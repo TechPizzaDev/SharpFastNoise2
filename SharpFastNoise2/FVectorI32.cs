@@ -1,0 +1,52 @@
+﻿namespace SharpFastNoise2
+{
+    public readonly struct FVectorI32 : IFVector<FVectorI32>
+    {
+        public readonly int Value;
+
+        public FVectorI32(int value)
+        {
+            Value = value;
+        }
+
+        public int Count => 1;
+
+        public FVectorI32 Add(FVectorI32 rhs) => new(Value + rhs.Value);
+
+        public FVectorI32 And(FVectorI32 rhs) => new(Value & rhs.Value);
+
+        public FVectorF32 AsSingle() => UnsafeR.As<FVectorI32, FVectorF32>(this);
+
+        public FVectorI32 Complement() => new(~Value);
+
+        public FVectorI32 Div(FVectorI32 rhs) => new(Value / rhs.Value);
+
+        public FVectorI32 Equal(FVectorI32 other) => new((Value == other.Value).AsInt32());
+
+        public FVectorI32 GreaterThan(FVectorI32 rhs) => new((Value > rhs.Value).AsInt32());
+
+        public FVectorI32 GreaterThanOrEqual(FVectorI32 rhs) => new((Value >= rhs.Value).AsInt32());
+
+        public FVectorI32 Incremented() => new(0);
+
+        public FVectorI32 LeftShift(int rhs) => new(Value << rhs);
+
+        public FVectorI32 LessThan(FVectorI32 rhs) => new((Value < rhs.Value).AsInt32());
+
+        public FVectorI32 LessThanOrEqual(FVectorI32 rhs) => new((Value <= rhs.Value).AsInt32());
+
+        public FVectorI32 Mul(FVectorI32 rhs) => new(Value * rhs.Value);
+
+        public FVectorI32 Negate() => new(-Value);
+
+        public FVectorI32 NotEqual(FVectorI32 other) => new((Value != other.Value).AsInt32());
+
+        public FVectorI32 Or(FVectorI32 rhs) => new(Value | rhs.Value);
+
+        public FVectorI32 RightShift(int rhs) => new(Value >> rhs);
+
+        public FVectorI32 Sub(FVectorI32 rhs) => new(Value - rhs.Value);
+
+        public FVectorI32 Xor(FVectorI32 rhs) => new(Value ^ rhs.Value);
+    }
+}
