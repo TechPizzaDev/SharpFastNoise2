@@ -29,7 +29,7 @@
 
         public FVectorI32 Incremented() => new(0);
 
-        public FVectorI32 LeftShift(int rhs) => new(Value << rhs);
+        public FVectorI32 LeftShift(byte rhs) => new(Value << rhs);
 
         public FVectorI32 LessThan(FVectorI32 rhs) => new((Value < rhs.Value).AsInt32());
 
@@ -43,7 +43,7 @@
 
         public FVectorI32 Or(FVectorI32 rhs) => new(Value | rhs.Value);
 
-        public FVectorI32 RightShift(int rhs) => new(Value >> rhs);
+        public FVectorI32 RightShift(byte rhs) => new(Value >> rhs);
 
         public FVectorI32 Sub(FVectorI32 rhs) => new(Value - rhs.Value);
 
