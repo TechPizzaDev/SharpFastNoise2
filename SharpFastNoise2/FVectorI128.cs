@@ -4,13 +4,23 @@ using System.Runtime.Intrinsics.X86;
 
 namespace SharpFastNoise2
 {
-    public readonly struct FVectorI128 : IFVector<FVectorI128>
+    public readonly struct FVectorI128 : IFMask<FVectorI128>, IFVector<FVectorI128, FVectorI128>
     {
         public readonly Vector128<int> Value;
 
         public FVectorI128(Vector128<int> value)
         {
             Value = value;
+        }
+
+        public FVectorI128(int value)
+        {
+            Value = Vector128.Create(value);
+        }
+
+        public FVectorI128(int x, int y, int z, int w)
+        {
+            Value = Vector128.Create(x, y, z, w);
         }
 
         public int Count => Vector128<int>.Count;
@@ -25,7 +35,7 @@ namespace SharpFastNoise2
 
         public FVectorI128 Div(FVectorI128 rhs) => throw new NotSupportedException();
 
-        public FVectorI128 Equal(FVectorI128 other) => new(Sse2.CompareEqual(Value, other.Value));
+        public FVectorI128 Equal(FVectorI128 rhs) => new(Sse2.CompareEqual(Value, rhs.Value));
 
         public FVectorI128 GreaterThan(FVectorI128 rhs) => new(Sse2.CompareGreaterThan(Value, rhs.Value));
 
@@ -61,7 +71,7 @@ namespace SharpFastNoise2
 
         public FVectorI128 Negate() => new(Sse2.Subtract(Vector128<int>.Zero, Value));
 
-        public FVectorI128 NotEqual(FVectorI128 other) => AsSingle().NotEqual(other.AsSingle()).AsInt32();
+        public FVectorI128 NotEqual(FVectorI128 other) => AsSingle().NotEqual(other.AsSingle());
 
         public FVectorI128 Or(FVectorI128 rhs) => new(Sse2.Or(Value, rhs.Value));
 
@@ -70,5 +80,14 @@ namespace SharpFastNoise2
         public FVectorI128 Sub(FVectorI128 rhs) => new(Sse2.Subtract(Value, rhs.Value));
 
         public FVectorI128 Xor(FVectorI128 rhs) => new(Sse2.Xor(Value, rhs.Value));
+
+        public static implicit operator Vector128<int>(FVectorI128 vector) => vector.Value;
+
+        public static implicit operator FVectorI128(Vector128<int> vector) => new(vector);
+
+        public override string ToString()
+        {
+            return Value.ToString();
+        }
     }
 }

@@ -1,6 +1,6 @@
 ﻿namespace SharpFastNoise2
 {
-    public readonly struct FVectorI32 : IFVector<FVectorI32>
+    public readonly struct FVectorI32 : IFMask<FVectorI32>, IFVector<FVectorI32, FVectorI32>
     {
         public readonly int Value;
 
@@ -21,7 +21,7 @@
 
         public FVectorI32 Div(FVectorI32 rhs) => new(Value / rhs.Value);
 
-        public FVectorI32 Equal(FVectorI32 other) => new((Value == other.Value).AsInt32());
+        public FVectorI32 Equal(FVectorI32 rhs) => new((Value == rhs.Value).AsInt32());
 
         public FVectorI32 GreaterThan(FVectorI32 rhs) => new((Value > rhs.Value).AsInt32());
 
@@ -39,7 +39,7 @@
 
         public FVectorI32 Negate() => new(-Value);
 
-        public FVectorI32 NotEqual(FVectorI32 other) => new((Value != other.Value).AsInt32());
+        public FVectorI32 NotEqual(FVectorI32 rhs) => new((Value != rhs.Value).AsInt32());
 
         public FVectorI32 Or(FVectorI32 rhs) => new(Value | rhs.Value);
 
@@ -48,5 +48,14 @@
         public FVectorI32 Sub(FVectorI32 rhs) => new(Value - rhs.Value);
 
         public FVectorI32 Xor(FVectorI32 rhs) => new(Value ^ rhs.Value);
+
+        public static implicit operator int(FVectorI32 vector) => vector.Value;
+
+        public static implicit operator FVectorI32(int vector) => new(vector);
+
+        public override string ToString()
+        {
+            return $"<{Value}>";
+        }
     }
 }

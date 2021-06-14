@@ -1,7 +1,8 @@
 ﻿namespace SharpFastNoise2
 {
-    public interface IFVector<T>
-        where T : IFVector<T>
+    public interface IFVector<T, M>
+        where T : IFVector<T, M>
+        where M : IFMask<M>
     {
         int Count { get; }
 
@@ -9,16 +10,16 @@
         T And(T rhs);
         T Div(T rhs);
         T Complement();
-        T Equal(T other);
-        T GreaterThan(T rhs);
-        T GreaterThanOrEqual(T rhs);
+        M Equal(T other);
+        M GreaterThan(T rhs);
+        M GreaterThanOrEqual(T rhs);
         T Incremented();
         T LeftShift(byte rhs);
-        T LessThan(T rhs);
-        T LessThanOrEqual(T rhs);
+        M LessThan(T rhs);
+        M LessThanOrEqual(T rhs);
         T Mul(T rhs);
         T Negate();
-        T NotEqual(T other);
+        M NotEqual(T other);
         T Or(T rhs);
         T RightShift(byte rhs);
         T Sub(T rhs);
