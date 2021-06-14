@@ -1,5 +1,4 @@
-﻿
-using System;
+﻿using System.Runtime.CompilerServices;
 
 namespace SharpFastNoise2
 {
@@ -12,12 +11,13 @@ namespace SharpFastNoise2
         where int32v : unmanaged, IFVector<int32v, mask32v>
         where TFunctions : unmanaged, IFunctionList<mask32v, float32v, int32v>
     {
-        private static TFunctions FS;
-        private static Utils<mask32v, float32v, int32v, TFunctions> Utils;
-        private static FastSimd<mask32v, float32v, int32v, TFunctions> FSS;
+        private static TFunctions FS = default;
+        private static Utils<mask32v, float32v, int32v, TFunctions> Utils = default;
+        private static FastSimd<mask32v, float32v, int32v, TFunctions> FSS = default;
 
         public int Count => default(float32v).Count;
 
+        [MethodImpl(MethodImplOptions.AggressiveOptimization)]
         public float32v Gen(int32v seed, float32v x, float32v y)
         {
             const float SQRT3 = 1.7320508075f;
@@ -79,6 +79,7 @@ namespace SharpFastNoise2
             return FS.Broad_f32(49.918426513671875f).Mul(last);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveOptimization)]
         public float32v Gen(int32v seed, float32v x, float32v y, float32v z)
         {
             float32v f = FS.Broad_f32(2.0f / 3.0f).Mul(x.Add(y).Add(z));

@@ -92,6 +92,7 @@ namespace SharpFastNoise2
 
         // Select
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public float32v Select_f32(mask32v m, float32v a, float32v b)
         {
             if (Sse41.IsSupported)
@@ -104,6 +105,7 @@ namespace SharpFastNoise2
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public int32v Select_i32(mask32v m, int32v a, int32v b)
         {
             if (Sse41.IsSupported)
@@ -128,6 +130,7 @@ namespace SharpFastNoise2
             return Sse.Max(a, b);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public int32v Min_i32(int32v a, int32v b)
         {
             if (Sse41.IsSupported)
@@ -140,6 +143,7 @@ namespace SharpFastNoise2
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public int32v Max_i32(int32v a, int32v b)
         {
             if (Sse41.IsSupported)
@@ -182,6 +186,7 @@ namespace SharpFastNoise2
             return a.And(intMax.AsSingle());
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public int32v Abs_i32(int32v a)
         {
             if (Ssse3.IsSupported)
@@ -214,6 +219,7 @@ namespace SharpFastNoise2
 
         // Floor, Ceil, Round: http://dss.stephanierct.com/DevBlog/?p=8
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public float32v Floor_f32(float32v a)
         {
             if (Sse41.IsSupported)
@@ -229,6 +235,7 @@ namespace SharpFastNoise2
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public float32v Ceil_f32(float32v a)
         {
             if (Sse41.IsSupported)
@@ -244,6 +251,7 @@ namespace SharpFastNoise2
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public float32v Round_f32(float32v a)
         {
             if (Sse41.IsSupported)
@@ -283,6 +291,7 @@ namespace SharpFastNoise2
             return Sse.AndNot(m.AsSingle(), a);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool AnyMask_bool(mask32v m)
         {
             if (Sse41.IsSupported)
@@ -297,6 +306,7 @@ namespace SharpFastNoise2
 
         // FMA
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public float32v FMulAdd_f32(float32v a, float32v b, float32v c)
         {
             if (Fma.IsSupported)
@@ -309,6 +319,7 @@ namespace SharpFastNoise2
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public float32v FNMulAdd_f32(float32v a, float32v b, float32v c)
         {
             if (Fma.IsSupported)

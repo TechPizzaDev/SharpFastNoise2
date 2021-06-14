@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.CompilerServices;
 using System.Runtime.Intrinsics;
 using System.Runtime.Intrinsics.X86;
 
@@ -29,7 +30,7 @@ namespace SharpFastNoise2
 
         public FVectorF128 And(FVectorF128 rhs) => new(Sse.And(Value, rhs.Value));
 
-        public FVectorI128 AsInt32() => UnsafeR.As<FVectorF128, FVectorI128>(this);
+        public FVectorI128 AsInt32() => Unsafe.As<FVectorF128, FVectorI128>(ref Unsafe.AsRef(this));
 
         public FVectorF128 Complement() => new(Sse.Xor(Value, Vector128<float>.AllBitsSet));
 

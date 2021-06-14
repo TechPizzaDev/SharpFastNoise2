@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.CompilerServices;
 using System.Runtime.Intrinsics;
 using System.Runtime.Intrinsics.X86;
 
@@ -29,7 +30,7 @@ namespace SharpFastNoise2
 
         public FVectorI128 And(FVectorI128 rhs) => new(Sse2.And(Value, rhs.Value));
 
-        public FVectorF128 AsSingle() => UnsafeR.As<FVectorI128, FVectorF128>(this);
+        public FVectorF128 AsSingle() => Unsafe.As<FVectorI128, FVectorF128>(ref Unsafe.AsRef(this));
 
         public FVectorI128 Complement() => new(Sse2.Xor(Value, Vector128<int>.AllBitsSet));
 
@@ -49,6 +50,7 @@ namespace SharpFastNoise2
 
         public FVectorI128 LessThanOrEqual(FVectorI128 rhs) => throw new NotSupportedException();
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public FVectorI128 Mul(FVectorI128 rhs)
         {
             if (Sse41.IsSupported)

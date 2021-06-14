@@ -1,4 +1,6 @@
-﻿namespace SharpFastNoise2
+﻿using System.Runtime.CompilerServices;
+
+namespace SharpFastNoise2
 {
     public readonly struct FVectorF32 : IFVector<FVectorF32, FVectorI32>
     {
@@ -15,7 +17,7 @@
 
         public FVectorF32 And(FVectorF32 rhs) => AsInt32().And(rhs.AsInt32()).AsSingle();
 
-        public FVectorI32 AsInt32() => UnsafeR.As<FVectorF32, FVectorI32>(this);
+        public FVectorI32 AsInt32() => Unsafe.As<FVectorF32, FVectorI32>(ref Unsafe.AsRef(this));
 
         public FVectorF32 Complement() => AsInt32().Complement().AsSingle();
 

@@ -10,7 +10,7 @@ namespace SharpFastNoise2
         where int32v : unmanaged, IFVector<int32v, mask32v>
         where TFunctions : unmanaged, IFunctionList<mask32v, float32v, int32v>
     {
-        private static TFunctions FS;
+        private static TFunctions FS = default;
 
         public const float ROOT2 = 1.4142135623730950488f;
         public const float ROOT3 = 1.7320508075688772935f;
@@ -239,7 +239,7 @@ namespace SharpFastNoise2
             hash = hash.Mul(FS.Broad_i32(0x27d4eb2d));
             return hash.RightShift(15).Xor(hash);
         }
-
+        
         public int32v HashPrimes(int32v seed, int32v x, int32v y, int32v z)
         {
             int32v hash = seed;
@@ -276,16 +276,19 @@ namespace SharpFastNoise2
         //    return FS.Converti32_f32(hash).Mul(FS.Broad_f32(1.0f / int.MaxValue));
         //}
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public float32v Lerp(float32v a, float32v b, float32v t)
         {
             return FS.FMulAdd_f32(t, b.Sub(a), a);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public float32v InterpHermite(float32v t)
         {
             return t.Mul(t).Mul(FS.FNMulAdd_f32(t, FS.Broad_f32(2), FS.Broad_f32(3)));
         }
-
+        
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public float32v InterpQuintic(float32v t)
         {
             return t.Mul(t).Mul(t).Mul(FS.FMulAdd_f32(t, FS.FMulAdd_f32(t, FS.Broad_f32(6), FS.Broad_f32(-15)), FS.Broad_f32(10)));

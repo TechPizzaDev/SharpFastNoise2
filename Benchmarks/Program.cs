@@ -17,7 +17,7 @@ namespace Benchmarks
             AddExporter(new HtmlExporter());
             AddColumnProvider(DefaultColumnProviders.Instance);
 
-            AddJob(Job.ShortRun
+            AddJob(Job.MediumRun
                 .WithLaunchCount(1)
                 .WithEvaluateOverhead(true)
                 .WithToolchain(InProcessEmitToolchain.Instance));

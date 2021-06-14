@@ -8,7 +8,7 @@ namespace SharpFastNoise2
         where int32v : unmanaged, IFVector<int32v, mask32v>
         where TFunctions : unmanaged, IFunctionList<mask32v, float32v, int32v>
     {
-        private static TFunctions FS;
+        private static TFunctions FS = default;
 
         // Masked float
 

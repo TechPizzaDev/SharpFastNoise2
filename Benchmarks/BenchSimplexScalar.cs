@@ -8,7 +8,7 @@ namespace Benchmarks
 
     public class BenchSimplexScalar : BenchNoiseBase<FVectorI32, FVectorF32, FVectorI32, ScalarFunctions>
     {
-        [Params(16 * 16, 16 * 16 * 16/*, 32 * 32 * 32*/)]
+        [Params(16 * 16/*, 16 * 16 * 16, 32 * 32 * 32*/)]
         public int Count { get; set; }
 
         [Benchmark]
