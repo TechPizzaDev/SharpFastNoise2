@@ -28,7 +28,7 @@ namespace Benchmarks
     {
         static void Main(string[] args)
         {
-            var switcher = new BenchmarkSwitcher(new[] { typeof(BenchPerlinScalar), typeof(BenchPerlinSse) });
+            var switcher = new BenchmarkSwitcher(new[] { typeof(BenchSimplexScalar), typeof(BenchSimplexSse) });
 
             switcher.RunAllJoined(new Config());
         }

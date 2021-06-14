@@ -16,7 +16,7 @@ namespace Sandbox
 
             if (true)
             {
-                var perlin32 = new Perlin<FVectorI32, FVectorF32, FVectorI32, ScalarFunctions>();
+                var perlin32 = new Simplex<FVectorI32, FVectorF32, FVectorI32, ScalarFunctions>();
 
                 if (true)
                 {
@@ -71,7 +71,7 @@ namespace Sandbox
             }
 
             {
-                var perlin128 = new Perlin<FVectorI128, FVectorF128, FVectorI128, SseFunctions>();
+                var perlin128 = new Simplex<FVectorI128, FVectorF128, FVectorI128, SseFunctions>();
 
                 if (true)
                 {

@@ -1,7 +1,7 @@
 ﻿
 namespace SharpFastNoise2
 {
-    public struct Perlin<mask32v, float32v, int32v, TFunctions> :
+    public struct Simplex<mask32v, float32v, int32v, TFunctions> :
         //INoiseGenerator1D<mask32v, float32v, int32v>,
         INoiseGenerator2D<mask32v, float32v, int32v>,
         INoiseGenerator3D<mask32v, float32v, int32v>,
