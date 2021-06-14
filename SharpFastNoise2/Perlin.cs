@@ -1,18 +1,27 @@
 ﻿
-using System;
-
 namespace SharpFastNoise2
 {
-    public struct Perlin<mask32v, float32v, int32v, TFunctions>
-        where mask32v : IFMask<mask32v>
-        where float32v : IFVector<float32v, mask32v>
-        where int32v : IFVector<int32v, mask32v>
-        where TFunctions : struct, IFunctionList<mask32v, float32v, int32v>
+    public struct Perlin<mask32v, float32v, int32v, TFunctions> :
+        //INoiseGenerator1D<mask32v, float32v, int32v>,
+        INoiseGenerator2D<mask32v, float32v, int32v>,
+        INoiseGenerator3D<mask32v, float32v, int32v>,
+        INoiseGenerator4D<mask32v, float32v, int32v>
+        where mask32v : unmanaged, IFMask<mask32v>
+        where float32v : unmanaged, IFVector<float32v, mask32v>
+        where int32v : unmanaged, IFVector<int32v, mask32v>
+        where TFunctions : unmanaged, IFunctionList<mask32v, float32v, int32v>
     {
         private static TFunctions FS = default;
         private static Utils<mask32v, float32v, int32v, TFunctions> Utils = default;
         private static FastSimd<mask32v, float32v, int32v, TFunctions> FSS = default;
 
+        public int Count => default(float32v).Count;
+
+        //public float32v Gen(int32v seed, float32v x)
+        //{
+        //    throw new System.NotImplementedException();
+        //}
+        
         public float32v Gen(int32v seed, float32v x, float32v y)
         {
             const float SQRT3 = 1.7320508075688772935274463415059f;
