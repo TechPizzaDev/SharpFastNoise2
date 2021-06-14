@@ -17,7 +17,7 @@ namespace Benchmarks
             AddExporter(new HtmlExporter());
             AddColumnProvider(DefaultColumnProviders.Instance);
 
-            AddJob(Job.MediumRun
+            AddJob(Job.ShortRun
                 .WithLaunchCount(1)
                 .WithEvaluateOverhead(true)
                 .WithToolchain(InProcessEmitToolchain.Instance));
@@ -28,7 +28,7 @@ namespace Benchmarks
     {
         static void Main(string[] args)
         {
-            var switcher = new BenchmarkSwitcher(new[] { typeof(BenchPerlin) });
+            var switcher = new BenchmarkSwitcher(new[] { typeof(BenchPerlinScalar), typeof(BenchPerlinSse) });
 
             switcher.RunAllJoined(new Config());
         }

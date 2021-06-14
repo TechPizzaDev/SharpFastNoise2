@@ -173,7 +173,7 @@ namespace SharpFastNoise2
             y = y.Mul(x.Mul(x));
             y = y.Add(x.Add(FS.Broad_f32(1)));
 
-            /* build 2^n */
+            // build 2^n
             int32v i = FS.Convertf32_i32(fx);
             // another two AVX2 instructions
             i = i.Add(FS.Broad_i32(0x7f));
