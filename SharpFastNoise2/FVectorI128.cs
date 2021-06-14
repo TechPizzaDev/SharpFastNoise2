@@ -75,7 +75,7 @@ namespace SharpFastNoise2
 
         public FVectorI128 Or(FVectorI128 rhs) => new(Sse2.Or(Value, rhs.Value));
 
-        public FVectorI128 RightShift(byte rhs) => new(Sse2.ShiftRightLogical(Value, rhs));
+        public FVectorI128 RightShift(byte rhs) => new(Sse2.ShiftRightArithmetic(Value, rhs));
 
         public FVectorI128 Sub(FVectorI128 rhs) => new(Sse2.Subtract(Value, rhs.Value));
 
