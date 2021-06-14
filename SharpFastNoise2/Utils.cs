@@ -1,80 +1,88 @@
-﻿
-using System.Runtime.CompilerServices;
+﻿using System.Runtime.CompilerServices;
 using System.Runtime.Intrinsics;
 using System.Runtime.Intrinsics.X86;
 
 namespace SharpFastNoise2
 {
     public struct Utils<mask32v, float32v, int32v, TFunctions>
-        where mask32v : IFMask<mask32v>
-        where float32v : IFVector<float32v, mask32v>
-        where int32v : IFVector<int32v, mask32v>
-        where TFunctions : struct, IFunctionList<mask32v, float32v, int32v>
+        where mask32v : unmanaged, IFMask<mask32v>
+        where float32v : unmanaged, IFVector<float32v, mask32v>
+        where int32v : unmanaged, IFVector<int32v, mask32v>
+        where TFunctions : unmanaged, IFunctionList<mask32v, float32v, int32v>
     {
         private static TFunctions FS;
 
         public const float ROOT2 = 1.4142135623730950488f;
         public const float ROOT3 = 1.7320508075688772935f;
 
-        //template<typename SIMD = FS, std::enable_if_t<SIMD::SIMD_Level<FastSIMD::Level_AVX2>* = nullptr>
-        //public float32v GetGradientDotFancy(int32v hash, float32v fX, float32v fY)
-        //{
-        //    int32v index = FS.Convertf32_i32(FS.Converti32_f32(hash.And(FS.Broad_i32(0x3FFFFF))).Mul(FS.Broad_f32(1.3333333333333333f)));
-        //
-        //    // Bit-4 = Choose X Y ordering
-        //    mask32v xy;
-        //
-        //    if constexpr(FS::SIMD_Level == FastSIMD::Level_Scalar)
-        //    {
-        //        xy = int32_t(index & FS.Broad_i32(1 << 2)) != 0;
-        //    }
-        //    else
-        //    {
-        //        xy = index << 29;
-        //
-        //        if constexpr(FS::SIMD_Level < FastSIMD::Level_SSE41)
-        //        {
-        //            xy >>= 31;
-        //        }
-        //    }
-        //
-        //    float32v a = FS.Select_f32(xy, fY, fX);
-        //    float32v b = FS.Select_f32(xy, fX, fY);
-        //
-        //    // Bit-1 = b flip sign
-        //    b ^= FS.Casti32_f32(index << 31);
-        //
-        //    // Bit-2 = Mul a by 2 or Root3
-        //    mask32v aMul2;
-        //
-        //    if constexpr(FS::SIMD_Level == FastSIMD::Level_Scalar)
-        //    {
-        //        aMul2 = int32_t(index & FS.Broad_i32(1 << 1)) != 0;
-        //    }
-        //    else
-        //    {
-        //        aMul2 = (index << 30) >> 31;
-        //    }
-        //
-        //    a *= FS.Select_f32(aMul2, float32v(2), float32v(ROOT3));
-        //    // b zero value if a mul 2
-        //    b = FS.NMask_f32(b, aMul2);
-        //
-        //    // Bit-8 = Flip sign of a + b
-        //    return (a + b) ^ FS.Casti32_f32((index >> 3) << 31);
-        //}
+        public float32v GetGradientDotFancy(int32v hash, float32v fX, float32v fY)
+        {
+            if (hash.Count == Vector256<int>.Count)
+            {
+                int32v index = FS.Convertf32_i32(FS.Converti32_f32(hash.And(FS.Broad_i32(0x3FFFFF))).Mul(FS.Broad_f32(1.3333333333333333f)));
+            
+                Vector256<float> gX = Avx2.PermuteVar8x32(
+                    Vector256.Create(ROOT3, ROOT3, 2, 2, 1, -1, 0, 0),
+                    Unsafe.As<int32v, Vector256<int>>(ref hash));
+            
+                Vector256<float> gY = Avx2.PermuteVar8x32(
+                    Vector256.Create(1, -1, 0, 0, ROOT3, ROOT3, 2, 2),
+                    Unsafe.As<int32v, Vector256<int>>(ref hash));
+            
+                // Bit-8 = Flip sign of a + b
+                return FS.FMulAdd_f32(
+                    Unsafe.As<Vector256<float>, float32v>(ref gX),
+                    fX,
+                    fY.Mul(Unsafe.As<Vector256<float>, float32v>(ref gY))).Xor(FS.Casti32_f32(index.RightShift(3).LeftShift(31)));
+            }
+            else
+            {
+                int32v index = FS.Convertf32_i32(FS.Converti32_f32(hash.And(FS.Broad_i32(0x3FFFFF))).Mul(FS.Broad_f32(1.3333333333333333f)));
 
-        //template<typename SIMD = FS, std::enable_if_t<SIMD::SIMD_Level == FastSIMD::Level_AVX2>* = nullptr>
-        //FS.INLINE static float32v GetGradientDotFancy(int32v hash, float32v fX, float32v fY)
-        //{
-        //    int32v index = FS.Convertf32_i32(FS.Converti32_f32(hash & FS.Broad_i32(0x3FFFFF)) * float32v(1.3333333333333333f));
-        //
-        //    float32v gX = _mm256_permutevar8x32_ps(float32v(ROOT3, ROOT3, 2, 2, 1, -1, 0, 0), index);
-        //    float32v gY = _mm256_permutevar8x32_ps(float32v(1, -1, 0, 0, ROOT3, ROOT3, 2, 2), index);
-        //
-        //    // Bit-8 = Flip sign of a + b
-        //    return FS.FMulAdd_f32(gX, fX, fY * gY) ^ FS.Casti32_f32((index >> 3) << 31);
-        //}
+                // Bit-4 = Choose X Y ordering
+                mask32v xy;
+
+                if (hash.Count == 1)
+                {
+                    xy = index.And(FS.Broad_i32(1 << 2)).NotEqual(FS.Broad_i32(0));
+                }
+                else
+                {
+                    int32v xyV = index.LeftShift(29);
+                    if (!Sse41.IsSupported)
+                    {
+                        xyV = xyV.RightShift(31);
+                    }
+                    xy = Unsafe.As<int32v, mask32v>(ref xyV);
+                }
+
+                float32v a = FS.Select_f32(xy, fY, fX);
+                float32v b = FS.Select_f32(xy, fX, fY);
+
+                // Bit-1 = b flip sign
+                b = b.Xor(FS.Casti32_f32(index.LeftShift(31)));
+
+                // Bit-2 = Mul a by 2 or Root3
+                mask32v aMul2;
+
+                if (hash.Count == 1)
+                {
+                    aMul2 = index.And(FS.Broad_i32(1 << 1)).NotEqual(FS.Broad_i32(0));
+                }
+                else
+                {
+                    int32v aMul2V = index.LeftShift(30).RightShift(31);
+                    aMul2 = Unsafe.As<int32v, mask32v>(ref aMul2V);
+                }
+
+                a = a.Mul(FS.Select_f32(aMul2, FS.Broad_f32(2), FS.Broad_f32(ROOT3)));
+                // b zero value if a mul 2
+                b = FS.NMask_f32(b, aMul2);
+
+                // Bit-8 = Flip sign of a + b
+                return a.Add(b).Xor(FS.Casti32_f32(index.RightShift(3).LeftShift(31)));
+            }
+        }
 
         //template<typename SIMD = FS, std::enable_if_t<(SIMD::SIMD_Level == FastSIMD::Level_AVX512)>* = nullptr>
         //FS.INLINE static float32v GetGradientDotFancy(int32v hash, float32v fX, float32v fY)

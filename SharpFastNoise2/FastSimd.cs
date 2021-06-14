@@ -3,10 +3,10 @@
 namespace SharpFastNoise2
 {
     public struct FastSimd<mask32v, float32v, int32v, TFunctions>
-        where mask32v : IFMask<mask32v>
-        where float32v : IFVector<float32v, mask32v>
-        where int32v : IFVector<int32v, mask32v>
-        where TFunctions : struct, IFunctionList<mask32v, float32v, int32v>
+        where mask32v : unmanaged, IFMask<mask32v>
+        where float32v : unmanaged, IFVector<float32v, mask32v>
+        where int32v : unmanaged, IFVector<int32v, mask32v>
+        where TFunctions : unmanaged, IFunctionList<mask32v, float32v, int32v>
     {
         private static TFunctions FS;
 

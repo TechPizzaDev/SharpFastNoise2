@@ -3,9 +3,9 @@
 namespace Benchmarks
 {
     public class BenchNoiseBase<mask32v, float32v, int32v, TFunc>
-        where mask32v : unmanaged, IFMask<mask32v>
-        where float32v : unmanaged, IFVector<float32v, mask32v>
-        where int32v : unmanaged, IFVector<int32v, mask32v>
+        where mask32v : IFMask<mask32v>
+        where float32v : IFVector<float32v, mask32v>
+        where int32v : IFVector<int32v, mask32v>
         where TFunc : IFunctionList<mask32v, float32v, int32v>, new()
     {
         private const int Seed = 1234;
