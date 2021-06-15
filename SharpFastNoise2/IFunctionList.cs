@@ -5,6 +5,8 @@
         where float32v : IFVector<float32v, mask32v>
         where int32v : IFVector<int32v, mask32v>
     {
+        // Broadcast
+
         public float32v Broad_f32(float value);
 
         public int32v Broad_i32(int value);
@@ -14,6 +16,12 @@
         public float32v Load_f32(ref byte p);
 
         public int32v Load_i32(ref byte p);
+
+        // Incremented
+
+        public float32v Incremented_f32();
+
+        public int32v Incremented_i32();
 
         // Store
 

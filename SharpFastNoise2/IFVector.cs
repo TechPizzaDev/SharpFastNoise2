@@ -13,7 +13,6 @@
         M Equal(T other);
         M GreaterThan(T rhs);
         M GreaterThanOrEqual(T rhs);
-        T Incremented();
         T LeftShift(byte rhs);
         M LessThan(T rhs);
         M LessThanOrEqual(T rhs);

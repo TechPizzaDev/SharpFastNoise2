@@ -29,8 +29,6 @@ namespace SharpFastNoise2
 
         public FVectorI32 GreaterThanOrEqual(FVectorI32 rhs) => new((Value >= rhs.Value).AsInt32());
 
-        public FVectorI32 Incremented() => new(0);
-
         public FVectorI32 LeftShift(byte rhs) => new(Value << rhs);
 
         public FVectorI32 LessThan(FVectorI32 rhs) => new((Value < rhs.Value).AsInt32());

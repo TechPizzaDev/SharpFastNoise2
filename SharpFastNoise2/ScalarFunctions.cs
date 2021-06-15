@@ -9,6 +9,8 @@ namespace SharpFastNoise2
 
     public struct ScalarFunctions : IFunctionList<mask32v, float32v, int32v>
     {
+        // Broadcast
+
         public float32v Broad_f32(float value)
         {
             return new float32v(value);
@@ -29,6 +31,18 @@ namespace SharpFastNoise2
         public int32v Load_i32(ref byte p)
         {
             return Unsafe.ReadUnaligned<int32v>(ref p);
+        }
+
+        // Incremented
+
+        public float32v Incremented_f32()
+        {
+            return 0;
+        }
+
+        public int32v Incremented_i32()
+        {
+            return 0;
         }
 
         // Store

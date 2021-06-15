@@ -4,11 +4,11 @@ using SharpFastNoise2;
 
 namespace Benchmarks
 {
-    using SimplexNoise4 = Simplex<FVectorI128, FVectorF128, FVectorI128, SseFunctions>;
+    using SimplexNoise4 = Simplex<FVectorI128, FVectorF128, FVectorI128, Sse2Functions>;
 
-    public class BenchSimplexSse : BenchNoiseBase<FVectorI128, FVectorF128, FVectorI128, SseFunctions>
+    public class BenchSimplexSse2 : BenchNoiseBase<FVectorI128, FVectorF128, FVectorI128, Sse2Functions>
     {
-        [Params(16 * 16/*, 16 * 16 * 16, 32 * 32 * 32*/)]
+        [Params(16 * 16, 16 * 16 * 16/*, 32 * 32 * 32*/)]
         public int Count { get; set; }
 
         [Benchmark]

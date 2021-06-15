@@ -15,20 +15,21 @@ namespace SharpFastNoise2
         public const float ROOT2 = 1.4142135623730950488f;
         public const float ROOT3 = 1.7320508075688772935f;
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
         public float32v GetGradientDotFancy(int32v hash, float32v fX, float32v fY)
         {
-            if (hash.Count == Vector256<int>.Count)
+            if (typeof(int32v) == typeof(FVectorI256))
             {
                 int32v index = FS.Convertf32_i32(FS.Converti32_f32(hash.And(FS.Broad_i32(0x3FFFFF))).Mul(FS.Broad_f32(1.3333333333333333f)));
-            
+
                 Vector256<float> gX = Avx2.PermuteVar8x32(
                     Vector256.Create(ROOT3, ROOT3, 2, 2, 1, -1, 0, 0),
                     Unsafe.As<int32v, Vector256<int>>(ref hash));
-            
+
                 Vector256<float> gY = Avx2.PermuteVar8x32(
                     Vector256.Create(1, -1, 0, 0, ROOT3, ROOT3, 2, 2),
                     Unsafe.As<int32v, Vector256<int>>(ref hash));
-            
+
                 // Bit-8 = Flip sign of a + b
                 return FS.FMulAdd_f32(
                     Unsafe.As<Vector256<float>, float32v>(ref gX),
@@ -95,9 +96,10 @@ namespace SharpFastNoise2
         //    return FS.FMulAdd_f32(gX, fX, fY * gY);
         //}
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
         public float32v GetGradientDot(int32v hash, float32v fX, float32v fY)
         {
-            if (hash.Count == Vector256<int>.Count)
+            if (typeof(int32v) == typeof(FVectorI256))
             {
                 Vector256<float> gX = Avx2.PermuteVar8x32(
                     Vector256.Create(1 + ROOT2, -1 - ROOT2, 1 + ROOT2, -1 - ROOT2, 1, -1, 1, -1),
@@ -239,7 +241,7 @@ namespace SharpFastNoise2
             hash = hash.Mul(FS.Broad_i32(0x27d4eb2d));
             return hash.RightShift(15).Xor(hash);
         }
-        
+
         public int32v HashPrimes(int32v seed, int32v x, int32v y, int32v z)
         {
             int32v hash = seed;
@@ -287,7 +289,7 @@ namespace SharpFastNoise2
         {
             return t.Mul(t).Mul(FS.FNMulAdd_f32(t, FS.Broad_f32(2), FS.Broad_f32(3)));
         }
-        
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public float32v InterpQuintic(float32v t)
         {

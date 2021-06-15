@@ -19,34 +19,32 @@ namespace SharpFastNoise2
             Value = Vector128.Create(value);
         }
 
-        public FVectorI128(int x, int y, int z, int w)
+        public FVectorI128(int e0, int e1, int e2, int e3)
         {
-            Value = Vector128.Create(x, y, z, w);
+            Value = Vector128.Create(e0, e1, e2, e3);
         }
 
         public int Count => Vector128<int>.Count;
 
-        public FVectorI128 Add(FVectorI128 rhs) => new(Sse2.Add(Value, rhs.Value));
+        public FVectorI128 Add(FVectorI128 rhs) => Sse2.Add(Value, rhs.Value);
 
-        public FVectorI128 And(FVectorI128 rhs) => new(Sse2.And(Value, rhs.Value));
+        public FVectorI128 And(FVectorI128 rhs) => Sse2.And(Value, rhs.Value);
 
         public FVectorF128 AsSingle() => Unsafe.As<FVectorI128, FVectorF128>(ref Unsafe.AsRef(this));
 
-        public FVectorI128 Complement() => new(Sse2.Xor(Value, Vector128<int>.AllBitsSet));
+        public FVectorI128 Complement() => Sse2.Xor(Value, Vector128<int>.AllBitsSet);
 
         public FVectorI128 Div(FVectorI128 rhs) => throw new NotSupportedException();
 
-        public FVectorI128 Equal(FVectorI128 rhs) => new(Sse2.CompareEqual(Value, rhs.Value));
+        public FVectorI128 Equal(FVectorI128 rhs) => Sse2.CompareEqual(Value, rhs.Value);
 
-        public FVectorI128 GreaterThan(FVectorI128 rhs) => new(Sse2.CompareGreaterThan(Value, rhs.Value));
+        public FVectorI128 GreaterThan(FVectorI128 rhs) => Sse2.CompareGreaterThan(Value, rhs.Value);
 
         public FVectorI128 GreaterThanOrEqual(FVectorI128 rhs) => throw new NotSupportedException();
 
-        public FVectorI128 Incremented() => new(Vector128.Create(0, 1, 2, 3));
+        public FVectorI128 LeftShift(byte rhs) => Sse2.ShiftLeftLogical(Value, rhs);
 
-        public FVectorI128 LeftShift(byte rhs) => new(Sse2.ShiftLeftLogical(Value, rhs));
-
-        public FVectorI128 LessThan(FVectorI128 rhs) => new(Sse2.CompareLessThan(Value, rhs.Value));
+        public FVectorI128 LessThan(FVectorI128 rhs) => Sse2.CompareLessThan(Value, rhs.Value);
 
         public FVectorI128 LessThanOrEqual(FVectorI128 rhs) => throw new NotSupportedException();
 
@@ -55,7 +53,7 @@ namespace SharpFastNoise2
         {
             if (Sse41.IsSupported)
             {
-                return new(Sse41.MultiplyLow(Value, rhs.Value));
+                return Sse41.MultiplyLow(Value, rhs.Value);
             }
             else
             {
@@ -65,23 +63,23 @@ namespace SharpFastNoise2
                     Sse2.ShiftRightLogical128BitLane(rhs.Value, 4).AsUInt32()); // mul 3,1
 
                 const byte control = 8; // _MM_SHUFFLE(0,0,2,0)
-                return new(Sse2.UnpackLow(
+                return Sse2.UnpackLow(
                     Sse2.Shuffle(tmp1.AsInt32(), control),
-                    Sse2.Shuffle(tmp2.AsInt32(), control))); // shuffle results to [63..0] and pack
+                    Sse2.Shuffle(tmp2.AsInt32(), control)); // shuffle results to [63..0] and pack
             }
         }
 
-        public FVectorI128 Negate() => new(Sse2.Subtract(Vector128<int>.Zero, Value));
+        public FVectorI128 Negate() => Sse2.Subtract(Vector128<int>.Zero, Value);
 
         public FVectorI128 NotEqual(FVectorI128 other) => AsSingle().NotEqual(other.AsSingle());
 
-        public FVectorI128 Or(FVectorI128 rhs) => new(Sse2.Or(Value, rhs.Value));
+        public FVectorI128 Or(FVectorI128 rhs) => Sse2.Or(Value, rhs.Value);
 
-        public FVectorI128 RightShift(byte rhs) => new(Sse2.ShiftRightArithmetic(Value, rhs));
+        public FVectorI128 RightShift(byte rhs) => Sse2.ShiftRightArithmetic(Value, rhs);
 
-        public FVectorI128 Sub(FVectorI128 rhs) => new(Sse2.Subtract(Value, rhs.Value));
+        public FVectorI128 Sub(FVectorI128 rhs) => Sse2.Subtract(Value, rhs.Value);
 
-        public FVectorI128 Xor(FVectorI128 rhs) => new(Sse2.Xor(Value, rhs.Value));
+        public FVectorI128 Xor(FVectorI128 rhs) => Sse2.Xor(Value, rhs.Value);
 
         public static implicit operator Vector128<int>(FVectorI128 vector) => vector.Value;
 
