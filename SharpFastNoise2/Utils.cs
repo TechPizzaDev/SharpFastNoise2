@@ -5,12 +5,12 @@ using System.Runtime.Intrinsics.X86;
 namespace SharpFastNoise2
 {
     public struct Utils<mask32v, float32v, int32v, TFunctions>
-        where mask32v : unmanaged, IFMask<mask32v>
-        where float32v : unmanaged, IFVector<float32v, mask32v>
-        where int32v : unmanaged, IFVector<int32v, mask32v>
+        where mask32v : unmanaged
+        where float32v : unmanaged
+        where int32v : unmanaged
         where TFunctions : unmanaged, IFunctionList<mask32v, float32v, int32v>
     {
-        private static TFunctions FS = default;
+        private static TFunctions F = default;
 
         public const float ROOT2 = 1.4142135623730950488f;
         public const float ROOT3 = 1.7320508075688772935f;
@@ -18,70 +18,74 @@ namespace SharpFastNoise2
         [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
         public float32v GetGradientDotFancy(int32v hash, float32v fX, float32v fY)
         {
-            if (typeof(int32v) == typeof(FVectorI256))
+            if (typeof(int32v) == typeof(Vector256<int>))
             {
-                int32v index = FS.Convertf32_i32(FS.Converti32_f32(hash.And(FS.Broad_i32(0x3FFFFF))).Mul(FS.Broad_f32(1.3333333333333333f)));
-
+                int32v index = F.Convertf32_i32(F.Mul(
+                    F.Converti32_f32(F.And(hash, F.Broad_i32(0x3FFFFF))),
+                    F.Broad_f32(1.3333333333333333f)));
+            
                 Vector256<float> gX = Avx2.PermuteVar8x32(
                     Vector256.Create(ROOT3, ROOT3, 2, 2, 1, -1, 0, 0),
-                    Unsafe.As<int32v, Vector256<int>>(ref hash));
-
+                    Unsafe.As<int32v, Vector256<int>>(ref index));
+            
                 Vector256<float> gY = Avx2.PermuteVar8x32(
                     Vector256.Create(1, -1, 0, 0, ROOT3, ROOT3, 2, 2),
-                    Unsafe.As<int32v, Vector256<int>>(ref hash));
-
+                    Unsafe.As<int32v, Vector256<int>>(ref index));
+            
                 // Bit-8 = Flip sign of a + b
-                return FS.FMulAdd_f32(
-                    Unsafe.As<Vector256<float>, float32v>(ref gX),
-                    fX,
-                    fY.Mul(Unsafe.As<Vector256<float>, float32v>(ref gY))).Xor(FS.Casti32_f32(index.RightShift(3).LeftShift(31)));
+                return F.Xor(
+                    F.FMulAdd_f32(
+                        Unsafe.As<Vector256<float>, float32v>(ref gX),
+                        fX,
+                        F.Mul(fY, Unsafe.As<Vector256<float>, float32v>(ref gY))),
+                    F.Casti32_f32(F.LeftShift(F.RightShift(index, 3), 31)));
             }
             else
             {
-                int32v index = FS.Convertf32_i32(FS.Converti32_f32(hash.And(FS.Broad_i32(0x3FFFFF))).Mul(FS.Broad_f32(1.3333333333333333f)));
+                int32v index = F.Convertf32_i32(F.Mul(F.Converti32_f32(F.And(hash, F.Broad_i32(0x3FFFFF))), F.Broad_f32(1.3333333333333333f)));
 
                 // Bit-4 = Choose X Y ordering
                 mask32v xy;
 
-                if (hash.Count == 1)
+                if (F.Count == 1)
                 {
-                    xy = index.And(FS.Broad_i32(1 << 2)).NotEqual(FS.Broad_i32(0));
+                    xy = F.NotEqual(F.And(index, F.Broad_i32(1 << 2)), F.Broad_i32(0));
                 }
                 else
                 {
-                    int32v xyV = index.LeftShift(29);
+                    int32v xyV = F.LeftShift(index, 29);
                     if (!Sse41.IsSupported)
                     {
-                        xyV = xyV.RightShift(31);
+                        xyV = F.RightShift(xyV, 31);
                     }
                     xy = Unsafe.As<int32v, mask32v>(ref xyV);
                 }
 
-                float32v a = FS.Select_f32(xy, fY, fX);
-                float32v b = FS.Select_f32(xy, fX, fY);
+                float32v a = F.Select_f32(xy, fY, fX);
+                float32v b = F.Select_f32(xy, fX, fY);
 
                 // Bit-1 = b flip sign
-                b = b.Xor(FS.Casti32_f32(index.LeftShift(31)));
+                b = F.Xor(b, F.Casti32_f32(F.LeftShift(index, 31)));
 
                 // Bit-2 = Mul a by 2 or Root3
                 mask32v aMul2;
 
-                if (hash.Count == 1)
+                if (F.Count == 1)
                 {
-                    aMul2 = index.And(FS.Broad_i32(1 << 1)).NotEqual(FS.Broad_i32(0));
+                    aMul2 = F.NotEqual(F.And(index, F.Broad_i32(1 << 1)), F.Broad_i32(0));
                 }
                 else
                 {
-                    int32v aMul2V = index.LeftShift(30).RightShift(31);
+                    int32v aMul2V = F.RightShift(F.LeftShift(index, 30), 31);
                     aMul2 = Unsafe.As<int32v, mask32v>(ref aMul2V);
                 }
 
-                a = a.Mul(FS.Select_f32(aMul2, FS.Broad_f32(2), FS.Broad_f32(ROOT3)));
+                a = F.Mul(a, F.Select_f32(aMul2, F.Broad_f32(2), F.Broad_f32(ROOT3)));
                 // b zero value if a mul 2
-                b = FS.NMask_f32(b, aMul2);
+                b = F.NMask_f32(b, aMul2);
 
                 // Bit-8 = Flip sign of a + b
-                return a.Add(b).Xor(FS.Casti32_f32(index.RightShift(3).LeftShift(31)));
+                return F.Xor(F.Add(a, b), F.Casti32_f32(F.LeftShift(F.RightShift(index, 3), 31)));
             }
         }
 
@@ -99,7 +103,7 @@ namespace SharpFastNoise2
         [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
         public float32v GetGradientDot(int32v hash, float32v fX, float32v fY)
         {
-            if (typeof(int32v) == typeof(FVectorI256))
+            if (typeof(int32v) == typeof(Vector256<int>))
             {
                 Vector256<float> gX = Avx2.PermuteVar8x32(
                     Vector256.Create(1 + ROOT2, -1 - ROOT2, 1 + ROOT2, -1 - ROOT2, 1, -1, 1, -1),
@@ -109,41 +113,41 @@ namespace SharpFastNoise2
                     Vector256.Create(1, 1, -1, -1, 1 + ROOT2, 1 + ROOT2, -1 - ROOT2, -1 - ROOT2),
                     Unsafe.As<int32v, Vector256<int>>(ref hash));
 
-                return FS.FMulAdd_f32(
+                return F.FMulAdd_f32(
                     Unsafe.As<Vector256<float>, float32v>(ref gX),
                     fX,
-                    fY.Mul(Unsafe.As<Vector256<float>, float32v>(ref gY)));
+                    F.Mul(fY, Unsafe.As<Vector256<float>, float32v>(ref gY)));
             }
             else
             {
                 // ( 1+R2, 1 ) ( -1-R2, 1 ) ( 1+R2, -1 ) ( -1-R2, -1 )
                 // ( 1, 1+R2 ) ( 1, -1-R2 ) ( -1, 1+R2 ) ( -1, -1-R2 )
 
-                int32v bit1 = hash.LeftShift(31);
-                int32v bit2 = hash.RightShift(1).LeftShift(31);
+                int32v bit1 = F.LeftShift(hash, 31);
+                int32v bit2 = F.LeftShift(F.RightShift(hash, 1), 31);
                 mask32v mbit4;
 
-                if (hash.Count == 1)
+                if (F.Count == 1)
                 {
-                    mbit4 = hash.And(FS.Broad_i32(1 << 2)).NotEqual(FS.Broad_i32(0));
+                    mbit4 = F.NotEqual(F.And(hash, F.Broad_i32(1 << 2)), F.Broad_i32(0));
                 }
                 else
                 {
-                    int32v bit4 = hash.LeftShift(29);
+                    int32v bit4 = F.LeftShift(hash, 29);
                     if (!Sse41.IsSupported)
                     {
-                        bit4 = bit4.RightShift(31);
+                        bit4 = F.RightShift(bit4, 31);
                     }
                     mbit4 = Unsafe.As<int32v, mask32v>(ref bit4);
                 }
 
-                fX = fX.Xor(FS.Casti32_f32(bit1));
-                fY = fY.Xor(FS.Casti32_f32(bit2));
+                fX = F.Xor(fX, F.Casti32_f32(bit1));
+                fY = F.Xor(fY, F.Casti32_f32(bit2));
 
-                float32v a = FS.Select_f32(mbit4, fY, fX);
-                float32v b = FS.Select_f32(mbit4, fX, fY);
+                float32v a = F.Select_f32(mbit4, fY, fX);
+                float32v b = F.Select_f32(mbit4, fX, fY);
 
-                return FS.FMulAdd_f32(FS.Broad_f32(1.0f + ROOT2), a, b);
+                return F.FMulAdd_f32(F.Broad_f32(1.0f + ROOT2), a, b);
             }
         }
 
@@ -167,21 +171,21 @@ namespace SharpFastNoise2
 
         public float32v GetGradientDot(int32v hash, float32v fX, float32v fY, float32v fZ)
         {
-            int32v hasha13 = hash.And(FS.Broad_i32(13));
+            int32v hasha13 = F.And(hash, F.Broad_i32(13));
 
             //if h < 8 then x, else y
-            float32v u = FS.Select_f32(hasha13.LessThan(FS.Broad_i32(8)), fX, fY);
+            float32v u = F.Select_f32(F.LessThan(hasha13, F.Broad_i32(8)), fX, fY);
 
             //if h < 4 then y else if h is 12 or 14 then x else z
-            float32v v = FS.Select_f32(hasha13.Equal(FS.Broad_i32(12)), fX, fZ);
-            v = FS.Select_f32(hasha13.LessThan(FS.Broad_i32(2)), fY, v);
+            float32v v = F.Select_f32(F.Equal(hasha13, F.Broad_i32(12)), fX, fZ);
+            v = F.Select_f32(F.LessThan(hasha13, F.Broad_i32(2)), fY, v);
 
             //if h1 then -u else u
             //if h2 then -v else v
-            float32v h1 = FS.Casti32_f32(hash.LeftShift(31));
-            float32v h2 = FS.Casti32_f32(hash.And(FS.Broad_i32(2)).LeftShift(30));
+            float32v h1 = F.Casti32_f32(F.LeftShift(hash, 31));
+            float32v h2 = F.Casti32_f32(F.LeftShift(F.And(hash, F.Broad_i32(2)), 30));
             //then add them
-            return u.Xor(h1).Add(v.Xor(h2));
+            return F.Add(F.Xor(u, h1), F.Xor(v, h2));
         }
 
         //template<typename SIMD = FS, std::enable_if_t<SIMD::SIMD_Level == FastSIMD::Level_AVX512>* = nullptr>
@@ -196,29 +200,29 @@ namespace SharpFastNoise2
 
         public float32v GetGradientDot(int32v hash, float32v fX, float32v fY, float32v fZ, float32v fW)
         {
-            int32v p = hash.And(FS.Broad_i32(3 << 3));
+            int32v p = F.And(hash, F.Broad_i32(3 << 3));
 
-            float32v a = FS.Select_f32(p.GreaterThan(FS.Broad_i32(0)), fX, fY);
+            float32v a = F.Select_f32(F.GreaterThan(p, F.Broad_i32(0)), fX, fY);
             float32v b;
 
             if (Sse41.IsSupported)
             {
-                b = FS.Select_f32(p.GreaterThan(FS.Broad_i32(1 << 3)), fY, fZ);
+                b = F.Select_f32(F.GreaterThan(p, F.Broad_i32(1 << 3)), fY, fZ);
             }
             else
             {
-                int32v mask = hash.LeftShift(27);
-                b = FS.Select_f32(Unsafe.As<int32v, mask32v>(ref mask), fY, fZ);
+                int32v mask = F.LeftShift(hash, 27);
+                b = F.Select_f32(Unsafe.As<int32v, mask32v>(ref mask), fY, fZ);
             }
 
-            float32v c = FS.Select_f32(p.GreaterThan(FS.Broad_i32(2 << 3)), fZ, fW);
+            float32v c = F.Select_f32(F.GreaterThan(p, F.Broad_i32(2 << 3)), fZ, fW);
 
             unchecked
             {
-                float32v aSign = FS.Casti32_f32(hash.LeftShift(31));
-                float32v bSign = FS.Casti32_f32(hash.LeftShift(30).And(FS.Broad_i32((int)0x80000000)));
-                float32v cSign = FS.Casti32_f32(hash.LeftShift(29).And(FS.Broad_i32((int)0x80000000)));
-                return a.Xor(aSign).Add(b.Xor(bSign)).Add(c.Xor(cSign));
+                float32v aSign = F.Casti32_f32(F.LeftShift(hash, 31));
+                float32v bSign = F.Casti32_f32(F.And(F.LeftShift(hash, 30), F.Broad_i32((int)0x80000000)));
+                float32v cSign = F.Casti32_f32(F.And(F.LeftShift(hash, 29), F.Broad_i32((int)0x80000000)));
+                return F.Add(F.Add(F.Xor(a, aSign), F.Xor(b, bSign)), F.Xor(c, cSign));
             }
         }
 
@@ -236,28 +240,28 @@ namespace SharpFastNoise2
         public int32v HashPrimes(int32v seed, int32v x, int32v y)
         {
             int32v hash = seed;
-            hash = hash.Xor(x.Xor(y));
+            hash = F.Xor(hash, F.Xor(x, y));
 
-            hash = hash.Mul(FS.Broad_i32(0x27d4eb2d));
-            return hash.RightShift(15).Xor(hash);
+            hash = F.Mul(hash, F.Broad_i32(0x27d4eb2d));
+            return F.Xor(F.RightShift(hash, 15), hash);
         }
 
         public int32v HashPrimes(int32v seed, int32v x, int32v y, int32v z)
         {
             int32v hash = seed;
-            hash = hash.Xor(x.Xor(y.Xor(z)));
+            hash = F.Xor(hash, F.Xor(x, F.Xor(y, z)));
 
-            hash = hash.Mul(FS.Broad_i32(0x27d4eb2d));
-            return hash.RightShift(15).Xor(hash);
+            hash = F.Mul(hash, F.Broad_i32(0x27d4eb2d));
+            return F.Xor(F.RightShift(hash, 15), hash);
         }
 
         public int32v HashPrimes(int32v seed, int32v x, int32v y, int32v z, int32v w)
         {
             int32v hash = seed;
-            hash = hash.Xor(x.Xor(y.Xor(z.Xor(w))));
+            hash = F.Xor(hash, F.Xor(x, F.Xor(y, F.Xor(z, w))));
 
-            hash = hash.Mul(FS.Broad_i32(0x27d4eb2d));
-            return hash.RightShift(15).Xor(hash);
+            hash = F.Mul(hash, F.Broad_i32(0x27d4eb2d));
+            return F.Xor(F.RightShift(hash, 15), hash);
         }
 
         //public static int32v HashPrimesHB(int32v seed, P...primedPos )
@@ -281,19 +285,19 @@ namespace SharpFastNoise2
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public float32v Lerp(float32v a, float32v b, float32v t)
         {
-            return FS.FMulAdd_f32(t, b.Sub(a), a);
+            return F.FMulAdd_f32(t, F.Sub(b, a), a);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public float32v InterpHermite(float32v t)
         {
-            return t.Mul(t).Mul(FS.FNMulAdd_f32(t, FS.Broad_f32(2), FS.Broad_f32(3)));
+            return F.Mul(F.Mul(t, t), F.FNMulAdd_f32(t, F.Broad_f32(2), F.Broad_f32(3)));
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public float32v InterpQuintic(float32v t)
         {
-            return t.Mul(t).Mul(t).Mul(FS.FMulAdd_f32(t, FS.FMulAdd_f32(t, FS.Broad_f32(6), FS.Broad_f32(-15)), FS.Broad_f32(10)));
+            return F.Mul(F.Mul(F.Mul(t, t), t), F.FMulAdd_f32(t, F.FMulAdd_f32(t, F.Broad_f32(6), F.Broad_f32(-15)), F.Broad_f32(10)));
         }
 
         //public float32v CalcDistance(DistanceFunction distFunc, float32v dX, P...d )

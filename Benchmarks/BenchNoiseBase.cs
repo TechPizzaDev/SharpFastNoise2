@@ -3,16 +3,13 @@
 namespace Benchmarks
 {
     public class BenchNoiseBase<mask32v, float32v, int32v, TFunc>
-        where mask32v : IFMask<mask32v>
-        where float32v : IFVector<float32v, mask32v>
-        where int32v : IFVector<int32v, mask32v>
         where TFunc : IFunctionList<mask32v, float32v, int32v>, new()
     {
         private const int Seed = 1234;
         private const float Mul = 0.01f;
 
         public void Generate1D<TGen>(int count)
-            where TGen : INoiseGenerator1D<mask32v, float32v, int32v>, new()
+            where TGen : INoiseGenerator1D<float32v, int32v>, new()
         {
             var noise = new TGen();
             var fn = new TFunc();
@@ -24,7 +21,7 @@ namespace Benchmarks
         }
 
         public void Generate2D<TGen>(int count)
-            where TGen : INoiseGenerator2D<mask32v, float32v, int32v>, new()
+            where TGen : INoiseGenerator2D<float32v, int32v>, new()
         {
             var noise = new TGen();
             var fn = new TFunc();
@@ -36,7 +33,7 @@ namespace Benchmarks
         }
 
         public void Generate3D<TGen>(int count)
-            where TGen : INoiseGenerator3D<mask32v, float32v, int32v>, new()
+            where TGen : INoiseGenerator3D<float32v, int32v>, new()
         {
             var noise = new TGen();
             var fn = new TFunc();
@@ -48,7 +45,7 @@ namespace Benchmarks
         }
 
         public void Generate4D<TGen>(int count)
-            where TGen : INoiseGenerator4D<mask32v, float32v, int32v>, new()
+            where TGen : INoiseGenerator4D<float32v, int32v>, new()
         {
             var noise = new TGen();
             var fn = new TFunc();

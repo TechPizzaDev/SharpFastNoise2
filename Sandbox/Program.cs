@@ -23,23 +23,29 @@ namespace Sandbox
             {
                 string simplexPath = Path.Combine(basePath, "Simplex");
 
-                Write<FVectorI256, FVectorF256, FVectorI256, Avx2Functions, Simplex<FVectorI256, FVectorF256, FVectorI256, Avx2Functions>>(
+                Write<
+                    Vector256<int>, Vector256<float>, Vector256<int>, Avx2Functions,
+                    Simplex<Vector256<int>, Vector256<float>, Vector256<int>, Avx2Functions>>(
                     basePath: simplexPath,
                     generator: new(),
                     seed,
                     offsetX,
                     256,
                     256);
-
-                Write<FVectorI128, FVectorF128, FVectorI128, Sse2Functions, Simplex<FVectorI128, FVectorF128, FVectorI128, Sse2Functions>>(
+                
+                Write<
+                    Vector128<int>, Vector128<float>, Vector128<int>, Sse2Functions, 
+                    Simplex<Vector128<int>, Vector128<float>, Vector128<int>, Sse2Functions>>(
                     basePath: simplexPath,
                     generator: new(),
                     seed,
                     offsetX,
                     256,
                     256);
-
-                Write<FVectorI32, FVectorF32, FVectorI32, ScalarFunctions, Simplex<FVectorI32, FVectorF32, FVectorI32, ScalarFunctions>>(
+                
+                Write<
+                    int, float, int, ScalarFunctions,
+                    Simplex<int, float, int, ScalarFunctions>>(
                     basePath: simplexPath,
                     generator: new(),
                     seed,
@@ -52,23 +58,30 @@ namespace Sandbox
             {
                 string openSimplex2Path = Path.Combine(basePath, "OpenSimplex2");
 
-                Write<FVectorI256, FVectorF256, FVectorI256, Avx2Functions, OpenSimplex2<FVectorI256, FVectorF256, FVectorI256, Avx2Functions>>(
+                Write<
+                    Vector256<int>, Vector256<float>, Vector256<int>, Avx2Functions, 
+                    OpenSimplex2<Vector256<int>, Vector256<float>, Vector256<int>, Avx2Functions>>(
                     basePath: openSimplex2Path,
                     generator: new(),
                     seed,
                     offsetX,
                     256,
                     256);
+                
 
-                Write<FVectorI128, FVectorF128, FVectorI128, Sse2Functions, OpenSimplex2<FVectorI128, FVectorF128, FVectorI128, Sse2Functions>>(
-                    basePath: openSimplex2Path,
+                Write<
+                    Vector128<int>, Vector128<float>, Vector128<int>, Sse2Functions,
+                    OpenSimplex2<Vector128<int>, Vector128<float>, Vector128<int>, Sse2Functions>>(
+                   basePath: openSimplex2Path,
                     generator: new(),
                     seed,
                     offsetX,
                     256,
                     256);
 
-                Write<FVectorI32, FVectorF32, FVectorI32, ScalarFunctions, OpenSimplex2<FVectorI32, FVectorF32, FVectorI32, ScalarFunctions>>(
+                Write<
+                    int, float, int, ScalarFunctions, 
+                    OpenSimplex2<int, float, int, ScalarFunctions>>(
                     basePath: openSimplex2Path,
                     generator: new(),
                     seed,
@@ -85,31 +98,31 @@ namespace Sandbox
             float offsetX,
             int width,
             int height)
-            where mask32v : unmanaged, IFMask<mask32v>
-            where float32v : unmanaged, IFVector<float32v, mask32v>
-            where int32v : unmanaged, IFVector<int32v, mask32v>
+            where mask32v : unmanaged
+            where float32v : unmanaged
+            where int32v : unmanaged
             where TFunctions : unmanaged, IFunctionList<mask32v, float32v, int32v>
             where TGen : struct
         {
-            TFunctions funcs = new();
+            TFunctions F = new();
             using Image<L16> image = new Image<L16>(width, height);
 
-            var vSeed = funcs.Broad_i32(seed);
-            var vIncrementX = funcs.Incremented_f32().Add(funcs.Broad_f32(offsetX)).Div(funcs.Broad_f32(32));
+            var vSeed = F.Broad_i32(seed);
+            var vIncrementX = F.Div(F.Add(F.Incremented_f32(), F.Broad_f32(offsetX)), F.Broad_f32(32));
 
-            if (generator is INoiseGenerator4D<mask32v, float32v, int32v> gen4D)
+            if (generator is INoiseGenerator4D<float32v, int32v> gen4D)
             {
                 for (int y = 0; y < image.Height; y++)
                 {
-                    float32v vy = funcs.Broad_f32(y / 32f);
+                    float32v vy = F.Broad_f32(y / 32f);
 
                     for (int x = 0; x < image.Width; x += gen4D.Count)
                     {
-                        float32v noise = gen4D.Gen(vSeed, funcs.Broad_f32(x / 32f).Add(vIncrementX), vy, default, default);
+                        float32v noise = gen4D.Gen(vSeed, F.Add(F.Broad_f32(x / 32f), vIncrementX), vy, default, default);
 
                         for (int i = 0; i < gen4D.Count; i++)
                         {
-                            image[x + i, y] = new L16((ushort)((funcs.Extract_f32(noise, i) + 1) * 0.5f * ushort.MaxValue));
+                            image[x + i, y] = new L16((ushort)((F.Extract_f32(noise, i) + 1) * 0.5f * ushort.MaxValue));
                         }
                     }
                 }
@@ -117,19 +130,19 @@ namespace Sandbox
                 image.Save(basePath + $"_4Dx{gen4D.Count}.png");
             }
 
-            if (generator is INoiseGenerator3D<mask32v, float32v, int32v> gen3D)
+            if (generator is INoiseGenerator3D<float32v, int32v> gen3D)
             {
                 for (int y = 0; y < image.Height; y++)
                 {
-                    float32v vy = funcs.Broad_f32(y / 32f);
+                    float32v vy = F.Broad_f32(y / 32f);
 
                     for (int x = 0; x < image.Width; x += gen3D.Count)
                     {
-                        float32v noise = gen3D.Gen(vSeed, funcs.Broad_f32(x / 32f).Add(vIncrementX), vy, default);
+                        float32v noise = gen3D.Gen(vSeed, F.Add(F.Broad_f32(x / 32f), vIncrementX), vy, default);
 
                         for (int i = 0; i < gen3D.Count; i++)
                         {
-                            image[x + i, y] = new L16((ushort)((funcs.Extract_f32(noise, i) + 1) * 0.5f * ushort.MaxValue));
+                            image[x + i, y] = new L16((ushort)((F.Extract_f32(noise, i) + 1) * 0.5f * ushort.MaxValue));
                         }
                     }
                 }
@@ -137,19 +150,19 @@ namespace Sandbox
                 image.Save(basePath + $"_3Dx{gen3D.Count}.png");
             }
 
-            if (generator is INoiseGenerator2D<mask32v, float32v, int32v> gen2D)
+            if (generator is INoiseGenerator2D<float32v, int32v> gen2D)
             {
                 for (int y = 0; y < image.Height; y++)
                 {
-                    float32v vy = funcs.Broad_f32(y / 32f);
+                    float32v vy = F.Broad_f32(y / 32f);
 
                     for (int x = 0; x < image.Width; x += gen2D.Count)
                     {
-                        float32v noise = gen2D.Gen(vSeed, funcs.Broad_f32(x / 32f).Add(vIncrementX), vy);
+                        float32v noise = gen2D.Gen(vSeed, F.Add(F.Broad_f32(x / 32f), vIncrementX), vy);
 
                         for (int i = 0; i < gen2D.Count; i++)
                         {
-                            image[x + i, y] = new L16((ushort)((funcs.Extract_f32(noise, i) + 1) * 0.5f * ushort.MaxValue));
+                            image[x + i, y] = new L16((ushort)((F.Extract_f32(noise, i) + 1) * 0.5f * ushort.MaxValue));
                         }
                     }
                 }
@@ -157,17 +170,17 @@ namespace Sandbox
                 image.Save(basePath + $"_2Dx{gen2D.Count}.png");
             }
 
-            if (generator is INoiseGenerator1D<mask32v, float32v, int32v> gen1D)
+            if (generator is INoiseGenerator1D<float32v, int32v> gen1D)
             {
                 for (int y = 0; y < image.Height; y++)
                 {
                     for (int x = 0; x < image.Width; x += gen1D.Count)
                     {
-                        float32v noise = gen1D.Gen(vSeed, funcs.Broad_f32(x / 32f).Add(vIncrementX));
+                        float32v noise = gen1D.Gen(vSeed, F.Add(F.Broad_f32(x / 32f), vIncrementX));
 
                         for (int i = 0; i < gen1D.Count; i++)
                         {
-                            image[x + i, y] = new L16((ushort)((funcs.Extract_f32(noise, i) + 1) * 0.5f * ushort.MaxValue));
+                            image[x + i, y] = new L16((ushort)((F.Extract_f32(noise, i) + 1) * 0.5f * ushort.MaxValue));
                         }
                     }
                 }

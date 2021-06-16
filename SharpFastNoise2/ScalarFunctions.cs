@@ -3,22 +3,24 @@ using System.Runtime.CompilerServices;
 
 namespace SharpFastNoise2
 {
-    using float32v = FVectorF32;
-    using int32v = FVectorI32;
-    using mask32v = FVectorI32;
+    using float32v = Single;
+    using int32v = Int32;
+    using mask32v = Int32;
 
     public struct ScalarFunctions : IFunctionList<mask32v, float32v, int32v>
     {
+        public int Count => 1;
+
         // Broadcast
 
         public float32v Broad_f32(float value)
         {
-            return new float32v(value);
+            return value;
         }
 
         public int32v Broad_i32(int value)
         {
-            return new int32v(value);
+            return value;
         }
 
         // Load
@@ -151,12 +153,12 @@ namespace SharpFastNoise2
 
         public float32v BitwiseShiftRightZX_f32(float32v a, byte b)
         {
-            return Casti32_f32((int)((uint)Castf32_i32(a).Value >> b));
+            return Casti32_f32((int)((uint)Castf32_i32(a) >> b));
         }
 
         public int32v BitwiseShiftRightZX_i32(int32v a, byte b)
         {
-            return (int)((uint)a.Value >> b);
+            return (int)((uint)a >> b);
         }
 
         // Abs
@@ -182,7 +184,7 @@ namespace SharpFastNoise2
         {
             float xhalf = 0.5f * (float)a;
             a = Casti32_f32(0x5f3759df - ((int)Castf32_i32(a) >> 1));
-            a *= (1.5f - xhalf * (float)a * (float)a);
+            a *= 1.5f - xhalf * (float)a * (float)a;
             return a;
         }
 
@@ -214,22 +216,22 @@ namespace SharpFastNoise2
 
         public int32v Mask_i32(int32v a, mask32v m)
         {
-            return m != 0 ? a : new int32v(0);
+            return m != 0 ? a : 0;
         }
 
         public float32v Mask_f32(float32v a, mask32v m)
         {
-            return m != 0 ? a : new float32v(0);
+            return m != 0 ? a : 0;
         }
 
         public int32v NMask_i32(int32v a, mask32v m)
         {
-            return m != 0 ? new int32v(0) : a;
+            return m != 0 ? 0 : a;
         }
 
         public float32v NMask_f32(float32v a, mask32v m)
         {
-            return m != 0 ? new float32v(0) : a;
+            return m != 0 ? 0 : a;
         }
 
         public bool AnyMask_bool(mask32v m)
@@ -248,5 +250,45 @@ namespace SharpFastNoise2
         {
             return -(a * b) + c;
         }
+
+        // Generic math
+
+        public float32v Add(float32v lhs, float32v rhs) => lhs + rhs;
+        public float32v And(float32v lhs, float32v rhs) => AsSingle(And(AsInt32(lhs), AsInt32(rhs)));
+        public int32v AsInt32(float32v lhs) => Unsafe.As<float32v, int32v>(ref lhs);
+        public float32v Complement(float32v lhs) => AsSingle(Complement(AsInt32(lhs)));
+        public float32v Div(float32v lhs, float32v rhs) => lhs / rhs;
+        public int32v Equal(float32v lhs, float32v rhs) => (lhs == rhs).AsInt32();
+        public int32v GreaterThan(float32v lhs, float32v rhs) => (lhs > rhs).AsInt32();
+        public int32v GreaterThanOrEqual(float32v lhs, float32v rhs) => (lhs >= rhs).AsInt32();
+        public float32v LeftShift(float32v lhs, byte rhs) => AsSingle(LeftShift(AsInt32(lhs), rhs));
+        public int32v LessThan(float32v lhs, float32v rhs) => (lhs < rhs).AsInt32();
+        public int32v LessThanOrEqual(float32v lhs, float32v rhs) => (lhs <= rhs).AsInt32();
+        public float32v Mul(float32v lhs, float32v rhs) => lhs * rhs;
+        public float32v Negate(float32v lhs) => -lhs;
+        public int32v NotEqual(float32v lhs, float32v rhs) => (lhs != rhs).AsInt32();
+        public float32v Or(float32v lhs, float32v rhs) => AsSingle(Or(AsInt32(lhs), AsInt32(rhs)));
+        public float32v RightShift(float32v lhs, byte rhs) => AsSingle(RightShift(AsInt32(lhs), rhs));
+        public float32v Sub(float32v lhs, float32v rhs) => lhs - rhs;
+        public float32v Xor(float32v lhs, float32v rhs) => AsSingle(Xor(AsInt32(lhs), AsInt32(rhs)));
+
+        public int32v Add(int32v lhs, int32v rhs) => lhs + rhs;
+        public int32v And(int32v lhs, int32v rhs) => lhs & rhs;
+        public float32v AsSingle(int32v lhs) => Unsafe.As<int32v, float32v>(ref lhs);
+        public int32v Complement(int32v lhs) => ~lhs;
+        public int32v Div(int32v lhs, int32v rhs) => lhs / rhs;
+        public int32v Equal(int32v lhs, int32v rhs) => (lhs == rhs).AsInt32();
+        public int32v GreaterThan(int32v lhs, int32v rhs) => (lhs > rhs).AsInt32();
+        public int32v GreaterThanOrEqual(int32v lhs, int32v rhs) => (lhs >= rhs).AsInt32();
+        public int32v LeftShift(int32v lhs, byte rhs) => lhs << rhs;
+        public int32v LessThan(int32v lhs, int32v rhs) => (lhs < rhs).AsInt32();
+        public int32v LessThanOrEqual(int32v lhs, int32v rhs) => (lhs <= rhs).AsInt32();
+        public int32v Mul(int32v lhs, int32v rhs) => lhs * rhs;
+        public int32v Negate(int32v lhs) => -lhs;
+        public int32v NotEqual(int32v lhs, int32v rhs) => (lhs != rhs).AsInt32();
+        public int32v Or(int32v lhs, int32v rhs) => lhs | rhs;
+        public int32v RightShift(int32v lhs, byte rhs) => lhs >> rhs;
+        public int32v Sub(int32v lhs, int32v rhs) => lhs - rhs;
+        public int32v Xor(int32v lhs, int32v rhs) => lhs ^ rhs;
     }
 }

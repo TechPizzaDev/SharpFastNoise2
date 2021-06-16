@@ -1,25 +1,28 @@
-﻿using System.Runtime.CompilerServices;
+﻿using System;
+using System.Runtime.CompilerServices;
 using System.Runtime.Intrinsics;
 using System.Runtime.Intrinsics.X86;
 
 namespace SharpFastNoise2
 {
-    using float32v = FVectorF256;
-    using int32v = FVectorI256;
-    using mask32v = FVectorI256;
+    using float32v = Vector256<float>;
+    using int32v = Vector256<int>;
+    using mask32v = Vector256<int>;
 
     public struct Avx2Functions : IFunctionList<mask32v, float32v, int32v>
     {
+        public int Count => 8;
+
         // Broadcast
 
         public float32v Broad_f32(float value)
         {
-            return new float32v(Vector256.Create(value));
+            return Vector256.Create(value);
         }
 
         public int32v Broad_i32(int value)
         {
-            return new int32v(Vector256.Create(value));
+            return Vector256.Create(value);
         }
 
         // Load
@@ -38,12 +41,12 @@ namespace SharpFastNoise2
 
         public float32v Incremented_f32()
         {
-            return new(Vector256.Create(0f, 1, 2, 3, 4, 5, 6, 7));
+            return Vector256.Create(0f, 1, 2, 3, 4, 5, 6, 7);
         }
 
         public int32v Incremented_i32()
         {
-            return new(Vector256.Create(0, 1, 2, 3, 4, 5, 6, 7));
+            return Vector256.Create(0, 1, 2, 3, 4, 5, 6, 7);
         }
 
         // Store
@@ -62,22 +65,22 @@ namespace SharpFastNoise2
 
         public float Extract0_f32(float32v a)
         {
-            return a.Value.ToScalar();
+            return a.ToScalar();
         }
 
         public int Extract0_i32(int32v a)
         {
-            return a.Value.ToScalar();
+            return a.ToScalar();
         }
 
         public float Extract_f32(float32v a, int idx)
         {
-            return a.Value.GetElement(idx);
+            return a.GetElement(idx);
         }
 
         public int Extract_i32(int32v a, int idx)
         {
-            return a.Value.GetElement(idx);
+            return a.GetElement(idx);
         }
 
         // Cast
@@ -165,7 +168,7 @@ namespace SharpFastNoise2
         public float32v Abs_f32(float32v a)
         {
             int32v intMax = Avx2.ShiftRightLogical(Vector256<int>.AllBitsSet, 1);
-            return a.And(intMax.AsSingle());
+            return And(a, intMax.AsSingle());
         }
 
         public int32v Abs_i32(int32v a)
@@ -211,12 +214,12 @@ namespace SharpFastNoise2
 
         public int32v Mask_i32(int32v a, mask32v m)
         {
-            return a.And(m);
+            return And(a, m);
         }
 
         public float32v Mask_f32(float32v a, mask32v m)
         {
-            return a.And(m.AsSingle());
+            return And(a, m.AsSingle());
         }
 
         public int32v NMask_i32(int32v a, mask32v m)
@@ -245,7 +248,7 @@ namespace SharpFastNoise2
             }
             else
             {
-                return a.Mul(b).Add(c);
+                return Add(Mul(a, b), c);
             }
         }
 
@@ -258,8 +261,48 @@ namespace SharpFastNoise2
             }
             else
             {
-                return a.Mul(b).Negate().Add(c);
+                return Add(Negate(Mul(a, b)), c);
             }
         }
+
+        // Generic math
+
+        public float32v Add(float32v lhs, float32v rhs) => Avx.Add(lhs, rhs);
+        public float32v And(float32v lhs, float32v rhs) => Avx.And(lhs, rhs);
+        public int32v AsInt32(float32v lhs) => lhs.AsInt32();
+        public float32v Complement(float32v lhs) => Avx.Xor(lhs, float32v.AllBitsSet);
+        public float32v Div(float32v lhs, float32v rhs) => Avx.Divide(lhs, rhs);
+        public mask32v Equal(float32v lhs, float32v rhs) => Avx.CompareEqual(lhs, rhs).AsInt32();
+        public mask32v GreaterThan(float32v lhs, float32v rhs) => Avx.CompareGreaterThan(lhs, rhs).AsInt32();
+        public mask32v GreaterThanOrEqual(float32v lhs, float32v rhs) => Avx.CompareGreaterThanOrEqual(lhs, rhs).AsInt32();
+        public float32v LeftShift(float32v lhs, byte rhs) => throw new NotSupportedException();
+        public mask32v LessThan(float32v lhs, float32v rhs) => Avx.CompareLessThan(lhs, rhs).AsInt32();
+        public mask32v LessThanOrEqual(float32v lhs, float32v rhs) => Avx.CompareLessThanOrEqual(lhs, rhs).AsInt32();
+        public float32v Mul(float32v lhs, float32v rhs) => Avx.Multiply(lhs, rhs);
+        public float32v Negate(float32v lhs) => Avx.Xor(lhs, Vector256.Create(0x80000000).AsSingle());
+        public mask32v NotEqual(float32v lhs, float32v rhs) => Avx.CompareNotEqual(lhs, rhs).AsInt32();
+        public float32v Or(float32v lhs, float32v rhs) => Avx.Or(lhs, rhs);
+        public float32v RightShift(float32v lhs, byte rhs) => throw new NotSupportedException();
+        public float32v Sub(float32v lhs, float32v rhs) => Avx.Subtract(lhs, rhs);
+        public float32v Xor(float32v lhs, float32v rhs) => Avx.Xor(lhs, rhs);
+
+        public int32v Add(int32v lhs, int32v rhs) => Avx2.Add(lhs, rhs);
+        public int32v And(int32v lhs, int32v rhs) => Avx2.And(lhs, rhs);
+        public float32v AsSingle(int32v lhs) => lhs.AsSingle();
+        public int32v Complement(int32v lhs) => Avx2.Xor(lhs, int32v.AllBitsSet);
+        public int32v Div(int32v lhs, int32v rhs) => throw new NotSupportedException();
+        public mask32v Equal(int32v lhs, int32v rhs) => Avx2.CompareEqual(lhs, rhs);
+        public mask32v GreaterThan(int32v lhs, int32v rhs) => Avx2.CompareGreaterThan(lhs, rhs);
+        public mask32v GreaterThanOrEqual(int32v lhs, int32v rhs) => throw new NotSupportedException();
+        public int32v LeftShift(int32v lhs, byte rhs) => Avx2.ShiftLeftLogical(lhs, rhs);
+        public mask32v LessThan(int32v lhs, int32v rhs) => Avx2.CompareGreaterThan(rhs, lhs);
+        public mask32v LessThanOrEqual(int32v lhs, int32v rhs) => throw new NotSupportedException();
+        public int32v Mul(int32v lhs, int32v rhs) => Avx2.MultiplyLow(lhs, rhs);
+        public int32v Negate(int32v lhs) => Avx2.Subtract(int32v.Zero, lhs);
+        public mask32v NotEqual(int32v lhs, int32v rhs) => NotEqual(lhs.AsSingle(), rhs.AsSingle());
+        public int32v Or(int32v lhs, int32v rhs) => Avx2.Or(lhs, rhs);
+        public int32v RightShift(int32v lhs, byte rhs) => Avx2.ShiftRightArithmetic(lhs, rhs);
+        public int32v Sub(int32v lhs, int32v rhs) => Avx2.Subtract(lhs, rhs);
+        public int32v Xor(int32v lhs, int32v rhs) => Avx2.Xor(lhs, rhs);
     }
 }

@@ -1,10 +1,9 @@
 ﻿namespace SharpFastNoise2
 {
     public interface IFunctionList<mask32v, float32v, int32v>
-        where mask32v : IFMask<mask32v>
-        where float32v : IFVector<float32v, mask32v>
-        where int32v : IFVector<int32v, mask32v>
     {
+        public int Count { get; }
+
         // Broadcast
 
         public float32v Broad_f32(float value);
@@ -116,5 +115,47 @@
         public float32v FMulAdd_f32(float32v a, float32v b, float32v c);
 
         public float32v FNMulAdd_f32(float32v a, float32v b, float32v c);
+
+        public float32v Add(float32v lhs, float32v rhs);
+        public float32v And(float32v lhs, float32v rhs);
+        public int32v AsInt32(float32v lhs);
+        public float32v Div(float32v lhs, float32v rhs);
+        public float32v Complement(float32v lhs);
+        public mask32v Equal(float32v lhs, float32v rhs);
+        public mask32v GreaterThan(float32v lhs, float32v rhs);
+        public mask32v GreaterThanOrEqual(float32v lhs, float32v rhs);
+        public float32v LeftShift(float32v lhs, byte rhs);
+        public mask32v LessThan(float32v lhs, float32v rhs);
+        public mask32v LessThanOrEqual(float32v lhs, float32v rhs);
+        public float32v Mul(float32v lhs, float32v rhs);
+        public float32v Negate(float32v lhs);
+        public mask32v NotEqual(float32v lhs, float32v rhs);
+        public float32v Or(float32v lhs, float32v rhs);
+        public float32v RightShift(float32v lhs, byte rhs);
+        public float32v Sub(float32v lhs, float32v rhs);
+        public float32v Xor(float32v lhs, float32v rhs);
+
+        public int32v Add(int32v lhs, int32v rhs);
+        public int32v And(int32v lhs, int32v rhs);
+        public float32v AsSingle(int32v lhs);
+        public int32v Div(int32v lhs, int32v rhs);
+        public int32v Complement(int32v lhs);
+        public mask32v Equal(int32v lhs, int32v rhs);
+        public mask32v GreaterThan(int32v lhs, int32v rhs);
+        public mask32v GreaterThanOrEqual(int32v lhs, int32v rhs);
+        public int32v LeftShift(int32v lhs, byte rhs);
+        public mask32v LessThan(int32v lhs, int32v rhs);
+        public mask32v LessThanOrEqual(int32v lhs, int32v rhs);
+        public int32v Mul(int32v lhs, int32v rhs);
+        public int32v Negate(int32v lhs);
+        public mask32v NotEqual(int32v lhs, int32v rhs);
+        public int32v Or(int32v lhs, int32v rhs);
+        public int32v RightShift(int32v lhs, byte rhs);
+        public int32v Sub(int32v lhs, int32v rhs);
+        public int32v Xor(int32v lhs, int32v rhs);
+
+        public mask32v And(mask32v lhs, mask32v rhs);
+        public mask32v Complement(mask32v lhs);
+        public mask32v Or(mask32v lhs, mask32v rhs);
     }
 }

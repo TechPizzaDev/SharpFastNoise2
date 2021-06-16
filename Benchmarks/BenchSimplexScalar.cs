@@ -4,19 +4,19 @@ using SharpFastNoise2;
 
 namespace Benchmarks
 {
-    using SimplexNoise1 = Simplex<FVectorI32, FVectorF32, FVectorI32, ScalarFunctions>;
+    using SimplexNoise1 = Simplex<int, float, int, ScalarFunctions>;
 
-    public class BenchSimplexScalar : BenchNoiseBase<FVectorI32, FVectorF32, FVectorI32, ScalarFunctions>
+    public class BenchSimplexScalar : BenchNoiseBase<int, float, int, ScalarFunctions>
     {
-        [Params(16 * 16/*, 16 * 16 * 16, 32 * 32 * 32*/)]
+        [Params(16 * 16, 16 * 16 * 16, 32 * 32 * 32)]
         public int Count { get; set; }
 
-        [Benchmark]
-        public void Simplex1Dx1()
-        {
-            throw new NotImplementedException();
-            //Generate1D<SimplexNoise1>(Count);
-        }
+        //[Benchmark]
+        //public void Simplex1Dx1()
+        //{
+        //    throw new NotImplementedException();
+        //    //Generate1D<SimplexNoise1>(Count);
+        //}
 
         [Benchmark]
         public void Simplex2Dx1()
