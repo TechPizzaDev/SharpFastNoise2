@@ -297,7 +297,12 @@ namespace SharpFastNoise2
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public float32v InterpQuintic(float32v t)
         {
-            return F.Mul(F.Mul(F.Mul(t, t), t), F.FMulAdd_f32(t, F.FMulAdd_f32(t, F.Broad_f32(6), F.Broad_f32(-15)), F.Broad_f32(10)));
+            return F.Mul(
+                F.Mul(F.Mul(t, t), t), 
+                F.FMulAdd_f32(
+                    t,
+                    F.FMulAdd_f32(t, F.Broad_f32(6), F.Broad_f32(-15)), 
+                    F.Broad_f32(10)));
         }
 
         //public float32v CalcDistance(DistanceFunction distFunc, float32v dX, P...d )

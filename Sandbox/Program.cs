@@ -21,32 +21,32 @@ namespace Sandbox
 
             if (true)
             {
-                string simplexPath = Path.Combine(basePath, "Simplex");
+                string path = Path.Combine(basePath, "Perlin");
 
                 Write<
                     Vector256<int>, Vector256<float>, Vector256<int>, Avx2Functions,
-                    Simplex<Vector256<int>, Vector256<float>, Vector256<int>, Avx2Functions>>(
-                    basePath: simplexPath,
+                    Perlin<Vector256<int>, Vector256<float>, Vector256<int>, Avx2Functions>>(
+                    path,
                     generator: new(),
                     seed,
                     offsetX,
                     256,
                     256);
-                
+
                 Write<
-                    Vector128<int>, Vector128<float>, Vector128<int>, Sse2Functions, 
-                    Simplex<Vector128<int>, Vector128<float>, Vector128<int>, Sse2Functions>>(
-                    basePath: simplexPath,
+                    Vector128<int>, Vector128<float>, Vector128<int>, Sse2Functions,
+                    Perlin<Vector128<int>, Vector128<float>, Vector128<int>, Sse2Functions>>(
+                    path,
                     generator: new(),
                     seed,
                     offsetX,
                     256,
                     256);
-                
+
                 Write<
                     int, float, int, ScalarFunctions,
-                    Simplex<int, float, int, ScalarFunctions>>(
-                    basePath: simplexPath,
+                    Perlin<int, float, int, ScalarFunctions>>(
+                    path,
                     generator: new(),
                     seed,
                     offsetX,
@@ -56,12 +56,47 @@ namespace Sandbox
 
             if (true)
             {
-                string openSimplex2Path = Path.Combine(basePath, "OpenSimplex2");
+                string path = Path.Combine(basePath, "Simplex");
+
+                Write<
+                    Vector256<int>, Vector256<float>, Vector256<int>, Avx2Functions,
+                    Simplex<Vector256<int>, Vector256<float>, Vector256<int>, Avx2Functions>>(
+                    path,
+                    generator: new(),
+                    seed,
+                    offsetX,
+                    256,
+                    256);
+                
+                Write<
+                    Vector128<int>, Vector128<float>, Vector128<int>, Sse2Functions, 
+                    Simplex<Vector128<int>, Vector128<float>, Vector128<int>, Sse2Functions>>(
+                    path,
+                    generator: new(),
+                    seed,
+                    offsetX,
+                    256,
+                    256);
+                
+                Write<
+                    int, float, int, ScalarFunctions,
+                    Simplex<int, float, int, ScalarFunctions>>(
+                    path,
+                    generator: new(),
+                    seed,
+                    offsetX,
+                    256,
+                    256);
+            }
+
+            if (true)
+            {
+                string path = Path.Combine(basePath, "OpenSimplex2");
 
                 Write<
                     Vector256<int>, Vector256<float>, Vector256<int>, Avx2Functions, 
                     OpenSimplex2<Vector256<int>, Vector256<float>, Vector256<int>, Avx2Functions>>(
-                    basePath: openSimplex2Path,
+                    path,
                     generator: new(),
                     seed,
                     offsetX,
@@ -72,7 +107,7 @@ namespace Sandbox
                 Write<
                     Vector128<int>, Vector128<float>, Vector128<int>, Sse2Functions,
                     OpenSimplex2<Vector128<int>, Vector128<float>, Vector128<int>, Sse2Functions>>(
-                   basePath: openSimplex2Path,
+                    path,
                     generator: new(),
                     seed,
                     offsetX,
@@ -82,7 +117,7 @@ namespace Sandbox
                 Write<
                     int, float, int, ScalarFunctions, 
                     OpenSimplex2<int, float, int, ScalarFunctions>>(
-                    basePath: openSimplex2Path,
+                    path,
                     generator: new(),
                     seed,
                     offsetX,

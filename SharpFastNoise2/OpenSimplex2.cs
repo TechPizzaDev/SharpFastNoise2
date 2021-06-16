@@ -3,7 +3,6 @@
 namespace SharpFastNoise2
 {
     public struct OpenSimplex2<mask32v, float32v, int32v, TFunctions> :
-        //INoiseGenerator1D<float32v, int32v>,
         INoiseGenerator2D<float32v, int32v>,
         INoiseGenerator3D<float32v, int32v>
         where mask32v : unmanaged
