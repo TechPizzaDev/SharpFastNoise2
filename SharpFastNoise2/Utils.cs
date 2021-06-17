@@ -23,15 +23,15 @@ namespace SharpFastNoise2
                 int32v index = F.Convertf32_i32(F.Mul(
                     F.Converti32_f32(F.And(hash, F.Broad_i32(0x3FFFFF))),
                     F.Broad_f32(1.3333333333333333f)));
-            
+
                 Vector256<float> gX = Avx2.PermuteVar8x32(
                     Vector256.Create(ROOT3, ROOT3, 2, 2, 1, -1, 0, 0),
                     Unsafe.As<int32v, Vector256<int>>(ref index));
-            
+
                 Vector256<float> gY = Avx2.PermuteVar8x32(
                     Vector256.Create(1, -1, 0, 0, ROOT3, ROOT3, 2, 2),
                     Unsafe.As<int32v, Vector256<int>>(ref index));
-            
+
                 // Bit-8 = Flip sign of a + b
                 return F.Xor(
                     F.FMulAdd_f32(
@@ -90,14 +90,14 @@ namespace SharpFastNoise2
         }
 
         //template<typename SIMD = FS, std::enable_if_t<(SIMD::SIMD_Level == FastSIMD::Level_AVX512)>* = nullptr>
-        //FS.INLINE static float32v GetGradientDotFancy(int32v hash, float32v fX, float32v fY)
+        //F.INLINE static float32v GetGradientDotFancy(int32v hash, float32v fX, float32v fY)
         //{
-        //    int32v index = FS.Convertf32_i32(FS.Converti32_f32(hash & FS.Broadcast(0x3FFFFF)) * float32v(1.3333333333333333f));
+        //    int32v index = F.Convertf32_i32(F.Converti32_f32(hash & F.Broadcast(0x3FFFFF)) * float32v(1.3333333333333333f));
         //
         //    float32v gX = _mm512_permutexvar_ps(index, float32v(ROOT3, ROOT3, 2, 2, 1, -1, 0, 0, -ROOT3, -ROOT3, -2, -2, -1, 1, 0, 0));
         //    float32v gY = _mm512_permutexvar_ps(index, float32v(1, -1, 0, 0, ROOT3, ROOT3, 2, 2, -1, 1, 0, 0, -ROOT3, -ROOT3, -2, -2));
         //
-        //    return FS.FMulAdd_f32(gX, fX, fY * gY);
+        //    return F.FMulAdd_f32(gX, fX, fY * gY);
         //}
 
         [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
@@ -152,21 +152,21 @@ namespace SharpFastNoise2
         }
 
         //template<typename SIMD = FS, std::enable_if_t<SIMD::SIMD_Level == FastSIMD::Level_AVX2>* = nullptr>
-        //FS.INLINE static float32v GetGradientDot(int32v hash, float32v fX, float32v fY)
+        //F.INLINE static float32v GetGradientDot(int32v hash, float32v fX, float32v fY)
         //{
         //    float32v gX = _mm256_permutevar8x32_ps(float32v(1 + ROOT2, -1 - ROOT2, 1 + ROOT2, -1 - ROOT2, 1, -1, 1, -1), hash);
         //    float32v gY = _mm256_permutevar8x32_ps(float32v(1, 1, -1, -1, 1 + ROOT2, 1 + ROOT2, -1 - ROOT2, -1 - ROOT2), hash);
         //
-        //    return FS.FMulAdd_f32(gX, fX, fY * gY);
+        //    return F.FMulAdd_f32(gX, fX, fY * gY);
         //}
 
         //template<typename SIMD = FS, std::enable_if_t<SIMD::SIMD_Level == FastSIMD::Level_AVX512>* = nullptr>
-        // FS.INLINE static float32v GetGradientDot(int32v hash, float32v fX, float32v fY)
+        // F.INLINE static float32v GetGradientDot(int32v hash, float32v fX, float32v fY)
         //{
         //    float32v gX = _mm512_permutexvar_ps(hash, float32v(1 + ROOT2, -1 - ROOT2, 1 + ROOT2, -1 - ROOT2, 1, -1, 1, -1, 1 + ROOT2, -1 - ROOT2, 1 + ROOT2, -1 - ROOT2, 1, -1, 1, -1));
         //    float32v gY = _mm512_permutexvar_ps(hash, float32v(1, 1, -1, -1, 1 + ROOT2, 1 + ROOT2, -1 - ROOT2, -1 - ROOT2, 1, 1, -1, -1, 1 + ROOT2, 1 + ROOT2, -1 - ROOT2, -1 - ROOT2));
         //
-        //    return FS.FMulAdd_f32(gX, fX, fY * gY);
+        //    return F.FMulAdd_f32(gX, fX, fY * gY);
         //}
 
         public float32v GetGradientDot(int32v hash, float32v fX, float32v fY, float32v fZ)
@@ -189,13 +189,13 @@ namespace SharpFastNoise2
         }
 
         //template<typename SIMD = FS, std::enable_if_t<SIMD::SIMD_Level == FastSIMD::Level_AVX512>* = nullptr>
-        //FS.INLINE static float32v GetGradientDot(int32v hash, float32v fX, float32v fY, float32v fZ)
+        //F.INLINE static float32v GetGradientDot(int32v hash, float32v fX, float32v fY, float32v fZ)
         //{
         //    float32v gX = _mm512_permutexvar_ps(hash, float32v(1, -1, 1, -1, 1, -1, 1, -1, 0, 0, 0, 0, 1, 0, -1, 0));
         //    float32v gY = _mm512_permutexvar_ps(hash, float32v(1, 1, -1, -1, 0, 0, 0, 0, 1, -1, 1, -1, 1, -1, 1, -1));
         //    float32v gZ = _mm512_permutexvar_ps(hash, float32v(0, 0, 0, 0, 1, 1, -1, -1, 1, 1, -1, -1, 0, 1, 0, -1));
         //
-        //    return FS.FMulAdd_f32(gX, fX, FS.FMulAdd_f32(fY, gY, fZ * gZ));
+        //    return F.FMulAdd_f32(gX, fX, F.FMulAdd_f32(fY, gY, fZ * gZ));
         //}
 
         public float32v GetGradientDot(int32v hash, float32v fX, float32v fY, float32v fZ, float32v fW)
@@ -227,14 +227,14 @@ namespace SharpFastNoise2
         }
 
         //template<typename SIMD = FS, std::enable_if_t<SIMD::SIMD_Level == FastSIMD::Level_AVX512>* = nullptr>
-        //FS.INLINE static float32v GetGradientDot(int32v hash, float32v fX, float32v fY, float32v fZ, float32v fW)
+        //F.INLINE static float32v GetGradientDot(int32v hash, float32v fX, float32v fY, float32v fZ, float32v fW)
         //{
         //    float32v gX = _mm512_permutex2var_ps(float32v(0, 0, 0, 0, 0, 0, 0, 0, 1, -1, 1, -1, 1, -1, 1, -1), hash, float32v(1, -1, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1));
         //    float32v gY = _mm512_permutex2var_ps(float32v(1, -1, 1, -1, 1, -1, 1, -1, 0, 0, 0, 0, 0, 0, 0, 0), hash, float32v(1, 1, -1, -1, 1, 1, -1, -1, 1, 1, -1, -1, 1, 1, -1, -1));
         //    float32v gZ = _mm512_permutex2var_ps(float32v(1, 1, -1, -1, 1, 1, -1, -1, 1, 1, -1, -1, 1, 1, -1, -1), hash, float32v(0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, -1, -1, -1, -1));
         //    float32v gW = _mm512_permutex2var_ps(float32v(1, 1, 1, 1, -1, -1, -1, -1, 1, 1, 1, 1, -1, -1, -1, -1), hash, float32v(1, 1, 1, 1, -1, -1, -1, -1, 0, 0, 0, 0, 0, 0, 0, 0));
         //
-        //    return FS.FMulAdd_f32(gX, fX, FS.FMulAdd_f32(fY, gY, FS.FMulAdd_f32(fZ, gZ, fW * gW)));
+        //    return F.FMulAdd_f32(gX, fX, F.FMulAdd_f32(fY, gY, F.FMulAdd_f32(fZ, gZ, fW * gW)));
         //}
 
         public int32v HashPrimes(int32v seed, int32v x, int32v y)
@@ -264,22 +264,40 @@ namespace SharpFastNoise2
             return F.Xor(F.RightShift(hash, 15), hash);
         }
 
-        //public static int32v HashPrimesHB(int32v seed, P...primedPos )
-        //{
-        //    int32v hash = seed;
-        //    hash ^= (primedPos ^ ...);
-        //
-        //    hash = hash.Mul(FS.Broad_i32(0x27d4eb2d));
-        //    return hash;
-        //}
-        //
+        public int32v HashPrimesHB(int32v seed, int32v x, int32v y)
+        {
+            int32v hash = seed;
+            hash = F.Xor(hash, F.Xor(x, y));
+
+            hash = F.Mul(hash, F.Broad_i32(0x27d4eb2d));
+            return hash;
+        }
+
+        public int32v HashPrimesHB(int32v seed, int32v x, int32v y, int32v z)
+        {
+            int32v hash = seed;
+            hash = F.Xor(hash, F.Xor(x, F.Xor(y, z)));
+
+            hash = F.Mul(hash, F.Broad_i32(0x27d4eb2d));
+            return hash;
+        }
+
+        public int32v HashPrimesHB(int32v seed, int32v x, int32v y, int32v z, int32v w)
+        {
+            int32v hash = seed;
+            hash = F.Xor(hash, F.Xor(x, F.Xor(y, F.Xor(z, w))));
+
+            hash = F.Mul(hash, F.Broad_i32(0x27d4eb2d));
+            return hash;
+        }
+
         //public static float32v GetValueCoord(int32v seed, P...primedPos )
         //{
         //    int32v hash = seed;
         //    hash ^= (primedPos ^ ...);
         //
-        //    hash = hash.Mul(hash.Mul(FS.Broad_i32(0x27d4eb2d)));
-        //    return FS.Converti32_f32(hash).Mul(FS.Broad_f32(1.0f / int.MaxValue));
+        //    hash = hash.Mul(hash.Mul(F.Broad_i32(0x27d4eb2d)));
+        //    return F.Converti32_f32(hash).Mul(F.Broad_f32(1.0f / int.MaxValue));
         //}
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -298,58 +316,156 @@ namespace SharpFastNoise2
         public float32v InterpQuintic(float32v t)
         {
             return F.Mul(
-                F.Mul(F.Mul(t, t), t), 
+                F.Mul(F.Mul(t, t), t),
                 F.FMulAdd_f32(
                     t,
-                    F.FMulAdd_f32(t, F.Broad_f32(6), F.Broad_f32(-15)), 
+                    F.FMulAdd_f32(t, F.Broad_f32(6), F.Broad_f32(-15)),
                     F.Broad_f32(10)));
         }
 
-        //public float32v CalcDistance(DistanceFunction distFunc, float32v dX, P...d )
-        //{
-        //    switch (distFunc)
-        //    {
-        //        default:
-        //        case DistanceFunction::Euclidean:
-        //        {
-        //            float32v distSqr = dX * dX;
-        //            ((distSqr = FS.FMulAdd_f32(d, d, distSqr)), ...);
-        //
-        //            return FS.InvSqrt_f32(distSqr) * distSqr;
-        //        }
-        //
-        //        case DistanceFunction::EuclideanSquared:
-        //        {
-        //            float32v distSqr = dX * dX;
-        //            ((distSqr = FS.FMulAdd_f32(d, d, distSqr)), ...);
-        //
-        //            return distSqr;
-        //        }
-        //
-        //        case DistanceFunction::Manhattan:
-        //        {
-        //            float32v dist = FS.Abs_f32(dX);
-        //            dist += (FS.Abs_f32(d) + ...);
-        //
-        //            return dist;
-        //        }
-        //
-        //        case DistanceFunction::Hybrid:
-        //        {
-        //            float32v both = FS.FMulAdd_f32(dX, dX, FS.Abs_f32(dX));
-        //            ((both += FS.FMulAdd_f32(d, d, FS.Abs_f32(d))), ...);
-        //
-        //            return both;
-        //        }
-        //
-        //        case DistanceFunction::MaxAxis:
-        //        {
-        //            float32v max = FS.Abs_f32(dX);
-        //            ((max = FS.Max_f32(FS.Abs_f32(d), max)), ...);
-        //
-        //            return max;
-        //        }
-        //    }
-        //}
+        public float32v CalcDistance(DistanceFunction distFunc, float32v dX, float32v dY)
+        {
+            switch (distFunc)
+            {
+                default:
+                case DistanceFunction.Euclidean:
+                {
+                    float32v distSqr = F.Mul(dX, dX);
+                    distSqr = F.FMulAdd_f32(dY, dY, distSqr);
+        
+                    return F.Mul(F.InvSqrt_f32(distSqr), distSqr);
+                }
+        
+                case DistanceFunction.EuclideanSquared:
+                {
+                    float32v distSqr = F.Mul(dX, dX);
+                    distSqr = F.FMulAdd_f32(dY, dY, distSqr);
+
+                    return distSqr;
+                }
+        
+                case DistanceFunction.Manhattan:
+                {
+                    float32v dist = F.Abs_f32(dX);
+                    dist = F.Add(dist, F.Abs_f32(dY));
+
+                    return dist;
+                }
+        
+                case DistanceFunction.Hybrid:
+                {
+                    float32v both = F.FMulAdd_f32(dX, dX, F.Abs_f32(dX));
+                    both = F.Add(both, F.FMulAdd_f32(dY, dY, F.Abs_f32(dY)));
+        
+                    return both;
+                }
+        
+                case DistanceFunction.MaxAxis:
+                {
+                    float32v max = F.Abs_f32(dX);
+                    max = F.Max_f32(F.Abs_f32(dY), max);
+        
+                    return max;
+                }
+            }
+        }
+
+        public float32v CalcDistance(DistanceFunction distFunc, float32v dX, float32v dY, float32v dZ)
+        {
+            switch (distFunc)
+            {
+                default:
+                case DistanceFunction.Euclidean:
+                {
+                    float32v distSqr = F.Mul(dX, dX);
+                    distSqr = F.FMulAdd_f32(dY, dY, distSqr);
+                    distSqr = F.FMulAdd_f32(dZ, dZ, distSqr);
+                    return F.Mul(F.InvSqrt_f32(distSqr), distSqr);
+                }
+
+                case DistanceFunction.EuclideanSquared:
+                {
+                    float32v distSqr = F.Mul(dX, dX);
+                    distSqr = F.FMulAdd_f32(dY, dY, distSqr);
+                    distSqr = F.FMulAdd_f32(dZ, dZ, distSqr);
+                    return distSqr;
+                }
+
+                case DistanceFunction.Manhattan:
+                {
+                    float32v dist = F.Abs_f32(dX);
+                    dist = F.Add(dist, F.Add(F.Abs_f32(dY), F.Abs_f32(dZ)));
+                    return dist;
+                }
+
+                case DistanceFunction.Hybrid:
+                {
+                    float32v both = F.FMulAdd_f32(dX, dX, F.Abs_f32(dX));
+                    both = F.Add(both, F.FMulAdd_f32(dY, dY, F.Abs_f32(dY)));
+                    both = F.Add(both, F.FMulAdd_f32(dZ, dZ, F.Abs_f32(dZ)));
+                    return both;
+                }
+
+                case DistanceFunction.MaxAxis:
+                {
+                    float32v max = F.Abs_f32(dX);
+                    max = F.Max_f32(F.Abs_f32(dY), max);
+                    max = F.Max_f32(F.Abs_f32(dZ), max);
+                    return max;
+                }
+            }
+        }
+
+        public float32v CalcDistance(DistanceFunction distFunc, float32v dX, float32v dY, float32v dZ, float32v dW)
+        {
+            switch (distFunc)
+            {
+                default:
+                case DistanceFunction.Euclidean:
+                {
+                    float32v distSqr = F.Mul(dX, dX);
+                    distSqr = F.FMulAdd_f32(dY, dY, distSqr);
+                    distSqr = F.FMulAdd_f32(dZ, dZ, distSqr);
+                    distSqr = F.FMulAdd_f32(dW, dW, distSqr);
+                    return F.Mul(F.InvSqrt_f32(distSqr), distSqr);
+                }
+
+                case DistanceFunction.EuclideanSquared:
+                {
+                    float32v distSqr = F.Mul(dX, dX);
+                    distSqr = F.FMulAdd_f32(dY, dY, distSqr);
+                    distSqr = F.FMulAdd_f32(dZ, dZ, distSqr);
+                    distSqr = F.FMulAdd_f32(dW, dW, distSqr);
+                    return distSqr;
+                }
+
+                case DistanceFunction.Manhattan:
+                {
+                    float32v dist = F.Abs_f32(dX);
+                    dist = F.Add(dist, F.Abs_f32(dY));
+                    dist = F.Add(dist, F.Abs_f32(dZ));
+                    dist = F.Add(dist, F.Abs_f32(dW));
+                    return dist;
+                }
+
+                case DistanceFunction.Hybrid:
+                {
+                    float32v both = F.FMulAdd_f32(dX, dX, F.Abs_f32(dX));
+                    both = F.Add(both, F.FMulAdd_f32(dY, dY, F.Abs_f32(dY)));
+                    both = F.Add(both, F.FMulAdd_f32(dZ, dZ, F.Abs_f32(dZ)));
+                    both = F.Add(both, F.FMulAdd_f32(dW, dW, F.Abs_f32(dW)));
+                    return both;
+                }
+
+                case DistanceFunction.MaxAxis:
+                {
+                    float32v max = F.Abs_f32(dX);
+                    max = F.Max_f32(F.Abs_f32(dY), max);
+                    max = F.Max_f32(F.Abs_f32(dZ), max);
+                    max = F.Max_f32(F.Abs_f32(dW), max);
+                    return max;
+                }
+            }
+        }
     }
 }

@@ -21,6 +21,41 @@ namespace Sandbox
 
             if (true)
             {
+                string path = Path.Combine(basePath, "CellularValue");
+
+                Write<
+                    Vector256<int>, Vector256<float>, Vector256<int>, Avx2Functions,
+                    CellularValue<Vector256<int>, Vector256<float>, Vector256<int>, Avx2Functions>>(
+                    path,
+                    generator: new(),
+                    seed,
+                    offsetX,
+                    256,
+                    256);
+
+                Write<
+                    Vector128<int>, Vector128<float>, Vector128<int>, Sse2Functions,
+                    CellularValue<Vector128<int>, Vector128<float>, Vector128<int>, Sse2Functions>>(
+                    path,
+                    generator: new(),
+                    seed,
+                    offsetX,
+                    256,
+                    256);
+
+                Write<
+                    int, float, int, ScalarFunctions,
+                    CellularValue<int, float, int, ScalarFunctions>>(
+                    path,
+                    generator: new(),
+                    seed,
+                    offsetX,
+                    256,
+                    256);
+            }
+
+            if (true)
+            {
                 string path = Path.Combine(basePath, "Perlin");
 
                 Write<
