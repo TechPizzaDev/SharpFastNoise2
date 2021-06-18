@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Runtime.CompilerServices;
+using System.Runtime.Intrinsics;
+using System.Runtime.Intrinsics.X86;
 
 namespace SharpFastNoise2
 {
@@ -9,6 +11,8 @@ namespace SharpFastNoise2
 
     public struct ScalarFunctions : IFunctionList<mask32v, float32v, int32v>
     {
+        public static bool IsSupported => true;
+
         public int Count => 1;
 
         // Broadcast
@@ -57,6 +61,16 @@ namespace SharpFastNoise2
         public void Store_i32(ref byte p, int32v a)
         {
             Unsafe.WriteUnaligned(ref p, a);
+        }
+
+        public void Store_f32(ref float p, float32v a)
+        {
+            Unsafe.WriteUnaligned(ref Unsafe.As<float, byte>(ref p), a);
+        }
+
+        public void Store_i32(ref int p, int32v a)
+        {
+            Unsafe.WriteUnaligned(ref Unsafe.As<int, byte>(ref p), a);
         }
 
         // Extract
@@ -151,6 +165,11 @@ namespace SharpFastNoise2
             return a & ~b;
         }
 
+        public mask32v BitwiseAndNot_m32(mask32v a, mask32v b)
+        {
+            return a & ~b;
+        }
+
         public float32v BitwiseShiftRightZX_f32(float32v a, byte b)
         {
             return Casti32_f32((int)((uint)Castf32_i32(a) >> b));
@@ -182,17 +201,31 @@ namespace SharpFastNoise2
 
         public float32v InvSqrt_f32(float32v a)
         {
-            float xhalf = 0.5f * (float)a;
-            a = Casti32_f32(0x5f3759df - ((int)Castf32_i32(a) >> 1));
-            a *= 1.5f - xhalf * (float)a * (float)a;
-            return a;
+            if (Sse.IsSupported)
+            {
+                return Sse.ReciprocalSqrtScalar(Vector128.CreateScalarUnsafe(a)).ToScalar();
+            }
+            else
+            {
+                float xhalf = 0.5f * (float)a;
+                a = Casti32_f32(0x5f3759df - (Castf32_i32(a) >> 1));
+                a *= 1.5f - xhalf * (float)a * (float)a;
+                return a;
+            }
         }
 
         public float32v Reciprocal_f32(float32v a)
         {
-            // pow( pow(x,-0.5), 2 ) = pow( x, -1 ) = 1.0 / x
-            a = Casti32_f32((int)(0xbe6eb3beU - (uint)(int)Castf32_i32(a)) >> 1);
-            return a * a;
+            if (Sse.IsSupported)
+            {
+                return Sse.ReciprocalScalar(Vector128.CreateScalarUnsafe(a)).ToScalar();
+            }
+            else
+            {
+                // pow( pow(x,-0.5), 2 ) = pow( x, -1 ) = 1.0 / x
+                a = Casti32_f32((int)(0xbe6eb3beU - (uint)Castf32_i32(a)) >> 1);
+                return a * a;
+            }
         }
 
         // Floor, Ceil, Round

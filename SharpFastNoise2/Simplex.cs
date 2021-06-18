@@ -118,8 +118,8 @@ namespace SharpFastNoise2
             z0 = F.Sub(zi, g);
 
             mask32v i1 = F.And(x_ge_y, x_ge_z);
-            mask32v j1 = FSS.BitwiseAndNot_m32(y_ge_z, x_ge_y);
-            mask32v k1 = FSS.BitwiseAndNot_m32(F.Complement(x_ge_z), y_ge_z);
+            mask32v j1 = F.BitwiseAndNot_m32(y_ge_z, x_ge_y);
+            mask32v k1 = F.BitwiseAndNot_m32(F.Complement(x_ge_z), y_ge_z);
 
             mask32v i2 = F.Or(x_ge_y, x_ge_z);
             mask32v j2 = F.Or(F.Complement(x_ge_y), y_ge_z);

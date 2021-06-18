@@ -28,6 +28,10 @@
 
         public void Store_i32(ref byte p, int32v a);
 
+        public void Store_f32(ref float p, float32v a);
+
+        public void Store_i32(ref int p, int32v a);
+
         // Extract
 
         public float Extract0_f32(float32v a);
@@ -71,6 +75,8 @@
         public float32v BitwiseAndNot_f32(float32v a, float32v b);
 
         public int32v BitwiseAndNot_i32(int32v a, int32v b);
+
+        public mask32v BitwiseAndNot_m32(mask32v a, mask32v b);
 
         public float32v BitwiseShiftRightZX_f32(float32v a, byte b);
 

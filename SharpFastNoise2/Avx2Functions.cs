@@ -11,6 +11,8 @@ namespace SharpFastNoise2
 
     public struct Avx2Functions : IFunctionList<mask32v, float32v, int32v>
     {
+        public static bool IsSupported => Avx2.IsSupported;
+
         public int Count => 8;
 
         // Broadcast
@@ -59,6 +61,16 @@ namespace SharpFastNoise2
         public void Store_i32(ref byte p, int32v a)
         {
             Unsafe.WriteUnaligned(ref p, a);
+        }
+
+        public void Store_f32(ref float p, float32v a)
+        {
+            Unsafe.WriteUnaligned(ref Unsafe.As<float, byte>(ref p), a);
+        }
+
+        public void Store_i32(ref int p, int32v a)
+        {
+            Unsafe.WriteUnaligned(ref Unsafe.As<int, byte>(ref p), a);
         }
 
         // Extract
@@ -149,6 +161,11 @@ namespace SharpFastNoise2
         }
 
         public int32v BitwiseAndNot_i32(int32v a, int32v b)
+        {
+            return Avx2.AndNot(b, a);
+        }
+
+        public mask32v BitwiseAndNot_m32(mask32v a, mask32v b)
         {
             return Avx2.AndNot(b, a);
         }

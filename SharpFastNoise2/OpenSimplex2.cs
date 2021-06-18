@@ -100,7 +100,7 @@ namespace SharpFastNoise2
                 float32v score0yr = F.Abs_f32(d0yr);
                 float32v score0zr = F.Abs_f32(d0zr);
                 mask32v dir0xr = F.LessThanOrEqual(F.Max_f32(score0yr, score0zr), score0xr);
-                mask32v dir0yr = FSS.BitwiseAndNot_m32(F.LessThanOrEqual(F.Max_f32(score0zr, score0xr), score0yr), dir0xr);
+                mask32v dir0yr = F.BitwiseAndNot_m32(F.LessThanOrEqual(F.Max_f32(score0zr, score0xr), score0yr), dir0xr);
                 mask32v dir0zr = F.Complement(F.Or(dir0xr, dir0yr));
                 float32v v1xr = FSS.MaskedAdd_f32(v0xr, F.Or(F.Broad_f32(1.0f), F.And(F.Broad_f32(-1.0f), d0xr)), dir0xr);
                 float32v v1yr = FSS.MaskedAdd_f32(v0yr, F.Or(F.Broad_f32(1.0f), F.And(F.Broad_f32(-1.0f), d0yr)), dir0yr);
