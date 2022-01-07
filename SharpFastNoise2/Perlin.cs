@@ -2,35 +2,35 @@
 
 namespace SharpFastNoise2
 {
-    public struct Perlin<mask32v, float32v, int32v, TFunctions> :
-        INoiseGenerator2D<float32v, int32v>,
-        INoiseGenerator3D<float32v, int32v>,
-        INoiseGenerator4D<float32v, int32v>
-        where mask32v : unmanaged
-        where float32v : unmanaged
-        where int32v : unmanaged
-        where TFunctions : unmanaged, IFunctionList<mask32v, float32v, int32v>
+    public struct Perlin<m32, f32, i32, TFunc> :
+        INoiseGenerator2D<f32, i32>,
+        INoiseGenerator3D<f32, i32>,
+        INoiseGenerator4D<f32, i32>
+        where m32 : unmanaged
+        where f32 : unmanaged
+        where i32 : unmanaged
+        where TFunc : unmanaged, IFunctionList<m32, f32, i32>
     {
-        private static TFunctions F = default;
-        private static Utils<mask32v, float32v, int32v, TFunctions> Utils = default;
+        private static TFunc F = default;
+        private static Utils<m32, f32, i32, TFunc> Utils = default;
 
-        public static int Count => TFunctions.Count;
+        public static int Count => TFunc.Count;
 
         [MethodImpl(MethodImplOptions.AggressiveOptimization)]
-        public float32v Gen(int32v seed, float32v x, float32v y)
+        public f32 Gen(i32 seed, f32 x, f32 y)
         {
-            float32v xs = F.Floor_f32(x);
-            float32v ys = F.Floor_f32(y);
+            f32 xs = F.Floor_f32(x);
+            f32 ys = F.Floor_f32(y);
 
-            int32v x0 = F.Mul(F.Convertf32_i32(xs), F.Broad_i32(Primes.X));
-            int32v y0 = F.Mul(F.Convertf32_i32(ys), F.Broad_i32(Primes.Y));
-            int32v x1 = F.Add(x0, F.Broad_i32(Primes.X));
-            int32v y1 = F.Add(y0, F.Broad_i32(Primes.Y));
+            i32 x0 = F.Mul(F.Convertf32_i32(xs), F.Broad_i32(Primes.X));
+            i32 y0 = F.Mul(F.Convertf32_i32(ys), F.Broad_i32(Primes.Y));
+            i32 x1 = F.Add(x0, F.Broad_i32(Primes.X));
+            i32 y1 = F.Add(y0, F.Broad_i32(Primes.Y));
 
-            float32v xf0 = xs = F.Sub(x, xs);
-            float32v yf0 = ys = F.Sub(y, ys);
-            float32v xf1 = F.Sub(xf0, F.Broad_f32(1));
-            float32v yf1 = F.Sub(yf0, F.Broad_f32(1));
+            f32 xf0 = xs = F.Sub(x, xs);
+            f32 yf0 = ys = F.Sub(y, ys);
+            f32 xf1 = F.Sub(xf0, F.Broad_f32(1));
+            f32 yf1 = F.Sub(yf0, F.Broad_f32(1));
 
             xs = Utils.InterpQuintic(xs);
             ys = Utils.InterpQuintic(ys);
@@ -48,25 +48,25 @@ namespace SharpFastNoise2
         }
 
         [MethodImpl(MethodImplOptions.AggressiveOptimization)]
-        public float32v Gen(int32v seed, float32v x, float32v y, float32v z)
+        public f32 Gen(i32 seed, f32 x, f32 y, f32 z)
         {
-            float32v xs = F.Floor_f32(x);
-            float32v ys = F.Floor_f32(y);
-            float32v zs = F.Floor_f32(z);
+            f32 xs = F.Floor_f32(x);
+            f32 ys = F.Floor_f32(y);
+            f32 zs = F.Floor_f32(z);
 
-            int32v x0 = F.Mul(F.Convertf32_i32(xs), F.Broad_i32(Primes.X));
-            int32v y0 = F.Mul(F.Convertf32_i32(ys), F.Broad_i32(Primes.Y));
-            int32v z0 = F.Mul(F.Convertf32_i32(zs), F.Broad_i32(Primes.Z));
-            int32v x1 = F.Add(x0, F.Broad_i32(Primes.X));
-            int32v y1 = F.Add(y0, F.Broad_i32(Primes.Y));
-            int32v z1 = F.Add(z0, F.Broad_i32(Primes.Z));
+            i32 x0 = F.Mul(F.Convertf32_i32(xs), F.Broad_i32(Primes.X));
+            i32 y0 = F.Mul(F.Convertf32_i32(ys), F.Broad_i32(Primes.Y));
+            i32 z0 = F.Mul(F.Convertf32_i32(zs), F.Broad_i32(Primes.Z));
+            i32 x1 = F.Add(x0, F.Broad_i32(Primes.X));
+            i32 y1 = F.Add(y0, F.Broad_i32(Primes.Y));
+            i32 z1 = F.Add(z0, F.Broad_i32(Primes.Z));
 
-            float32v xf0 = xs = F.Sub(x, xs);
-            float32v yf0 = ys = F.Sub(y, ys);
-            float32v zf0 = zs = F.Sub(z, zs);
-            float32v xf1 = F.Sub(xf0, F.Broad_f32(1));
-            float32v yf1 = F.Sub(yf0, F.Broad_f32(1));
-            float32v zf1 = F.Sub(zf0, F.Broad_f32(1));
+            f32 xf0 = xs = F.Sub(x, xs);
+            f32 yf0 = ys = F.Sub(y, ys);
+            f32 zf0 = zs = F.Sub(z, zs);
+            f32 xf1 = F.Sub(xf0, F.Broad_f32(1));
+            f32 yf1 = F.Sub(yf0, F.Broad_f32(1));
+            f32 zf1 = F.Sub(zf0, F.Broad_f32(1));
 
             xs = Utils.InterpQuintic(xs);
             ys = Utils.InterpQuintic(ys);
@@ -97,30 +97,30 @@ namespace SharpFastNoise2
         }
 
         [MethodImpl(MethodImplOptions.AggressiveOptimization)]
-        public float32v Gen(int32v seed, float32v x, float32v y, float32v z, float32v w)
+        public f32 Gen(i32 seed, f32 x, f32 y, f32 z, f32 w)
         {
-            float32v xs = F.Floor_f32(x);
-            float32v ys = F.Floor_f32(y);
-            float32v zs = F.Floor_f32(z);
-            float32v ws = F.Floor_f32(w);
+            f32 xs = F.Floor_f32(x);
+            f32 ys = F.Floor_f32(y);
+            f32 zs = F.Floor_f32(z);
+            f32 ws = F.Floor_f32(w);
 
-            int32v x0 = F.Mul(F.Convertf32_i32(xs), F.Broad_i32(Primes.X));
-            int32v y0 = F.Mul(F.Convertf32_i32(ys), F.Broad_i32(Primes.Y));
-            int32v z0 = F.Mul(F.Convertf32_i32(zs), F.Broad_i32(Primes.Z));
-            int32v w0 = F.Mul(F.Convertf32_i32(ws), F.Broad_i32(Primes.W));
-            int32v x1 = F.Add(x0, F.Broad_i32(Primes.X));
-            int32v y1 = F.Add(y0, F.Broad_i32(Primes.Y));
-            int32v z1 = F.Add(z0, F.Broad_i32(Primes.Z));
-            int32v w1 = F.Add(w0, F.Broad_i32(Primes.W));
+            i32 x0 = F.Mul(F.Convertf32_i32(xs), F.Broad_i32(Primes.X));
+            i32 y0 = F.Mul(F.Convertf32_i32(ys), F.Broad_i32(Primes.Y));
+            i32 z0 = F.Mul(F.Convertf32_i32(zs), F.Broad_i32(Primes.Z));
+            i32 w0 = F.Mul(F.Convertf32_i32(ws), F.Broad_i32(Primes.W));
+            i32 x1 = F.Add(x0, F.Broad_i32(Primes.X));
+            i32 y1 = F.Add(y0, F.Broad_i32(Primes.Y));
+            i32 z1 = F.Add(z0, F.Broad_i32(Primes.Z));
+            i32 w1 = F.Add(w0, F.Broad_i32(Primes.W));
 
-            float32v xf0 = xs = F.Sub(x, xs);
-            float32v yf0 = ys = F.Sub(y, ys);
-            float32v zf0 = zs = F.Sub(z, zs);
-            float32v wf0 = ws = F.Sub(w, ws);
-            float32v xf1 = F.Sub(xf0, F.Broad_f32(1));
-            float32v yf1 = F.Sub(yf0, F.Broad_f32(1));
-            float32v zf1 = F.Sub(zf0, F.Broad_f32(1));
-            float32v wf1 = F.Sub(wf0, F.Broad_f32(1));
+            f32 xf0 = xs = F.Sub(x, xs);
+            f32 yf0 = ys = F.Sub(y, ys);
+            f32 zf0 = zs = F.Sub(z, zs);
+            f32 wf0 = ws = F.Sub(w, ws);
+            f32 xf1 = F.Sub(xf0, F.Broad_f32(1));
+            f32 yf1 = F.Sub(yf0, F.Broad_f32(1));
+            f32 zf1 = F.Sub(zf0, F.Broad_f32(1));
+            f32 wf1 = F.Sub(wf0, F.Broad_f32(1));
 
             xs = Utils.InterpQuintic(xs);
             ys = Utils.InterpQuintic(ys);

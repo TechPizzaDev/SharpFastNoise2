@@ -5,11 +5,11 @@ using System.Runtime.Intrinsics.X86;
 
 namespace SharpFastNoise2
 {
-    using float32v = Single;
-    using int32v = Int32;
-    using mask32v = Int32;
+    using f32 = Single;
+    using i32 = Int32;
+    using m32 = Int32;
 
-    public struct ScalarFunctions : IFunctionList<mask32v, float32v, int32v>
+    public struct ScalarFunctions : IFunctionList<m32, f32, i32>
     {
         public static bool IsSupported => true;
 
@@ -17,189 +17,189 @@ namespace SharpFastNoise2
 
         // Broadcast
 
-        public float32v Broad_f32(float value)
+        public f32 Broad_f32(float value)
         {
             return value;
         }
 
-        public int32v Broad_i32(int value)
+        public i32 Broad_i32(int value)
         {
             return value;
         }
 
         // Load
 
-        public float32v Load_f32(ref byte p)
+        public f32 Load_f32(ref byte p)
         {
-            return Unsafe.ReadUnaligned<float32v>(ref p);
+            return Unsafe.ReadUnaligned<f32>(ref p);
         }
 
-        public int32v Load_i32(ref byte p)
+        public i32 Load_i32(ref byte p)
         {
-            return Unsafe.ReadUnaligned<int32v>(ref p);
+            return Unsafe.ReadUnaligned<i32>(ref p);
         }
 
         // Incremented
 
-        public float32v Incremented_f32()
+        public f32 Incremented_f32()
         {
             return 0;
         }
 
-        public int32v Incremented_i32()
+        public i32 Incremented_i32()
         {
             return 0;
         }
 
         // Store
 
-        public void Store_f32(ref byte p, float32v a)
+        public void Store_f32(ref byte p, f32 a)
         {
             Unsafe.WriteUnaligned(ref p, a);
         }
 
-        public void Store_i32(ref byte p, int32v a)
+        public void Store_i32(ref byte p, i32 a)
         {
             Unsafe.WriteUnaligned(ref p, a);
         }
 
-        public void Store_f32(ref float p, float32v a)
+        public void Store_f32(ref float p, f32 a)
         {
             Unsafe.WriteUnaligned(ref Unsafe.As<float, byte>(ref p), a);
         }
 
-        public void Store_i32(ref int p, int32v a)
+        public void Store_i32(ref int p, i32 a)
         {
             Unsafe.WriteUnaligned(ref Unsafe.As<int, byte>(ref p), a);
         }
 
         // Extract
 
-        public float Extract0_f32(float32v a)
+        public float Extract0_f32(f32 a)
         {
             return a;
         }
 
-        public int Extract0_i32(int32v a)
+        public int Extract0_i32(i32 a)
         {
             return a;
         }
 
-        public float Extract_f32(float32v a, int idx)
+        public float Extract_f32(f32 a, int idx)
         {
             return a;
         }
 
-        public int Extract_i32(int32v a, int idx)
+        public int Extract_i32(i32 a, int idx)
         {
             return a;
         }
 
         // Cast
 
-        public float32v Casti32_f32(int32v a)
+        public f32 Casti32_f32(i32 a)
         {
-            return Unsafe.As<int32v, float32v>(ref a);
+            return Unsafe.As<i32, f32>(ref a);
         }
 
-        public int32v Castf32_i32(float32v a)
+        public i32 Castf32_i32(f32 a)
         {
-            return Unsafe.As<float32v, int32v>(ref a);
+            return Unsafe.As<f32, i32>(ref a);
         }
 
         // Convert
 
-        public float32v Converti32_f32(int32v a)
+        public f32 Converti32_f32(i32 a)
         {
             return (float)a;
         }
 
-        public int32v Convertf32_i32(float32v a)
+        public i32 Convertf32_i32(f32 a)
         {
             return (int)MathF.Round(a);
         }
 
         // Select
 
-        public float32v Select_f32(mask32v m, float32v a, float32v b)
+        public f32 Select_f32(m32 m, f32 a, f32 b)
         {
             return m != 0 ? a : b;
         }
 
-        public int32v Select_i32(mask32v m, int32v a, int32v b)
+        public i32 Select_i32(m32 m, i32 a, i32 b)
         {
             return m != 0 ? a : b;
         }
 
         // Min, Max
 
-        public float32v Min_f32(float32v a, float32v b)
+        public f32 Min_f32(f32 a, f32 b)
         {
             return MathF.Min(a, b);
         }
 
-        public float32v Max_f32(float32v a, float32v b)
+        public f32 Max_f32(f32 a, f32 b)
         {
             return MathF.Max(a, b);
         }
 
-        public int32v Min_i32(int32v a, int32v b)
+        public i32 Min_i32(i32 a, i32 b)
         {
             return Math.Min(a, b);
         }
 
-        public int32v Max_i32(int32v a, int32v b)
+        public i32 Max_i32(i32 a, i32 b)
         {
             return Math.Max(a, b);
         }
 
         // Bitwise       
 
-        public float32v BitwiseAndNot_f32(float32v a, float32v b)
+        public f32 BitwiseAndNot_f32(f32 a, f32 b)
         {
             return Casti32_f32(Castf32_i32(a) & ~Castf32_i32(b));
         }
 
-        public int32v BitwiseAndNot_i32(int32v a, int32v b)
+        public i32 BitwiseAndNot_i32(i32 a, i32 b)
         {
             return a & ~b;
         }
 
-        public mask32v BitwiseAndNot_m32(mask32v a, mask32v b)
+        public m32 BitwiseAndNot_m32(m32 a, m32 b)
         {
             return a & ~b;
         }
 
-        public float32v BitwiseShiftRightZX_f32(float32v a, byte b)
+        public f32 BitwiseShiftRightZX_f32(f32 a, byte b)
         {
             return Casti32_f32((int)((uint)Castf32_i32(a) >> b));
         }
 
-        public int32v BitwiseShiftRightZX_i32(int32v a, byte b)
+        public i32 BitwiseShiftRightZX_i32(i32 a, byte b)
         {
             return (int)((uint)a >> b);
         }
 
         // Abs
 
-        public float32v Abs_f32(float32v a)
+        public f32 Abs_f32(f32 a)
         {
             return MathF.Abs(a);
         }
 
-        public int32v Abs_i32(int32v a)
+        public i32 Abs_i32(i32 a)
         {
             return Math.Abs(a);
         }
 
         // Float math
 
-        public float32v Sqrt_f32(float32v a)
+        public f32 Sqrt_f32(f32 a)
         {
             return MathF.Sqrt(a);
         }
 
-        public float32v InvSqrt_f32(float32v a)
+        public f32 InvSqrt_f32(f32 a)
         {
             if (Sse.IsSupported)
             {
@@ -214,7 +214,7 @@ namespace SharpFastNoise2
             }
         }
 
-        public float32v Reciprocal_f32(float32v a)
+        public f32 Reciprocal_f32(f32 a)
         {
             if (Sse.IsSupported)
             {
@@ -230,98 +230,98 @@ namespace SharpFastNoise2
 
         // Floor, Ceil, Round
 
-        public float32v Floor_f32(float32v a)
+        public f32 Floor_f32(f32 a)
         {
             return MathF.Floor(a);
         }
 
-        public float32v Ceil_f32(float32v a)
+        public f32 Ceil_f32(f32 a)
         {
             return MathF.Ceiling(a);
         }
 
-        public float32v Round_f32(float32v a)
+        public f32 Round_f32(f32 a)
         {
             return MathF.Round(a);
         }
 
         // Mask
 
-        public int32v Mask_i32(int32v a, mask32v m)
+        public i32 Mask_i32(i32 a, m32 m)
         {
             return m != 0 ? a : 0;
         }
 
-        public float32v Mask_f32(float32v a, mask32v m)
+        public f32 Mask_f32(f32 a, m32 m)
         {
             return m != 0 ? a : 0;
         }
 
-        public int32v NMask_i32(int32v a, mask32v m)
+        public i32 NMask_i32(i32 a, m32 m)
         {
             return m != 0 ? 0 : a;
         }
 
-        public float32v NMask_f32(float32v a, mask32v m)
+        public f32 NMask_f32(f32 a, m32 m)
         {
             return m != 0 ? 0 : a;
         }
 
-        public bool AnyMask_bool(mask32v m)
+        public bool AnyMask_bool(m32 m)
         {
             return m != 0;
         }
 
         // FMA
 
-        public float32v FMulAdd_f32(float32v a, float32v b, float32v c)
+        public f32 FMulAdd_f32(f32 a, f32 b, f32 c)
         {
             return MathF.FusedMultiplyAdd(a, b, c);
         }
 
-        public float32v FNMulAdd_f32(float32v a, float32v b, float32v c)
+        public f32 FNMulAdd_f32(f32 a, f32 b, f32 c)
         {
             return -(a * b) + c;
         }
 
         // Generic math
 
-        public float32v Add(float32v lhs, float32v rhs) => lhs + rhs;
-        public float32v And(float32v lhs, float32v rhs) => AsSingle(And(AsInt32(lhs), AsInt32(rhs)));
-        public int32v AsInt32(float32v lhs) => Unsafe.As<float32v, int32v>(ref lhs);
-        public float32v Complement(float32v lhs) => AsSingle(Complement(AsInt32(lhs)));
-        public float32v Div(float32v lhs, float32v rhs) => lhs / rhs;
-        public int32v Equal(float32v lhs, float32v rhs) => (lhs == rhs).AsInt32();
-        public int32v GreaterThan(float32v lhs, float32v rhs) => (lhs > rhs).AsInt32();
-        public int32v GreaterThanOrEqual(float32v lhs, float32v rhs) => (lhs >= rhs).AsInt32();
-        public float32v LeftShift(float32v lhs, byte rhs) => AsSingle(LeftShift(AsInt32(lhs), rhs));
-        public int32v LessThan(float32v lhs, float32v rhs) => (lhs < rhs).AsInt32();
-        public int32v LessThanOrEqual(float32v lhs, float32v rhs) => (lhs <= rhs).AsInt32();
-        public float32v Mul(float32v lhs, float32v rhs) => lhs * rhs;
-        public float32v Negate(float32v lhs) => -lhs;
-        public int32v NotEqual(float32v lhs, float32v rhs) => (lhs != rhs).AsInt32();
-        public float32v Or(float32v lhs, float32v rhs) => AsSingle(Or(AsInt32(lhs), AsInt32(rhs)));
-        public float32v RightShift(float32v lhs, byte rhs) => AsSingle(RightShift(AsInt32(lhs), rhs));
-        public float32v Sub(float32v lhs, float32v rhs) => lhs - rhs;
-        public float32v Xor(float32v lhs, float32v rhs) => AsSingle(Xor(AsInt32(lhs), AsInt32(rhs)));
+        public f32 Add(f32 lhs, f32 rhs) => lhs + rhs;
+        public f32 And(f32 lhs, f32 rhs) => AsSingle(And(AsInt32(lhs), AsInt32(rhs)));
+        public i32 AsInt32(f32 lhs) => Unsafe.As<f32, i32>(ref lhs);
+        public f32 Complement(f32 lhs) => AsSingle(Complement(AsInt32(lhs)));
+        public f32 Div(f32 lhs, f32 rhs) => lhs / rhs;
+        public i32 Equal(f32 lhs, f32 rhs) => (lhs == rhs).AsInt32();
+        public i32 GreaterThan(f32 lhs, f32 rhs) => (lhs > rhs).AsInt32();
+        public i32 GreaterThanOrEqual(f32 lhs, f32 rhs) => (lhs >= rhs).AsInt32();
+        public f32 LeftShift(f32 lhs, byte rhs) => AsSingle(LeftShift(AsInt32(lhs), rhs));
+        public i32 LessThan(f32 lhs, f32 rhs) => (lhs < rhs).AsInt32();
+        public i32 LessThanOrEqual(f32 lhs, f32 rhs) => (lhs <= rhs).AsInt32();
+        public f32 Mul(f32 lhs, f32 rhs) => lhs * rhs;
+        public f32 Negate(f32 lhs) => -lhs;
+        public i32 NotEqual(f32 lhs, f32 rhs) => (lhs != rhs).AsInt32();
+        public f32 Or(f32 lhs, f32 rhs) => AsSingle(Or(AsInt32(lhs), AsInt32(rhs)));
+        public f32 RightShift(f32 lhs, byte rhs) => AsSingle(RightShift(AsInt32(lhs), rhs));
+        public f32 Sub(f32 lhs, f32 rhs) => lhs - rhs;
+        public f32 Xor(f32 lhs, f32 rhs) => AsSingle(Xor(AsInt32(lhs), AsInt32(rhs)));
 
-        public int32v Add(int32v lhs, int32v rhs) => lhs + rhs;
-        public int32v And(int32v lhs, int32v rhs) => lhs & rhs;
-        public float32v AsSingle(int32v lhs) => Unsafe.As<int32v, float32v>(ref lhs);
-        public int32v Complement(int32v lhs) => ~lhs;
-        public int32v Div(int32v lhs, int32v rhs) => lhs / rhs;
-        public int32v Equal(int32v lhs, int32v rhs) => (lhs == rhs).AsInt32();
-        public int32v GreaterThan(int32v lhs, int32v rhs) => (lhs > rhs).AsInt32();
-        public int32v GreaterThanOrEqual(int32v lhs, int32v rhs) => (lhs >= rhs).AsInt32();
-        public int32v LeftShift(int32v lhs, byte rhs) => lhs << rhs;
-        public int32v LessThan(int32v lhs, int32v rhs) => (lhs < rhs).AsInt32();
-        public int32v LessThanOrEqual(int32v lhs, int32v rhs) => (lhs <= rhs).AsInt32();
-        public int32v Mul(int32v lhs, int32v rhs) => lhs * rhs;
-        public int32v Negate(int32v lhs) => -lhs;
-        public int32v NotEqual(int32v lhs, int32v rhs) => (lhs != rhs).AsInt32();
-        public int32v Or(int32v lhs, int32v rhs) => lhs | rhs;
-        public int32v RightShift(int32v lhs, byte rhs) => lhs >> rhs;
-        public int32v Sub(int32v lhs, int32v rhs) => lhs - rhs;
-        public int32v Xor(int32v lhs, int32v rhs) => lhs ^ rhs;
+        public i32 Add(i32 lhs, i32 rhs) => lhs + rhs;
+        public i32 And(i32 lhs, i32 rhs) => lhs & rhs;
+        public f32 AsSingle(i32 lhs) => Unsafe.As<i32, f32>(ref lhs);
+        public i32 Complement(i32 lhs) => ~lhs;
+        public i32 Div(i32 lhs, i32 rhs) => lhs / rhs;
+        public i32 Equal(i32 lhs, i32 rhs) => (lhs == rhs).AsInt32();
+        public i32 GreaterThan(i32 lhs, i32 rhs) => (lhs > rhs).AsInt32();
+        public i32 GreaterThanOrEqual(i32 lhs, i32 rhs) => (lhs >= rhs).AsInt32();
+        public i32 LeftShift(i32 lhs, byte rhs) => lhs << rhs;
+        public i32 LessThan(i32 lhs, i32 rhs) => (lhs < rhs).AsInt32();
+        public i32 LessThanOrEqual(i32 lhs, i32 rhs) => (lhs <= rhs).AsInt32();
+        public i32 Mul(i32 lhs, i32 rhs) => lhs * rhs;
+        public i32 Negate(i32 lhs) => -lhs;
+        public i32 NotEqual(i32 lhs, i32 rhs) => (lhs != rhs).AsInt32();
+        public i32 Or(i32 lhs, i32 rhs) => lhs | rhs;
+        public i32 RightShift(i32 lhs, byte rhs) => lhs >> rhs;
+        public i32 Sub(i32 lhs, i32 rhs) => lhs - rhs;
+        public i32 Xor(i32 lhs, i32 rhs) => lhs ^ rhs;
     }
 }

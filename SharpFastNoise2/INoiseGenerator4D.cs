@@ -1,8 +1,8 @@
 ﻿
 namespace SharpFastNoise2
 {
-    public interface INoiseGenerator4D<float32v, int32v> : INoiseGenerator
+    public interface INoiseGenerator4D<f32, i32> : INoiseGenerator
     {
-        public float32v Gen(int32v seed, float32v x, float32v y, float32v z, float32v w);
+        public f32 Gen(i32 seed, f32 x, f32 y, f32 z, f32 w);
     }
 }
