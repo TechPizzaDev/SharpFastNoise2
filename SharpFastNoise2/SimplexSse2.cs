@@ -14,7 +14,7 @@ namespace SharpFastNoise2
 
         public static bool IsSupported => Sse2Functions.IsSupported;
 
-        public int Count => _noise.Count;
+        public static int Count => Simplex<mask32v, float32v, int32v, Sse2Functions>.Count;
 
         public float32v Gen(int32v seed, float32v x, float32v y)
         {

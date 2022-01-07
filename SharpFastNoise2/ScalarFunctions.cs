@@ -13,7 +13,7 @@ namespace SharpFastNoise2
     {
         public static bool IsSupported => true;
 
-        public int Count => 1;
+        public static int Count => 1;
 
         // Broadcast
 

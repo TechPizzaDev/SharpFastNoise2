@@ -14,7 +14,7 @@ namespace SharpFastNoise2
         private static Utils<mask32v, float32v, int32v, TFunctions> Utils = default;
         private static FastSimd<mask32v, float32v, int32v, TFunctions> FSS = default;
 
-        public int Count => F.Count;
+        public static int Count => TFunctions.Count;
 
         [MethodImpl(MethodImplOptions.AggressiveOptimization)]
         public float32v Gen(int32v seed, float32v x, float32v y)

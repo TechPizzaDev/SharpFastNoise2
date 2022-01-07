@@ -2,7 +2,9 @@
 {
     public interface IFunctionList<mask32v, float32v, int32v>
     {
-        public int Count { get; }
+        static abstract bool IsSupported { get; }
+
+        static abstract int Count { get; }
 
         // Broadcast
 

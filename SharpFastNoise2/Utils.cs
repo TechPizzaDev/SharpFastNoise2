@@ -47,7 +47,7 @@ namespace SharpFastNoise2
                 // Bit-4 = Choose X Y ordering
                 mask32v xy;
 
-                if (F.Count == 1)
+                if (TFunctions.Count == 1)
                 {
                     xy = F.NotEqual(F.And(index, F.Broad_i32(1 << 2)), F.Broad_i32(0));
                 }
@@ -70,7 +70,7 @@ namespace SharpFastNoise2
                 // Bit-2 = Mul a by 2 or Root3
                 mask32v aMul2;
 
-                if (F.Count == 1)
+                if (TFunctions.Count == 1)
                 {
                     aMul2 = F.NotEqual(F.And(index, F.Broad_i32(1 << 1)), F.Broad_i32(0));
                 }
@@ -127,7 +127,7 @@ namespace SharpFastNoise2
                 int32v bit2 = F.LeftShift(F.RightShift(hash, 1), 31);
                 mask32v mbit4;
 
-                if (F.Count == 1)
+                if (TFunctions.Count == 1)
                 {
                     mbit4 = F.NotEqual(F.And(hash, F.Broad_i32(1 << 2)), F.Broad_i32(0));
                 }

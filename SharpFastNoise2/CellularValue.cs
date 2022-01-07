@@ -19,7 +19,7 @@ namespace SharpFastNoise2
 
         private int _valueIndex;
 
-        public int Count => F.Count;
+        public static int Count => TFunctions.Count;
 
         public DistanceFunction DistanceFunction { get; set; }
 

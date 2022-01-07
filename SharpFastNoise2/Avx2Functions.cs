@@ -13,7 +13,7 @@ namespace SharpFastNoise2
     {
         public static bool IsSupported => Avx2.IsSupported;
 
-        public int Count => 8;
+        public static int Count => 8;
 
         // Broadcast
 

@@ -67,7 +67,7 @@ namespace SharpFastNoise2
 
             xIdx = F.Add(xIdx, F.Incremented_i32());
 
-            while (index < totalValues - F.Count)
+            while (index < totalValues - TFunctions.Count)
             {
                 float32v xF = F.Mul(F.Converti32_f32(xIdx), xMul);
                 float32v yF = F.Mul(F.Converti32_f32(yIdx), yMul);
@@ -83,8 +83,8 @@ namespace SharpFastNoise2
                 min = F.Min_f32(min, gen);
                 max = F.Max_f32(max, gen);
 
-                index += F.Count;
-                xIdx = F.Add(xIdx, F.Broad_i32(F.Count));
+                index += TFunctions.Count;
+                xIdx = F.Add(xIdx, F.Broad_i32(TFunctions.Count));
 
                 mask32v xReset = F.GreaterThan(xIdx, xMax);
                 yIdx = FSS.MaskedIncrement_i32(yIdx, xReset);
@@ -124,7 +124,7 @@ namespace SharpFastNoise2
             OutputMinMax minMax = default;
             int remaining = totalValues - index;
 
-            if (remaining == F.Count)
+            if (remaining == TFunctions.Count)
             {
                 F.Store_f32(ref Unsafe.Add(ref noiseOut, index), finalGen);
 
@@ -145,7 +145,7 @@ namespace SharpFastNoise2
                 while (++index < totalValues);
             }
 
-            for (int i = 0; i < F.Count; i++)
+            for (int i = 0; i < TFunctions.Count; i++)
             {
                 minMax.Apply(F.Extract_f32(min, i), F.Extract_f32(max, i));
             }
