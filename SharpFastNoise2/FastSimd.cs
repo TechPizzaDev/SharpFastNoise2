@@ -2,14 +2,12 @@
 
 namespace SharpFastNoise2
 {
-    public struct FastSimd<m32, f32, i32, TFunc>
+    public struct FastSimd<m32, f32, i32, F>
         where m32 : unmanaged
         where f32 : unmanaged
         where i32 : unmanaged
-        where TFunc : unmanaged, IFunctionList<m32, f32, i32>
+        where F : unmanaged, IFunctionList<m32, f32, i32>
     {
-        private static TFunc F = default;
-
         // Masked float
 
         public f32 MaskedAdd_f32(f32 a, f32 b, m32 m)

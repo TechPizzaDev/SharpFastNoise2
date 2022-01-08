@@ -2,19 +2,78 @@
 
 namespace SharpFastNoise2
 {
-    public struct Perlin<m32, f32, i32, TFunc> :
+    public interface IFloat32<f32, i32>
+        where f32 : IFloat32<f32, i32>
+        where i32 : IInt32<f32, i32>
+    {
+        static abstract f32 operator +(f32 a, f32 b);
+    }
+
+    public interface IInt32<f32, i32>
+        where f32 : IFloat32<f32, i32>
+        where i32 : IInt32<f32, i32>
+    {
+        static abstract i32 operator +(i32 a, i32 b);
+    }
+
+    public static class Generator
+    {
+        public static f32 Magic<f32, i32>(f32 a, f32 b, i32 c)
+            where f32 : IFloat32<f32, i32>
+            where i32 : IInt32<f32, i32>
+        {
+            return a + b;
+        }
+
+        public static float Call()
+        {
+            F32Wrap r = Magic(new F32Wrap(1), new F32Wrap(2), new I32Wrap(3));
+            return r.Value;
+        }
+    }
+
+    public struct I32Wrap : IInt32<F32Wrap, I32Wrap>
+    {
+        public int Value;
+
+        public I32Wrap(int value)
+        {
+            Value = value;
+        }
+
+        public static I32Wrap operator +(I32Wrap a, I32Wrap b)
+        {
+            return new I32Wrap(a.Value + b.Value);
+        }
+    }
+
+    public struct F32Wrap : IFloat32<F32Wrap, I32Wrap>
+    {
+        public float Value;
+
+        public F32Wrap(float value)
+        {
+            Value = value;
+        }
+
+        public static F32Wrap operator +(F32Wrap a, F32Wrap b)
+        {
+            return new F32Wrap(a.Value + b.Value);
+        }
+    }
+
+    public struct Perlin<m32, f32, i32, F> :
         INoiseGenerator2D<f32, i32>,
         INoiseGenerator3D<f32, i32>,
         INoiseGenerator4D<f32, i32>
         where m32 : unmanaged
         where f32 : unmanaged
         where i32 : unmanaged
-        where TFunc : unmanaged, IFunctionList<m32, f32, i32>
+        where F : unmanaged, IFunctionList<m32, f32, i32>
     {
-        private static TFunc F = default;
-        private static Utils<m32, f32, i32, TFunc> Utils = default;
+        private static Utils<m32, f32, i32, F> Utils = default;
 
-        public static int Count => TFunc.Count;
+        public static int Count => F.Count;
 
         [MethodImpl(MethodImplOptions.AggressiveOptimization)]
         public f32 Gen(i32 seed, f32 x, f32 y)
@@ -131,12 +190,12 @@ namespace SharpFastNoise2
                 Utils.Lerp(
                     Utils.Lerp(
                         Utils.Lerp(
-                            Utils.GetGradientDot(Utils.HashPrimes(seed, x0, y0, z0, w0), xf0, yf0, zf0, wf0), 
+                            Utils.GetGradientDot(Utils.HashPrimes(seed, x0, y0, z0, w0), xf0, yf0, zf0, wf0),
                             Utils.GetGradientDot(Utils.HashPrimes(seed, x1, y0, z0, w0), xf1, yf0, zf0, wf0),
                             xs),
                         Utils.Lerp(
                             Utils.GetGradientDot(Utils.HashPrimes(seed, x0, y1, z0, w0), xf0, yf1, zf0, wf0),
-                            Utils.GetGradientDot(Utils.HashPrimes(seed, x1, y1, z0, w0), xf1, yf1, zf0, wf0), 
+                            Utils.GetGradientDot(Utils.HashPrimes(seed, x1, y1, z0, w0), xf1, yf1, zf0, wf0),
                             xs),
                         ys),
                     Utils.Lerp(
@@ -157,21 +216,21 @@ namespace SharpFastNoise2
                             Utils.GetGradientDot(Utils.HashPrimes(seed, x1, y0, z0, w1), xf1, yf0, zf0, wf1),
                             xs),
                         Utils.Lerp(
-                            Utils.GetGradientDot(Utils.HashPrimes(seed, x0, y1, z0, w1), xf0, yf1, zf0, wf1), 
-                            Utils.GetGradientDot(Utils.HashPrimes(seed, x1, y1, z0, w1), xf1, yf1, zf0, wf1), 
-                            xs), 
+                            Utils.GetGradientDot(Utils.HashPrimes(seed, x0, y1, z0, w1), xf0, yf1, zf0, wf1),
+                            Utils.GetGradientDot(Utils.HashPrimes(seed, x1, y1, z0, w1), xf1, yf1, zf0, wf1),
+                            xs),
                         ys),
                     Utils.Lerp(
                         Utils.Lerp(
                             Utils.GetGradientDot(Utils.HashPrimes(seed, x0, y0, z1, w1), xf0, yf0, zf1, wf1),
-                            Utils.GetGradientDot(Utils.HashPrimes(seed, x1, y0, z1, w1), xf1, yf0, zf1, wf1), 
+                            Utils.GetGradientDot(Utils.HashPrimes(seed, x1, y0, z1, w1), xf1, yf0, zf1, wf1),
                             xs),
                         Utils.Lerp(
                             Utils.GetGradientDot(Utils.HashPrimes(seed, x0, y1, z1, w1), xf0, yf1, zf1, wf1),
-                            Utils.GetGradientDot(Utils.HashPrimes(seed, x1, y1, z1, w1), xf1, yf1, zf1, wf1), 
-                            xs), 
+                            Utils.GetGradientDot(Utils.HashPrimes(seed, x1, y1, z1, w1), xf1, yf1, zf1, wf1),
+                            xs),
                         ys),
-                    zs), 
+                    zs),
                 ws));
         }
     }

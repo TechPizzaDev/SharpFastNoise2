@@ -2,19 +2,18 @@
 
 namespace SharpFastNoise2
 {
-    public struct OpenSimplex2<m32, f32, i32, TFunc> :
+    public struct OpenSimplex2<m32, f32, i32, F> :
         INoiseGenerator2D<f32, i32>,
         INoiseGenerator3D<f32, i32>
         where m32 : unmanaged
         where f32 : unmanaged
         where i32 : unmanaged
-        where TFunc : unmanaged, IFunctionList<m32, f32, i32>
+        where F : unmanaged, IFunctionList<m32, f32, i32>
     {
-        private static TFunc F = default;
-        private static Utils<m32, f32, i32, TFunc> Utils = default;
-        private static FastSimd<m32, f32, i32, TFunc> FSS = default;
+        private static Utils<m32, f32, i32, F> Utils = default;
+        private static FastSimd<m32, f32, i32, F> FSS = default;
 
-        public static int Count => TFunc.Count;
+        public static int Count => F.Count;
 
         [MethodImpl(MethodImplOptions.AggressiveOptimization)]
         public f32 Gen(i32 seed, f32 x, f32 y)

@@ -243,9 +243,9 @@ namespace Sandbox
             }
         }
 
-        public static void Write<m32, f32, i32, TFunc, TNGen>(
+        public static void Write<m32, f32, i32, F, G>(
             string basePath,
-            TNGen generator,
+            G generator,
             int seed,
             float offsetX,
             int width,
@@ -253,10 +253,9 @@ namespace Sandbox
             where m32 : unmanaged
             where f32 : unmanaged
             where i32 : unmanaged
-            where TFunc : unmanaged, IFunctionList<m32, f32, i32>
-            where TNGen : INoiseGenerator
+            where F : unmanaged, IFunctionList<m32, f32, i32>
+            where G : INoiseGenerator
         {
-            TFunc F = new();
             using Image<L16> image = new Image<L16>(width, height);
 
             var vSeed = F.Broad_i32(seed);
@@ -264,19 +263,19 @@ namespace Sandbox
 
             if (generator is INoiseGenerator4D<f32, i32> gen4D)
             {
-                string path = string.Format(basePath, $"4Dx{TNGen.Count}") + ".png";
+                string path = string.Format(basePath, $"4Dx{G.Count}") + ".png";
                 Console.WriteLine("Writing " + path);
 
                 for (int y = 0; y < image.Height; y++)
                 {
                     f32 vy = F.Broad_f32(y / 32f);
 
-                    for (int x = 0; x < image.Width; x += TNGen.Count)
+                    for (int x = 0; x < image.Width; x += G.Count)
                     {
                         f32 vx = F.Add(F.Broad_f32(x / 32f), vIncrementX);
                         f32 noise = gen4D.Gen(vSeed, vx, vy, default, default);
 
-                        for (int i = 0; i < TNGen.Count; i++)
+                        for (int i = 0; i < G.Count; i++)
                         {
                             image[x + i, y] = new L16((ushort)((F.Extract_f32(noise, i) + 1) * 0.5f * ushort.MaxValue));
                         }
@@ -288,19 +287,19 @@ namespace Sandbox
 
             if (generator is INoiseGenerator3D<f32, i32> gen3D)
             {
-                string path = string.Format(basePath, $"3Dx{TNGen.Count}") + ".png";
+                string path = string.Format(basePath, $"3Dx{G.Count}") + ".png";
                 Console.WriteLine("Writing " + path);
 
                 for (int y = 0; y < image.Height; y++)
                 {
                     f32 vy = F.Broad_f32(y / 32f);
 
-                    for (int x = 0; x < image.Width; x += TNGen.Count)
+                    for (int x = 0; x < image.Width; x += G.Count)
                     {
                         f32 vx = F.Add(F.Broad_f32(x / 32f), vIncrementX);
                         f32 noise = gen3D.Gen(vSeed, vx, vy, default);
 
-                        for (int i = 0; i < TNGen.Count; i++)
+                        for (int i = 0; i < G.Count; i++)
                         {
                             image[x + i, y] = new L16((ushort)((F.Extract_f32(noise, i) + 1) * 0.5f * ushort.MaxValue));
                         }
@@ -312,19 +311,19 @@ namespace Sandbox
 
             if (generator is INoiseGenerator2D<f32, i32> gen2D)
             {
-                string path = string.Format(basePath, $"2Dx{TNGen.Count}") + ".png";
+                string path = string.Format(basePath, $"2Dx{G.Count}") + ".png";
                 Console.WriteLine("Writing " + path);
 
                 for (int y = 0; y < image.Height; y++)
                 {
                     f32 vy = F.Broad_f32(y / 32f);
 
-                    for (int x = 0; x < image.Width; x += TNGen.Count)
+                    for (int x = 0; x < image.Width; x += G.Count)
                     {
                         f32 vx = F.Add(F.Broad_f32(x / 32f), vIncrementX);
                         f32 noise = gen2D.Gen(vSeed, vx, vy);
 
-                        for (int i = 0; i < TNGen.Count; i++)
+                        for (int i = 0; i < G.Count; i++)
                         {
                             image[x + i, y] = new L16((ushort)((F.Extract_f32(noise, i) + 1) * 0.5f * ushort.MaxValue));
                         }
@@ -336,17 +335,17 @@ namespace Sandbox
 
             if (generator is INoiseGenerator1D<f32, i32> gen1D)
             {
-                string path = string.Format(basePath, $"1Dx{TNGen.Count}") + ".png";
+                string path = string.Format(basePath, $"1Dx{G.Count}") + ".png";
                 Console.WriteLine("Writing " + path);
 
                 for (int y = 0; y < image.Height; y++)
                 {
-                    for (int x = 0; x < image.Width; x += TNGen.Count)
+                    for (int x = 0; x < image.Width; x += G.Count)
                     {
                         f32 vx = F.Add(F.Broad_f32(x / 32f), vIncrementX);
                         f32 noise = gen1D.Gen(vSeed, vx);
 
-                        for (int i = 0; i < TNGen.Count; i++)
+                        for (int i = 0; i < G.Count; i++)
                         {
                             image[x + i, y] = new L16((ushort)((F.Extract_f32(noise, i) + 1) * 0.5f * ushort.MaxValue));
                         }

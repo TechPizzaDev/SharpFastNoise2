@@ -4,14 +4,12 @@ using System.Runtime.Intrinsics.X86;
 
 namespace SharpFastNoise2
 {
-    public struct Utils<m32, f32, i32, TFunc>
+    public struct Utils<m32, f32, i32, F>
         where m32 : unmanaged
         where f32 : unmanaged
         where i32 : unmanaged
-        where TFunc : unmanaged, IFunctionList<m32, f32, i32>
+        where F : unmanaged, IFunctionList<m32, f32, i32>
     {
-        private static TFunc F = default;
-
         public const float ROOT2 = 1.4142135623730950488f;
         public const float ROOT3 = 1.7320508075688772935f;
 
@@ -47,7 +45,7 @@ namespace SharpFastNoise2
                 // Bit-4 = Choose X Y ordering
                 m32 xy;
 
-                if (TFunc.Count == 1)
+                if (F.Count == 1)
                 {
                     xy = F.NotEqual(F.And(index, F.Broad_i32(1 << 2)), F.Broad_i32(0));
                 }
@@ -70,7 +68,7 @@ namespace SharpFastNoise2
                 // Bit-2 = Mul a by 2 or Root3
                 m32 aMul2;
 
-                if (TFunc.Count == 1)
+                if (F.Count == 1)
                 {
                     aMul2 = F.NotEqual(F.And(index, F.Broad_i32(1 << 1)), F.Broad_i32(0));
                 }
@@ -127,7 +125,7 @@ namespace SharpFastNoise2
                 i32 bit2 = F.LeftShift(F.RightShift(hash, 1), 31);
                 m32 mbit4;
 
-                if (TFunc.Count == 1)
+                if (F.Count == 1)
                 {
                     mbit4 = F.NotEqual(F.And(hash, F.Broad_i32(1 << 2)), F.Broad_i32(0));
                 }

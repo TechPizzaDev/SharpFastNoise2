@@ -3,23 +3,22 @@ using System.Runtime.CompilerServices;
 
 namespace SharpFastNoise2
 {
-    public struct CellularValue<m32, f32, i32, TFunc> :
+    public struct CellularValue<m32, f32, i32, F> :
         INoiseGenerator2D<f32, i32>,
         //INoiseGenerator3D<f32, i32>,
         INoiseGenerator4D<f32, i32>
         where m32 : unmanaged
         where f32 : unmanaged
         where i32 : unmanaged
-        where TFunc : unmanaged, IFunctionList<m32, f32, i32>
+        where F : unmanaged, IFunctionList<m32, f32, i32>
     {
         private const int kMaxDistanceCount = 4;
 
-        private static TFunc F = default;
-        private static Utils<m32, f32, i32, TFunc> Utils = default;
+        private static Utils<m32, f32, i32, F> Utils = default;
 
         private int _valueIndex;
 
-        public static int Count => TFunc.Count;
+        public static int Count => F.Count;
 
         public DistanceFunction DistanceFunction { get; set; }
 

@@ -11,21 +11,21 @@ namespace SharpFastNoise2
             throw new ArgumentException("The destination is too small.", spanName);
         }
 
-        public static OutputMinMax GenTileable2D<TNGen>(
-            this TNGen generator,
+        public static OutputMinMax GenTileable2D<G>(
+            this G generator,
             Span<float> noiseOut,
             int width,
             int height,
             float frequency,
             int seed)
-            where TNGen : INoiseGenerator4D<float, int>
+            where G : INoiseGenerator4D<float, int>
         {
-            return generator.GenTileable2D<int, float, int, ScalarFunctions, TNGen>(
+            return generator.GenTileable2D<int, float, int, ScalarFunctions, G>(
                 noiseOut, width, height, frequency, seed);
         }
 
-        public static OutputMinMax GenTileable2D<m32, f32, i32, TFunc, TNGen>(
-            this TNGen generator,
+        public static OutputMinMax GenTileable2D<m32, f32, i32, F, G>(
+            this G generator,
             Span<float> noiseOut,
             int width,
             int height,
@@ -34,11 +34,10 @@ namespace SharpFastNoise2
             where m32 : unmanaged
             where f32 : unmanaged
             where i32 : unmanaged
-            where TFunc : unmanaged, IFunctionList<m32, f32, i32>
-            where TNGen : INoiseGenerator4D<f32, i32>
+            where F : unmanaged, IFunctionList<m32, f32, i32>
+            where G : INoiseGenerator4D<f32, i32>
         {
-            TFunc F = new();
-            FastSimd<m32, f32, i32, TFunc> FSS = new();
+            FastSimd<m32, f32, i32, F> FSS = new();
 
             int totalValues = width * height;
             if (noiseOut.Length < totalValues)
@@ -67,7 +66,7 @@ namespace SharpFastNoise2
 
             xIdx = F.Add(xIdx, F.Incremented_i32());
 
-            while (index < totalValues - TFunc.Count)
+            while (index < totalValues - F.Count)
             {
                 f32 xF = F.Mul(F.Converti32_f32(xIdx), xMul);
                 f32 yF = F.Mul(F.Converti32_f32(yIdx), yMul);
@@ -83,8 +82,8 @@ namespace SharpFastNoise2
                 min = F.Min_f32(min, gen);
                 max = F.Max_f32(max, gen);
 
-                index += TFunc.Count;
-                xIdx = F.Add(xIdx, F.Broad_i32(TFunc.Count));
+                index += F.Count;
+                xIdx = F.Add(xIdx, F.Broad_i32(F.Count));
 
                 m32 xReset = F.GreaterThan(xIdx, xMax);
                 yIdx = FSS.MaskedIncrement_i32(yIdx, xReset);
@@ -102,12 +101,12 @@ namespace SharpFastNoise2
 
                 f32 gen = generator.Gen(vSeed, xPos, yPos, zPos, wPos);
 
-                return DoRemaining<m32, f32, i32, TFunc>(
+                return DoRemaining<m32, f32, i32, F>(
                     ref dst, totalValues, index, min, max, gen);
             }
         }
 
-        private static OutputMinMax DoRemaining<m32, f32, i32, TFunc>(
+        private static OutputMinMax DoRemaining<m32, f32, i32, F>(
             ref float noiseOut,
             int totalValues,
             int index,
@@ -117,14 +116,12 @@ namespace SharpFastNoise2
             where m32 : unmanaged
             where f32 : unmanaged
             where i32 : unmanaged
-            where TFunc : unmanaged, IFunctionList<m32, f32, i32>
+            where F : unmanaged, IFunctionList<m32, f32, i32>
         {
-            TFunc F = new();
-
             OutputMinMax minMax = default;
             int remaining = totalValues - index;
 
-            if (remaining == TFunc.Count)
+            if (remaining == F.Count)
             {
                 F.Store_f32(ref Unsafe.Add(ref noiseOut, index), finalGen);
 
@@ -145,7 +142,7 @@ namespace SharpFastNoise2
                 while (++index < totalValues);
             }
 
-            for (int i = 0; i < TFunc.Count; i++)
+            for (int i = 0; i < F.Count; i++)
             {
                 minMax.Apply(F.Extract_f32(min, i), F.Extract_f32(max, i));
             }
