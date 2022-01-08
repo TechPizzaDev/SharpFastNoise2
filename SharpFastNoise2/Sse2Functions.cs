@@ -13,7 +13,7 @@ namespace SharpFastNoise2
     {
         public static bool IsSupported => Sse2.IsSupported;
 
-        public static int Count => 4;
+        public static int Count => f32.Count;
 
         // Broadcast
 
