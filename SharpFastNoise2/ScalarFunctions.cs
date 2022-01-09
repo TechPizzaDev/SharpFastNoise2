@@ -135,11 +135,19 @@ namespace SharpFastNoise2
 
         public static f32 Min_f32(f32 a, f32 b)
         {
+            if (Sse.IsSupported)
+            {
+                return Sse.MinScalar(Vector128.CreateScalarUnsafe(a), Vector128.CreateScalarUnsafe(b)).ToScalar();
+            }
             return MathF.Min(a, b);
         }
 
         public static f32 Max_f32(f32 a, f32 b)
         {
+            if (Sse.IsSupported)
+            {
+                return Sse.MaxScalar(Vector128.CreateScalarUnsafe(a), Vector128.CreateScalarUnsafe(b)).ToScalar();
+            }
             return MathF.Max(a, b);
         }
 
