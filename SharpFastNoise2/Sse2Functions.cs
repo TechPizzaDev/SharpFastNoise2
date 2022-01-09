@@ -262,10 +262,9 @@ namespace SharpFastNoise2
             }
             else
             {
-                f32 f1 = Vector128.Create(1f);
                 f32 fval = Sse2.ConvertToVector128Single(Sse2.ConvertToVector128Int32WithTruncation(a));
                 f32 cmp = Sse.CompareLessThan(a, fval);
-                return Sse.Subtract(fval, Sse.And(cmp, f1));
+                return Sse.Subtract(fval, Sse.And(cmp, Vector128.Create(1f)));
             }
         }
 
@@ -278,10 +277,9 @@ namespace SharpFastNoise2
             }
             else
             {
-                f32 f1 = Vector128.Create(1f);
                 f32 fval = Sse2.ConvertToVector128Single(Sse2.ConvertToVector128Int32WithTruncation(a));
                 f32 cmp = Sse.CompareLessThan(fval, a);
-                return Sse.Add(fval, Sse.And(cmp, f1));
+                return Sse.Add(fval, Sse.And(cmp, Vector128.Create(1f)));
             }
         }
 

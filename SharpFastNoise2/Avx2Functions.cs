@@ -184,8 +184,7 @@ namespace SharpFastNoise2
 
         public static f32 Abs_f32(f32 a)
         {
-            i32 intMax = Avx2.ShiftRightLogical(Vector256<int>.AllBitsSet, 1);
-            return And(a, intMax.AsSingle());
+            return And(a, Avx2.ShiftRightLogical(m32.AllBitsSet, 1).AsSingle());
         }
 
         public static i32 Abs_i32(i32 a)
