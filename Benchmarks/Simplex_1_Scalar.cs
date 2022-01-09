@@ -7,9 +7,6 @@ namespace Benchmarks
 
     public class Simplex_1_Scalar : BenchNoiseBase<int, float, int, ScalarFunctions>
     {
-        [Params(16 * 16, 16 * 16 * 16, 32 * 32 * 32)]
-        public int Count { get; set; }
-
         [Benchmark]
         public void Simplex_2Dx1()
         {

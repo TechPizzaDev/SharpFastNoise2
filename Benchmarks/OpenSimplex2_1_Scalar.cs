@@ -7,9 +7,6 @@ namespace Benchmarks
 
     public class OpenSimplex2_1_Scalar : BenchNoiseBase<int, float, int, ScalarFunctions>
     {
-        [Params(16 * 16, 16 * 16 * 16, 32 * 32 * 32)]
-        public int Count { get; set; }
-
         [Benchmark]
         public void OpenSimplex2_2Dx1()
         {
