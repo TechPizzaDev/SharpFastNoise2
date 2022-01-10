@@ -2,7 +2,7 @@
 
 namespace SharpFastNoise2
 {
-    public struct FastSimd<m32, f32, i32, F>
+    public partial struct Utils<m32, f32, i32, F>
         where m32 : unmanaged
         where f32 : unmanaged
         where i32 : unmanaged
@@ -10,73 +10,73 @@ namespace SharpFastNoise2
     {
         // Masked float
 
-        public f32 MaskedAdd_f32(f32 a, f32 b, m32 m)
+        public static f32 MaskedAdd_f32(f32 a, f32 b, m32 m)
         {
             return F.Add(a, F.Mask_f32(b, m));
         }
 
-        public f32 MaskedSub_f32(f32 a, f32 b, m32 m)
+        public static f32 MaskedSub_f32(f32 a, f32 b, m32 m)
         {
             return F.Sub(a, F.Mask_f32(b, m));
         }
 
-        public f32 MaskedMul_f32(f32 a, f32 b, m32 m)
+        public static f32 MaskedMul_f32(f32 a, f32 b, m32 m)
         {
             return F.Mul(a, F.Mask_f32(b, m));
         }
 
         // Masked int32
 
-        public i32 MaskedAdd_i32(i32 a, i32 b, m32 m)
+        public static i32 MaskedAdd_i32(i32 a, i32 b, m32 m)
         {
             return F.Add(a, F.Mask_i32(b, m));
         }
 
-        public i32 MaskedSub_i32(i32 a, i32 b, m32 m)
+        public static i32 MaskedSub_i32(i32 a, i32 b, m32 m)
         {
             return F.Sub(a, F.Mask_i32(b, m));
         }
 
-        public i32 MaskedMul_i32(i32 a, i32 b, m32 m)
+        public static i32 MaskedMul_i32(i32 a, i32 b, m32 m)
         {
             return F.Mul(a, F.Mask_i32(b, m));
         }
 
         // NMasked float
 
-        public f32 NMaskedAdd_f32(f32 a, f32 b, m32 m)
+        public static f32 NMaskedAdd_f32(f32 a, f32 b, m32 m)
         {
             return F.Add(a, F.NMask_f32(b, m));
         }
 
-        public f32 NMaskedSub_f32(f32 a, f32 b, m32 m)
+        public static f32 NMaskedSub_f32(f32 a, f32 b, m32 m)
         {
             return F.Sub(a, F.NMask_f32(b, m));
         }
 
-        public f32 NMaskedMul_f32(f32 a, f32 b, m32 m)
+        public static f32 NMaskedMul_f32(f32 a, f32 b, m32 m)
         {
             return F.Mul(a, F.NMask_f32(b, m));
         }
 
         // NMasked int32
 
-        public i32 NMaskedAdd_i32(i32 a, i32 b, m32 m)
+        public static i32 NMaskedAdd_i32(i32 a, i32 b, m32 m)
         {
             return F.Add(a, F.NMask_i32(b, m));
         }
 
-        public i32 NMaskedSub_i32(i32 a, i32 b, m32 m)
+        public static i32 NMaskedSub_i32(i32 a, i32 b, m32 m)
         {
             return F.Sub(a, F.NMask_i32(b, m));
         }
 
-        public i32 NMaskedMul_i32(i32 a, i32 b, m32 m)
+        public static i32 NMaskedMul_i32(i32 a, i32 b, m32 m)
         {
             return F.Mul(a, F.NMask_i32(b, m));
         }
 
-        public i32 MaskedIncrement_i32(i32 a, m32 m)
+        public static i32 MaskedIncrement_i32(i32 a, m32 m)
         {
             if (typeof(i32) == typeof(m32))
                 return F.Sub(a, Unsafe.As<m32, i32>(ref m));
@@ -84,7 +84,7 @@ namespace SharpFastNoise2
                 return MaskedSub_i32(a, F.Broad_i32(-1), m);
         }
 
-        public i32 MaskedDecrement_i32(i32 a, m32 m)
+        public static i32 MaskedDecrement_i32(i32 a, m32 m)
         {
             if (typeof(i32) == typeof(m32))
                 return F.Add(a, Unsafe.As<m32, i32>(ref m));
@@ -94,7 +94,7 @@ namespace SharpFastNoise2
 
         // Trig
 
-        public f32 Cos_f32(f32 value)
+        public static f32 Cos_f32(f32 value)
         {
             unchecked
             {
@@ -127,12 +127,12 @@ namespace SharpFastNoise2
             }
         }
 
-        public f32 Sin_f32(f32 value)
+        public static f32 Sin_f32(f32 value)
         {
             return Cos_f32(F.Sub(F.Broad_f32(1.570796f), value));
         }
 
-        public f32 Exp_f32(f32 x)
+        public static f32 Exp_f32(f32 x)
         {
             x = F.Min_f32(x, F.Broad_f32(88.3762626647949f));
             x = F.Max_f32(x, F.Broad_f32(-88.3762626647949f));
@@ -171,7 +171,7 @@ namespace SharpFastNoise2
             return F.Mul(y, pow2n);
         }
 
-        public f32 Log_f32(f32 x)
+        public static f32 Log_f32(f32 x)
         {
             m32 validMask = F.GreaterThan(x, F.Broad_f32(0));
 
@@ -225,7 +225,7 @@ namespace SharpFastNoise2
             return F.Mask_f32(x, validMask);
         }
 
-        public f32 Pow_f32(f32 value, f32 pow)
+        public static f32 Pow_f32(f32 value, f32 pow)
         {
             return Exp_f32(F.Mul(pow, Log_f32(value)));
         }

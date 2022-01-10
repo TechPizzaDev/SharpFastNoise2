@@ -14,8 +14,6 @@ namespace SharpFastNoise2
     {
         private const int kMaxDistanceCount = 4;
 
-        private static Utils<m32, f32, i32, F> Utils = default;
-
         private int _valueIndex;
 
         public static int Count => F.Count;
@@ -57,7 +55,7 @@ namespace SharpFastNoise2
                 i32 yc = ycBase;
                 for (int yi = 0; yi < 3; yi++)
                 {
-                    i32 hash = Utils.HashPrimesHB(seed, xc, yc);
+                    i32 hash = Utils<m32, f32, i32, F>.HashPrimesHB(seed, xc, yc);
                     f32 xd = F.Sub(F.Converti32_f32(F.And(hash, F.Broad_i32(0xffff))), F.Broad_f32(0xffff / 2.0f));
                     f32 yd = F.Sub(F.Converti32_f32(F.And(F.RightShift(hash, 16), F.Broad_i32(0xffff))), F.Broad_f32(0xffff / 2.0f));
 
@@ -66,7 +64,7 @@ namespace SharpFastNoise2
                     yd = F.FMulAdd_f32(yd, invMag, ycf);
 
                     f32 newCellValue = F.Mul(F.Broad_f32((float)(1.0 / int.MaxValue)), F.Converti32_f32(hash));
-                    f32 newDistance = Utils.CalcDistance(DistanceFunction, xd, yd);
+                    f32 newDistance = Utils<m32, f32, i32, F>.CalcDistance(DistanceFunction, xd, yd);
 
                     for (int i = 0; ; i++)
                     {
@@ -145,7 +143,7 @@ namespace SharpFastNoise2
                         i32 wc = wcBase;
                         for (int wi = 0; wi < 3; wi++)
                         {
-                            i32 hash = Utils.HashPrimesHB(seed, xc, yc, zc, wc);
+                            i32 hash = Utils<m32, f32, i32, F>.HashPrimesHB(seed, xc, yc, zc, wc);
                             f32 xd = F.Sub(F.Converti32_f32(F.And(hash, F.Broad_i32(0xff))), F.Broad_f32(0xff / 2.0f));
                             f32 yd = F.Sub(F.Converti32_f32(F.And(F.RightShift(hash, 8), F.Broad_i32(0xff))), F.Broad_f32(0xff / 2.0f));
                             f32 zd = F.Sub(F.Converti32_f32(F.And(F.RightShift(hash, 16), F.Broad_i32(0xff))), F.Broad_f32(0xff / 2.0f));
@@ -160,7 +158,7 @@ namespace SharpFastNoise2
                             wd = F.FMulAdd_f32(wd, invMag, wcf);
 
                             f32 newCellValue = F.Mul(F.Broad_f32((float)(1.0 / int.MaxValue)), F.Converti32_f32(hash));
-                            f32 newDistance = Utils.CalcDistance(DistanceFunction, xd, yd, zd, wd);
+                            f32 newDistance = Utils<m32, f32, i32, F>.CalcDistance(DistanceFunction, xd, yd, zd, wd);
 
                             for (int i = 0; ; i++)
                             {

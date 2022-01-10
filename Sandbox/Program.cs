@@ -70,7 +70,6 @@ namespace Sandbox
 
                 float pi = MathF.PI;
                 var noise = new CellularValue<int, float, int, ScalarFunctions>();
-                var fss = new FastSimd<int, float, int, ScalarFunctions>();
 
                 for (int y = 0; y < 256; y++)
                 {
@@ -79,10 +78,10 @@ namespace Sandbox
                         float s = x / 256f;
                         float t = y / 256f;
 
-                        float nx = fss.Cos_f32(s * 2 * pi) * dx / (2 * pi);
-                        float ny = fss.Cos_f32(t * 2 * pi) * dy / (2 * pi);
-                        float nz = fss.Sin_f32(s * 2 * pi) * dx / (2 * pi);
-                        float nw = fss.Sin_f32(t * 2 * pi) * dy / (2 * pi);
+                        float nx = Utils<int, float, int, ScalarFunctions>.Cos_f32(s * 2 * pi) * dx / (2 * pi);
+                        float ny = Utils<int, float, int, ScalarFunctions>.Cos_f32(t * 2 * pi) * dy / (2 * pi);
+                        float nz = Utils<int, float, int, ScalarFunctions>.Sin_f32(s * 2 * pi) * dx / (2 * pi);
+                        float nw = Utils<int, float, int, ScalarFunctions>.Sin_f32(t * 2 * pi) * dy / (2 * pi);
 
                         img[x, y] = new L16((ushort)((noise.Gen(1234, nx, ny, nz, nw) + 1f) * 0.5f * ushort.MaxValue));
                     }
@@ -357,26 +356,26 @@ namespace Sandbox
         }
 
 
-        public static void WriteTileable<m32, f32, i32, TFunc, TNGen>(
+        public static void WriteTileable<m32, f32, i32, F, G>(
             string basePath,
-            TNGen generator,
+            G generator,
             int seed,
             int width,
             int height)
             where m32 : unmanaged
             where f32 : unmanaged
             where i32 : unmanaged
-            where TFunc : unmanaged, IFunctionList<m32, f32, i32>
-            where TNGen : INoiseGenerator4D<f32, i32>
+            where F : unmanaged, IFunctionList<m32, f32, i32>
+            where G : INoiseGenerator4D<f32, i32>
         {
             float[] dst = new float[width * height];
 
-            generator.GenTileable2D<m32, f32, i32, TFunc, TNGen>(
+            generator.GenTileable2D<m32, f32, i32, F, G>(
                 dst.AsSpan(), width, height, 1f / 32f, seed);
 
             using Image<L16> image = new Image<L16>(width, height);
 
-            string path = string.Format(basePath, $"x{TNGen.Count}") + ".png";
+            string path = string.Format(basePath, $"x{G.Count}") + ".png";
             Console.WriteLine("Writing " + path);
 
             for (int y = 0; y < image.Height; y++)

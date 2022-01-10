@@ -37,8 +37,6 @@ namespace SharpFastNoise2
             where F : unmanaged, IFunctionList<m32, f32, i32>
             where G : INoiseGenerator4D<f32, i32>
         {
-            FastSimd<m32, f32, i32, F> FSS = new();
-
             int totalValues = width * height;
             if (noiseOut.Length < totalValues)
                 ThrowNotEnoughSpace(nameof(noiseOut));
@@ -49,7 +47,7 @@ namespace SharpFastNoise2
             i32 xIdx = F.Broad_i32(0);
             i32 yIdx = F.Broad_i32(0);
 
-            i32 xSizeV = F.Broad_i32(width); 
+            i32 xSizeV = F.Broad_i32(width);
             i32 xMax = F.Add(xSizeV, F.Add(xIdx, F.Broad_i32(-1)));
             i32 vSeed = F.Broad_i32(seed);
 
@@ -71,10 +69,10 @@ namespace SharpFastNoise2
                 f32 xF = F.Mul(F.Converti32_f32(xIdx), xMul);
                 f32 yF = F.Mul(F.Converti32_f32(yIdx), yMul);
 
-                f32 xPos = F.Mul(FSS.Cos_f32(xF), xFreq);
-                f32 yPos = F.Mul(FSS.Cos_f32(yF), yFreq);
-                f32 zPos = F.Mul(FSS.Sin_f32(xF), xFreq);
-                f32 wPos = F.Mul(FSS.Sin_f32(yF), yFreq);
+                f32 xPos = F.Mul(Utils<m32, f32, i32, F>.Cos_f32(xF), xFreq);
+                f32 yPos = F.Mul(Utils<m32, f32, i32, F>.Cos_f32(yF), yFreq);
+                f32 zPos = F.Mul(Utils<m32, f32, i32, F>.Sin_f32(xF), xFreq);
+                f32 wPos = F.Mul(Utils<m32, f32, i32, F>.Sin_f32(yF), yFreq);
 
                 f32 gen = generator.Gen(vSeed, xPos, yPos, zPos, wPos);
                 F.Store_f32(ref Unsafe.Add(ref dst, index), gen);
@@ -86,18 +84,18 @@ namespace SharpFastNoise2
                 xIdx = F.Add(xIdx, F.Broad_i32(F.Count));
 
                 m32 xReset = F.GreaterThan(xIdx, xMax);
-                yIdx = FSS.MaskedIncrement_i32(yIdx, xReset);
-                xIdx = FSS.MaskedSub_i32(xIdx, xSizeV, xReset);
+                yIdx = Utils<m32, f32, i32, F>.MaskedIncrement_i32(yIdx, xReset);
+                xIdx = Utils<m32, f32, i32, F>.MaskedSub_i32(xIdx, xSizeV, xReset);
             }
 
             {
                 f32 xF = F.Mul(F.Converti32_f32(xIdx), xMul);
                 f32 yF = F.Mul(F.Converti32_f32(yIdx), yMul);
 
-                f32 xPos = F.Mul(FSS.Cos_f32(xF), xFreq);
-                f32 yPos = F.Mul(FSS.Cos_f32(yF), yFreq);
-                f32 zPos = F.Mul(FSS.Sin_f32(xF), xFreq);
-                f32 wPos = F.Mul(FSS.Sin_f32(yF), yFreq);
+                f32 xPos = F.Mul(Utils<m32, f32, i32, F>.Cos_f32(xF), xFreq);
+                f32 yPos = F.Mul(Utils<m32, f32, i32, F>.Cos_f32(yF), yFreq);
+                f32 zPos = F.Mul(Utils<m32, f32, i32, F>.Sin_f32(xF), xFreq);
+                f32 wPos = F.Mul(Utils<m32, f32, i32, F>.Sin_f32(yF), yFreq);
 
                 f32 gen = generator.Gen(vSeed, xPos, yPos, zPos, wPos);
 
