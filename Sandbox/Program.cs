@@ -2,7 +2,6 @@
 using System.Diagnostics;
 using System.IO;
 using System.Runtime.Intrinsics;
-using System.Runtime.Intrinsics.X86;
 using System.Runtime.Versioning;
 using SharpFastNoise2;
 using SixLabors.ImageSharp;
@@ -50,7 +49,7 @@ namespace Sandbox
                     seed,
                     256,
                     256);
-                
+
                 WriteTileable<
                     int, float, int, ScalarFunctions,
                     CellularValue<int, float, int, ScalarFunctions>>(
@@ -134,7 +133,7 @@ namespace Sandbox
                     256,
                     256);
             }
-            
+
             if (true)
             {
                 string path = Path.Combine(basePath, "Perlin_{0}");
@@ -255,7 +254,8 @@ namespace Sandbox
             where F : unmanaged, IFunctionList<m32, f32, i32>
             where G : INoiseGenerator
         {
-            using Image<L16> image = new Image<L16>(width, height);
+            using Image<L16> image = new(width, height);
+            Stopwatch w = new();
 
             var vSeed = F.Broad_i32(seed);
             var vIncrementX = F.Div(F.Add(F.Incremented_f32(), F.Broad_f32(offsetX)), F.Broad_f32(32));
@@ -263,8 +263,9 @@ namespace Sandbox
             if (generator is INoiseGenerator4D<f32, i32> gen4D)
             {
                 string path = string.Format(basePath, $"4Dx{G.Count}") + ".png";
-                Console.WriteLine("Writing " + path);
+                Console.Write($"Generating \"{path}\" ");
 
+                w.Restart();
                 for (int y = 0; y < image.Height; y++)
                 {
                     f32 vy = F.Broad_f32(y / 32f);
@@ -281,14 +282,21 @@ namespace Sandbox
                     }
                 }
 
+                w.Stop();
+                Console.Write($"({w.Elapsed.TotalMilliseconds,4:0.0}ms)");
+
+                w.Restart();
                 image.Save(path);
+                w.Stop();
+                Console.WriteLine($" ({w.Elapsed.TotalMilliseconds,4:0.0}ms encode)");
             }
 
             if (generator is INoiseGenerator3D<f32, i32> gen3D)
             {
                 string path = string.Format(basePath, $"3Dx{G.Count}") + ".png";
-                Console.WriteLine("Writing " + path);
+                Console.Write($"Generating \"{path}\" ");
 
+                w.Restart();
                 for (int y = 0; y < image.Height; y++)
                 {
                     f32 vy = F.Broad_f32(y / 32f);
@@ -305,14 +313,21 @@ namespace Sandbox
                     }
                 }
 
+                w.Stop();
+                Console.Write($"({w.Elapsed.TotalMilliseconds,4:0.0}ms)");
+
+                w.Restart();
                 image.Save(path);
+                w.Stop();
+                Console.WriteLine($" ({w.Elapsed.TotalMilliseconds,4:0.0}ms encode)");
             }
 
             if (generator is INoiseGenerator2D<f32, i32> gen2D)
             {
                 string path = string.Format(basePath, $"2Dx{G.Count}") + ".png";
-                Console.WriteLine("Writing " + path);
+                Console.Write($"Generating \"{path}\" ");
 
+                w.Restart();
                 for (int y = 0; y < image.Height; y++)
                 {
                     f32 vy = F.Broad_f32(y / 32f);
@@ -329,14 +344,21 @@ namespace Sandbox
                     }
                 }
 
+                w.Stop();
+                Console.Write($"({w.Elapsed.TotalMilliseconds,4:0.0}ms)");
+
+                w.Restart();
                 image.Save(path);
+                w.Stop();
+                Console.WriteLine($" ({w.Elapsed.TotalMilliseconds,4:0.0}ms encode)");
             }
 
             if (generator is INoiseGenerator1D<f32, i32> gen1D)
             {
                 string path = string.Format(basePath, $"1Dx{G.Count}") + ".png";
-                Console.WriteLine("Writing " + path);
+                Console.Write($"Generating \"{path}\" ");
 
+                w.Restart();
                 for (int y = 0; y < image.Height; y++)
                 {
                     for (int x = 0; x < image.Width; x += G.Count)
@@ -351,10 +373,15 @@ namespace Sandbox
                     }
                 }
 
+                w.Stop();
+                Console.Write($"({w.Elapsed.TotalMilliseconds,4:0.0}ms)");
+
+                w.Restart();
                 image.Save(path);
+                w.Stop();
+                Console.WriteLine($" ({w.Elapsed.TotalMilliseconds,4:0.0}ms encode)");
             }
         }
-
 
         public static void WriteTileable<m32, f32, i32, F, G>(
             string basePath,
@@ -369,23 +396,35 @@ namespace Sandbox
             where G : INoiseGenerator4D<f32, i32>
         {
             float[] dst = new float[width * height];
+            string path = string.Format(basePath, $"x{G.Count}") + ".png";
 
+            Console.Write("Generating ");
+            Stopwatch w = new();
+
+            w.Start();
             generator.GenTileable2D<m32, f32, i32, F, G>(
                 dst.AsSpan(), width, height, 1f / 32f, seed);
+            w.Stop();
 
-            using Image<L16> image = new Image<L16>(width, height);
+            Console.Write($"({w.Elapsed.TotalMilliseconds,6:0.0}ms) \"{path}\" ");
 
-            string path = string.Format(basePath, $"x{G.Count}") + ".png";
-            Console.WriteLine("Writing " + path);
+            w.Restart();
+            using Image<L16> image = new(width, height);
 
             for (int y = 0; y < image.Height; y++)
             {
-                for (int x = 0; x < image.Width; x++)
+                Span<L16> row = image.GetPixelRowSpan(y);
+                Span<float> dstSlice = dst.AsSpan(y * row.Length, row.Length);
+
+                for (int x = 0; x < row.Length; x++)
                 {
-                    float value = dst[y * image.Width + x] + 1;
-                    image[x, y] = new L16((ushort)(value * 0.5f * ushort.MaxValue));
+                    float value = dstSlice[x] + 1;
+                    row[x] = new L16((ushort)(value * 0.5f * ushort.MaxValue));
                 }
             }
+            w.Stop();
+
+            Console.WriteLine($"({w.Elapsed.TotalMilliseconds,4:0.0}ms encode)");
 
             image.Save(path);
         }
