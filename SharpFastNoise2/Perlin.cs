@@ -1,4 +1,5 @@
 ﻿using System.Runtime.CompilerServices;
+using SharpFastNoise2.Generators;
 
 namespace SharpFastNoise2
 {
@@ -14,7 +15,7 @@ namespace SharpFastNoise2
         public static int Count => F.Count;
 
         [MethodImpl(MethodImplOptions.AggressiveOptimization)]
-        public f32 Gen(i32 seed, f32 x, f32 y)
+        public f32 Gen(f32 x, f32 y, i32 seed)
         {
             f32 xs = F.Floor_f32(x);
             f32 ys = F.Floor_f32(y);
@@ -45,7 +46,7 @@ namespace SharpFastNoise2
         }
 
         [MethodImpl(MethodImplOptions.AggressiveOptimization)]
-        public f32 Gen(i32 seed, f32 x, f32 y, f32 z)
+        public f32 Gen(f32 x, f32 y, f32 z, i32 seed)
         {
             f32 xs = F.Floor_f32(x);
             f32 ys = F.Floor_f32(y);
@@ -94,7 +95,7 @@ namespace SharpFastNoise2
         }
 
         [MethodImpl(MethodImplOptions.AggressiveOptimization)]
-        public f32 Gen(i32 seed, f32 x, f32 y, f32 z, f32 w)
+        public f32 Gen(f32 x, f32 y, f32 z, f32 w, i32 seed)
         {
             f32 xs = F.Floor_f32(x);
             f32 ys = F.Floor_f32(y);

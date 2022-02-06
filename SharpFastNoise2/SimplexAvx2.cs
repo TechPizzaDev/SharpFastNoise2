@@ -1,4 +1,5 @@
 ﻿using System.Runtime.Intrinsics;
+using SharpFastNoise2.Generators;
 
 namespace SharpFastNoise2
 {
@@ -16,14 +17,14 @@ namespace SharpFastNoise2
 
         public static int Count => Simplex<m32, f32, i32, Avx2Functions>.Count;
 
-        public f32 Gen(i32 seed, f32 x, f32 y)
+        public f32 Gen(f32 x, f32 y, i32 seed)
         {
-            return _noise.Gen(seed, x, y);
+            return _noise.Gen(x, y, seed);
         }
 
-        public f32 Gen(i32 seed, f32 x, f32 y, f32 z)
+        public f32 Gen(f32 x, f32 y, f32 z, i32 seed)
         {
-            return _noise.Gen(seed, x, y, z);
+            return _noise.Gen(x, y, z, seed);
         }
     }
 }

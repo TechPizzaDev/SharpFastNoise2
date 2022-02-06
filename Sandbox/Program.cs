@@ -4,6 +4,7 @@ using System.IO;
 using System.Runtime.Intrinsics;
 using System.Runtime.Versioning;
 using SharpFastNoise2;
+using SharpFastNoise2.Generators;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
@@ -82,7 +83,7 @@ namespace Sandbox
                         float nz = Utils<int, float, int, ScalarFunctions>.Sin_f32(s * 2 * pi) * dx / (2 * pi);
                         float nw = Utils<int, float, int, ScalarFunctions>.Sin_f32(t * 2 * pi) * dy / (2 * pi);
 
-                        img[x, y] = new L16((ushort)((noise.Gen(1234, nx, ny, nz, nw) + 1f) * 0.5f * ushort.MaxValue));
+                        img[x, y] = new L16((ushort)((noise.Gen(nx, ny, nz, nw, 1234) + 1f) * 0.5f * ushort.MaxValue));
                     }
                 }
 
@@ -273,7 +274,7 @@ namespace Sandbox
                     for (int x = 0; x < image.Width; x += G.Count)
                     {
                         f32 vx = F.Add(F.Broad_f32(x / 32f), vIncrementX);
-                        f32 noise = gen4D.Gen(vSeed, vx, vy, default, default);
+                        f32 noise = gen4D.Gen(vx, vy, default, default, vSeed);
 
                         for (int i = 0; i < G.Count; i++)
                         {
@@ -304,7 +305,7 @@ namespace Sandbox
                     for (int x = 0; x < image.Width; x += G.Count)
                     {
                         f32 vx = F.Add(F.Broad_f32(x / 32f), vIncrementX);
-                        f32 noise = gen3D.Gen(vSeed, vx, vy, default);
+                        f32 noise = gen3D.Gen(vx, vy, default, vSeed);
 
                         for (int i = 0; i < G.Count; i++)
                         {
@@ -335,7 +336,7 @@ namespace Sandbox
                     for (int x = 0; x < image.Width; x += G.Count)
                     {
                         f32 vx = F.Add(F.Broad_f32(x / 32f), vIncrementX);
-                        f32 noise = gen2D.Gen(vSeed, vx, vy);
+                        f32 noise = gen2D.Gen(vx, vy, vSeed);
 
                         for (int i = 0; i < G.Count; i++)
                         {
@@ -364,7 +365,7 @@ namespace Sandbox
                     for (int x = 0; x < image.Width; x += G.Count)
                     {
                         f32 vx = F.Add(F.Broad_f32(x / 32f), vIncrementX);
-                        f32 noise = gen1D.Gen(vSeed, vx);
+                        f32 noise = gen1D.Gen(vx, vSeed);
 
                         for (int i = 0; i < G.Count; i++)
                         {

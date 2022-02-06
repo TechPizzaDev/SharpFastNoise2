@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Runtime.CompilerServices;
+using SharpFastNoise2.Generators;
 
 namespace SharpFastNoise2
 {
@@ -27,7 +28,7 @@ namespace SharpFastNoise2
         }
 
         [MethodImpl(MethodImplOptions.AggressiveOptimization)]
-        public unsafe f32 Gen(i32 seed, f32 x, f32 y)
+        public unsafe f32 Gen(f32 x, f32 y, i32 seed)
         {
             f32 jitter = F.Mul(F.Broad_f32(Cellular.kJitter2D), F.Broad_f32(1f)); //this->GetSourceValue(mJitterModifier, seed, x, y);
             f32* value = stackalloc f32[kMaxDistanceCount];
@@ -101,7 +102,7 @@ namespace SharpFastNoise2
         //}
 
         [MethodImpl(MethodImplOptions.AggressiveOptimization)]
-        public unsafe f32 Gen(i32 seed, f32 x, f32 y, f32 z, f32 w)
+        public unsafe f32 Gen(f32 x, f32 y, f32 z, f32 w, i32 seed)
         {
             f32 jitter = F.Mul(F.Broad_f32(Cellular.kJitter4D), F.Broad_f32(1)); //this->GetSourceValue(mJitterModifier, seed, x, y, z, w);
             f32* value = stackalloc f32[kMaxDistanceCount];

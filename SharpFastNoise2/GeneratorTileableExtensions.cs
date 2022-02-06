@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using SharpFastNoise2.Generators;
 
 namespace SharpFastNoise2
 {
@@ -74,7 +75,7 @@ namespace SharpFastNoise2
                 f32 zPos = F.Mul(Utils<m32, f32, i32, F>.Sin_f32(xF), xFreq);
                 f32 wPos = F.Mul(Utils<m32, f32, i32, F>.Sin_f32(yF), yFreq);
 
-                f32 gen = generator.Gen(vSeed, xPos, yPos, zPos, wPos);
+                f32 gen = generator.Gen(xPos, yPos, zPos, wPos, vSeed);
                 F.Store_f32(ref Unsafe.Add(ref dst, index), gen);
 
                 min = F.Min_f32(min, gen);
@@ -97,7 +98,7 @@ namespace SharpFastNoise2
                 f32 zPos = F.Mul(Utils<m32, f32, i32, F>.Sin_f32(xF), xFreq);
                 f32 wPos = F.Mul(Utils<m32, f32, i32, F>.Sin_f32(yF), yFreq);
 
-                f32 gen = generator.Gen(vSeed, xPos, yPos, zPos, wPos);
+                f32 gen = generator.Gen(xPos, yPos, zPos, wPos, vSeed);
 
                 return DoRemaining<m32, f32, i32, F>(
                     ref dst, totalValues, index, min, max, gen);

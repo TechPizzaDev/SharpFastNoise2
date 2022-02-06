@@ -1,5 +1,6 @@
 ﻿using BenchmarkDotNet.Attributes;
 using SharpFastNoise2;
+using SharpFastNoise2.Generators;
 
 namespace Benchmarks
 {
@@ -28,7 +29,7 @@ namespace Benchmarks
             var seed = F.Broad_i32(Seed);
             for (int x = 0; x < count; x += F.Count)
             {
-                noise.Gen(seed, F.Broad_f32(x * Mul));
+                noise.Gen(F.Broad_f32(x * Mul), seed);
             }
         }
 
@@ -44,7 +45,7 @@ namespace Benchmarks
             var seed = F.Broad_i32(Seed);
             for (int x = 0; x < count; x += F.Count)
             {
-                noise.Gen(seed, F.Broad_f32(x * Mul), default);
+                noise.Gen(F.Broad_f32(x * Mul), default, seed);
             }
         }
 
@@ -60,7 +61,7 @@ namespace Benchmarks
             var seed = F.Broad_i32(Seed);
             for (int x = 0; x < count; x += F.Count)
             {
-                noise.Gen(seed, F.Broad_f32(x * Mul), default, default);
+                noise.Gen(F.Broad_f32(x * Mul), default, default, seed);
             }
         }
 
@@ -76,7 +77,7 @@ namespace Benchmarks
             var seed = F.Broad_i32(Seed);
             for (int x = 0; x < count; x += F.Count)
             {
-                noise.Gen(seed, F.Broad_f32(x * Mul), default, default, default);
+                noise.Gen(F.Broad_f32(x * Mul), default, default, default, seed);
             }
         }
     }
