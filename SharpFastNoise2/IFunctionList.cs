@@ -18,6 +18,10 @@
 
         static abstract i32 Load_i32(ref byte p);
 
+        static abstract f32 Load_f32(ref float p);
+
+        static abstract i32 Load_i32(ref int p);
+
         // Incremented
 
         static abstract f32 Incremented_f32();

@@ -23,7 +23,7 @@ namespace Sandbox
 
             if (true)
             {
-                WriteAll(basePath, seed, offsetX);
+                WriteAll(basePath, 1024, 1024, seed, offsetX);
             }
 
             if (true)
@@ -34,31 +34,31 @@ namespace Sandbox
                 string path = Path.Combine(tileableBasePath, "CellularValue_{0}");
 
                 WriteTileable<
-                    Vector256<int>, Vector256<float>, Vector256<int>, Avx2Functions,
+                    Vector256<float>, Vector256<int>,
                     CellularValue<Vector256<int>, Vector256<float>, Vector256<int>, Avx2Functions>>(
                     path,
                     generator: new(),
                     seed,
-                    256,
-                    256);
+                    1024,
+                    1024);
 
                 WriteTileable<
-                    Vector128<int>, Vector128<float>, Vector128<int>, Sse2Functions,
+                    Vector128<float>, Vector128<int>,
                     CellularValue<Vector128<int>, Vector128<float>, Vector128<int>, Sse2Functions>>(
                     path,
                     generator: new(),
                     seed,
-                    256,
-                    256);
+                    1024,
+                    1024);
 
                 WriteTileable<
-                    int, float, int, ScalarFunctions,
+                    float, int,
                     CellularValue<int, float, int, ScalarFunctions>>(
                     path,
                     generator: new(),
                     seed,
-                    256,
-                    256);
+                    1024,
+                    1024);
             }
 
             if (false)
@@ -91,7 +91,7 @@ namespace Sandbox
             }
         }
 
-        static void WriteAll(string basePath, int seed, float offsetX)
+        static void WriteAll(string basePath, int width, int height, int seed, float offsetX)
         {
             if (true)
             {
@@ -108,8 +108,8 @@ namespace Sandbox
                         generator: new() { DistanceFunction = distFunc },
                         seed,
                         offsetX,
-                        256,
-                        256);
+                        width,
+                        height);
                 }
 
                 string path = Path.Combine(basePath, $"CellularValue_{{0}}");
@@ -121,8 +121,8 @@ namespace Sandbox
                     generator: new(),
                     seed,
                     offsetX,
-                    256,
-                    256);
+                    width,
+                    height);
 
                 Write<
                     int, float, int, ScalarFunctions,
@@ -131,8 +131,8 @@ namespace Sandbox
                     generator: new(),
                     seed,
                     offsetX,
-                    256,
-                    256);
+                    width,
+                    height);
             }
 
             if (true)
@@ -146,8 +146,8 @@ namespace Sandbox
                     generator: new(),
                     seed,
                     offsetX,
-                    256,
-                    256);
+                    width,
+                    height);
 
                 Write<
                     Vector128<int>, Vector128<float>, Vector128<int>, Sse2Functions,
@@ -156,8 +156,8 @@ namespace Sandbox
                     generator: new(),
                     seed,
                     offsetX,
-                    256,
-                    256);
+                    width,
+                    height);
 
                 Write<
                     int, float, int, ScalarFunctions,
@@ -166,8 +166,8 @@ namespace Sandbox
                     generator: new(),
                     seed,
                     offsetX,
-                    256,
-                    256);
+                    width,
+                    height);
             }
 
             if (true)
@@ -181,8 +181,8 @@ namespace Sandbox
                     generator: new(),
                     seed,
                     offsetX,
-                    256,
-                    256);
+                    width,
+                    height);
 
                 Write<
                     Vector128<int>, Vector128<float>, Vector128<int>, Sse2Functions,
@@ -191,8 +191,8 @@ namespace Sandbox
                     generator: new(),
                     seed,
                     offsetX,
-                    256,
-                    256);
+                    width,
+                    height);
 
                 Write<
                     int, float, int, ScalarFunctions,
@@ -201,8 +201,8 @@ namespace Sandbox
                     generator: new(),
                     seed,
                     offsetX,
-                    256,
-                    256);
+                    width,
+                    height);
             }
 
             if (true)
@@ -216,9 +216,8 @@ namespace Sandbox
                     generator: new(),
                     seed,
                     offsetX,
-                    256,
-                    256);
-
+                    width,
+                    height);
 
                 Write<
                     Vector128<int>, Vector128<float>, Vector128<int>, Sse2Functions,
@@ -227,8 +226,8 @@ namespace Sandbox
                     generator: new(),
                     seed,
                     offsetX,
-                    256,
-                    256);
+                    width,
+                    height);
 
                 Write<
                     int, float, int, ScalarFunctions,
@@ -237,8 +236,8 @@ namespace Sandbox
                     generator: new(),
                     seed,
                     offsetX,
-                    256,
-                    256);
+                    width,
+                    height);
             }
         }
 
@@ -252,7 +251,7 @@ namespace Sandbox
             where m32 : unmanaged
             where f32 : unmanaged
             where i32 : unmanaged
-            where F : unmanaged, IFunctionList<m32, f32, i32>
+            where F : IFunctionList<m32, f32, i32>
             where G : INoiseGenerator
         {
             using Image<L16> image = new(width, height);
@@ -384,16 +383,14 @@ namespace Sandbox
             }
         }
 
-        public static void WriteTileable<m32, f32, i32, F, G>(
+        public static void WriteTileable<f32, i32, G>(
             string basePath,
             G generator,
             int seed,
             int width,
             int height)
-            where m32 : unmanaged
             where f32 : unmanaged
             where i32 : unmanaged
-            where F : unmanaged, IFunctionList<m32, f32, i32>
             where G : INoiseGenerator4D<f32, i32>
         {
             float[] dst = new float[width * height];
@@ -403,8 +400,7 @@ namespace Sandbox
             Stopwatch w = new();
 
             w.Start();
-            generator.GenTileable2D<m32, f32, i32, F, G>(
-                dst.AsSpan(), width, height, 1f / 32f, seed);
+            generator.GenTileable2D(dst.AsSpan(), width, height, 1f / 32f, seed);
             w.Stop();
 
             Console.Write($"({w.Elapsed.TotalMilliseconds,6:0.0}ms) \"{path}\" ");

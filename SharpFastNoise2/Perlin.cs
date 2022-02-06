@@ -1,4 +1,5 @@
-﻿using System.Runtime.CompilerServices;
+﻿using System;
+using System.Runtime.CompilerServices;
 using SharpFastNoise2.Generators;
 
 namespace SharpFastNoise2
@@ -10,7 +11,7 @@ namespace SharpFastNoise2
         where m32 : unmanaged
         where f32 : unmanaged
         where i32 : unmanaged
-        where F : unmanaged, IFunctionList<m32, f32, i32>
+        where F : IFunctionList<m32, f32, i32>
     {
         public static int Count => F.Count;
 
@@ -171,6 +172,190 @@ namespace SharpFastNoise2
                         ys),
                     zs),
                 ws));
+        }
+
+        public OutputMinMax GenUniformGrid2D(
+            Span<float> destination,
+            int xStart,
+            int yStart,
+            int xSize,
+            int ySize,
+            float frequency,
+            int seed)
+        {
+            return NoiseGenerator2DHelper.GenUniformGrid<m32, f32, i32, F, Perlin<m32, f32, i32, F>>(
+                ref this,
+                destination,
+                xStart,
+                yStart,
+                xSize,
+                ySize,
+                frequency,
+                seed);
+        }
+
+        public OutputMinMax GenUniformGrid3D(
+            Span<float> destination,
+            int xStart,
+            int yStart,
+            int zStart,
+            int xSize,
+            int ySize,
+            int zSize,
+            float frequency,
+            int seed)
+        {
+            return NoiseGenerator3DHelper.GenUniformGrid<m32, f32, i32, F, Perlin<m32, f32, i32, F>>(
+                ref this,
+                destination,
+                xStart,
+                yStart,
+                zStart,
+                xSize,
+                ySize,
+                zSize,
+                frequency,
+                seed);
+        }
+
+        public OutputMinMax GenUniformGrid4D(
+            Span<float> destination,
+            int xStart,
+            int yStart,
+            int zStart,
+            int wStart,
+            int xSize,
+            int ySize,
+            int zSize,
+            int wSize,
+            float frequency,
+            int seed)
+        {
+            return NoiseGenerator4DHelper.GenUniformGrid<m32, f32, i32, F, Perlin<m32, f32, i32, F>>(
+                ref this,
+                destination,
+                xStart,
+                yStart,
+                zStart,
+                wStart,
+                xSize,
+                ySize,
+                zSize,
+                wSize,
+                frequency,
+                seed);
+        }
+
+        public OutputMinMax GenPositionArray2D(
+            Span<float> destination,
+            ReadOnlySpan<float> xPosArray,
+            ReadOnlySpan<float> yPosArray,
+            float xOffset,
+            float yOffset,
+            int seed)
+        {
+            return NoiseGenerator2DHelper.GenPositionArray<m32, f32, i32, F, Perlin<m32, f32, i32, F>>(
+                ref this,
+                destination,
+                xPosArray,
+                yPosArray,
+                xOffset,
+                yOffset,
+                seed);
+        }
+
+        public OutputMinMax GenPositionArray3D(
+            Span<float> destination,
+            ReadOnlySpan<float> xPosArray,
+            ReadOnlySpan<float> yPosArray,
+            ReadOnlySpan<float> zPosArray,
+            float xOffset,
+            float yOffset,
+            float zOffset,
+            int seed)
+        {
+            return NoiseGenerator3DHelper.GenPositionArray<m32, f32, i32, F, Perlin<m32, f32, i32, F>>(
+                ref this,
+                destination,
+                xPosArray,
+                yPosArray,
+                zPosArray,
+                xOffset,
+                yOffset,
+                zOffset,
+                seed);
+        }
+
+        public OutputMinMax GenPositionArray4D(
+            Span<float> destination,
+            ReadOnlySpan<float> xPosArray,
+            ReadOnlySpan<float> yPosArray,
+            ReadOnlySpan<float> zPosArray,
+            ReadOnlySpan<float> wPosArray,
+            float xOffset,
+            float yOffset,
+            float zOffset,
+            float wOffset,
+            int seed)
+        {
+            return NoiseGenerator4DHelper.GenPositionArray<m32, f32, i32, F, Perlin<m32, f32, i32, F>>(
+                ref this,
+                destination,
+                xPosArray,
+                yPosArray,
+                zPosArray,
+                wPosArray,
+                xOffset,
+                yOffset,
+                zOffset,
+                wOffset,
+                seed);
+        }
+
+        public float GenSingle2D(float x, float y, int seed)
+        {
+            return NoiseGenerator2DHelper.GenSingle<m32, f32, i32, F, Perlin<m32, f32, i32, F>>(
+                ref this,
+                x,
+                y,
+                seed);
+        }
+
+        public float GenSingle3D(float x, float y, float z, int seed)
+        {
+            return NoiseGenerator3DHelper.GenSingle<m32, f32, i32, F, Perlin<m32, f32, i32, F>>(
+                ref this,
+                x,
+                y,
+                z,
+                seed);
+        }
+
+        public float GenSingle4D(float x, float y, float z, float w, int seed)
+        {
+            return NoiseGenerator4DHelper.GenSingle<m32, f32, i32, F, Perlin<m32, f32, i32, F>>(
+                ref this,
+                x,
+                y,
+                z,
+                w,
+                seed);
+        }
+
+        public OutputMinMax GenTileable2D(
+            Span<float> destination,
+            int xSize,
+            int ySize,
+            float frequency,
+            int seed)
+        {
+            return NoiseGenerator4DHelper.GenTileable<m32, f32, i32, F, Perlin<m32, f32, i32, F>>(
+                ref this,
+                destination,
+                xSize,
+                ySize,
+                frequency,
+                seed);
         }
     }
 }

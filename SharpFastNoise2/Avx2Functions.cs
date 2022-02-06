@@ -39,6 +39,16 @@ namespace SharpFastNoise2
             return Unsafe.ReadUnaligned<i32>(ref p);
         }
 
+        public static f32 Load_f32(ref float p)
+        {
+            return Unsafe.ReadUnaligned<f32>(ref Unsafe.As<float, byte>(ref p));
+        }
+
+        public static i32 Load_i32(ref int p)
+        {
+            return Unsafe.ReadUnaligned<i32>(ref Unsafe.As<int, byte>(ref p));
+        }
+
         // Incremented
 
         public static f32 Incremented_f32()

@@ -30,5 +30,12 @@ namespace SharpFastNoise2.Generators
             int seed);
 
         float GenSingle4D(float x, float y, float z, float w, int seed);
+
+        OutputMinMax GenTileable2D(
+            Span<float> destination,
+            int xSize,
+            int ySize,
+            float frequency,
+            int seed);
     }
 }

@@ -13,9 +13,8 @@ namespace SharpFastNoise2
             Max = max;
         }
 
-        public static OutputMinMax CreateInfiniteBounds()
+        public OutputMinMax() : this(float.PositiveInfinity, float.NegativeInfinity)
         {
-            return new OutputMinMax(float.PositiveInfinity, float.NegativeInfinity);
         }
 
         public void Apply(float min, float max)

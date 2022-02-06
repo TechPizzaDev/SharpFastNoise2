@@ -22,12 +22,5 @@ namespace SharpFastNoise2.Generators
             int seed);
 
         float GenSingle2D(float x, float y, int seed);
-
-        OutputMinMax GenTileable2D(
-            Span<float> destination,
-            int xSize,
-            int ySize,
-            float frequency,
-            int seed);
     }
 }
