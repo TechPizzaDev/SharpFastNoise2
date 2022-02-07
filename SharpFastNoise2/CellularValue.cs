@@ -4,7 +4,7 @@ using SharpFastNoise2.Generators;
 
 namespace SharpFastNoise2
 {
-    public unsafe struct CellularValue<m32, f32, i32, F> :
+    public unsafe struct CellularValue<m32, f32, i32, F, D> :
         INoiseGenerator2D<f32, i32>,
         INoiseGenerator3D<f32, i32>,
         INoiseGenerator4D<f32, i32>
@@ -12,14 +12,13 @@ namespace SharpFastNoise2
         where f32 : unmanaged
         where i32 : unmanaged
         where F : IFunctionList<m32, f32, i32>
+        where D : IDistanceFunction<m32, f32, i32, F>
     {
         private const int kMaxDistanceCount = 4;
 
         private int _valueIndex;
 
         public static int Count => F.Count;
-
-        public DistanceFunction DistanceFunction { get; set; }
 
         public int ValueIndex
         {
@@ -65,7 +64,7 @@ namespace SharpFastNoise2
                     yd = F.FMulAdd_f32(yd, invMag, ycf);
 
                     f32 newCellValue = F.Mul(F.Broad_f32((float)(1.0 / int.MaxValue)), F.Converti32_f32(hash));
-                    f32 newDistance = Utils<m32, f32, i32, F>.CalcDistance(DistanceFunction, xd, yd);
+                    f32 newDistance = D.CalcDistance(xd, yd);
 
                     for (int i = 0; ; i++)
                     {
@@ -143,7 +142,7 @@ namespace SharpFastNoise2
                         zd = F.FMulAdd_f32(zd, invMag, zcf);
 
                         f32 newCellValue = F.Mul(F.Broad_f32((float)(1.0 / int.MaxValue)), F.Converti32_f32(hash));
-                        f32 newDistance = Utils<m32, f32, i32, F>.CalcDistance(DistanceFunction, xd, yd, zd);
+                        f32 newDistance = D.CalcDistance(xd, yd, zd);
 
                         for (int i = 0; ; i++)
                         {
@@ -235,7 +234,7 @@ namespace SharpFastNoise2
                             wd = F.FMulAdd_f32(wd, invMag, wcf);
 
                             f32 newCellValue = F.Mul(F.Broad_f32((float)(1.0 / int.MaxValue)), F.Converti32_f32(hash));
-                            f32 newDistance = Utils<m32, f32, i32, F>.CalcDistance(DistanceFunction, xd, yd, zd, wd);
+                            f32 newDistance = D.CalcDistance(xd, yd, zd, wd);
 
                             for (int i = 0; ; i++)
                             {
@@ -281,7 +280,7 @@ namespace SharpFastNoise2
             float frequency,
             int seed)
         {
-            return NoiseGenerator2DHelper.GenUniformGrid<m32, f32, i32, F, CellularValue<m32, f32, i32, F>>(
+            return NoiseGenerator2DHelper.GenUniformGrid<m32, f32, i32, F, CellularValue<m32, f32, i32, F, D>>(
                 ref this,
                 destination,
                 xStart,
@@ -303,7 +302,7 @@ namespace SharpFastNoise2
             float frequency,
             int seed)
         {
-            return NoiseGenerator3DHelper.GenUniformGrid<m32, f32, i32, F, CellularValue<m32, f32, i32, F>>(
+            return NoiseGenerator3DHelper.GenUniformGrid<m32, f32, i32, F, CellularValue<m32, f32, i32, F, D>>(
                 ref this,
                 destination,
                 xStart,
@@ -329,7 +328,7 @@ namespace SharpFastNoise2
             float frequency,
             int seed)
         {
-            return NoiseGenerator4DHelper.GenUniformGrid<m32, f32, i32, F, CellularValue<m32, f32, i32, F>>(
+            return NoiseGenerator4DHelper.GenUniformGrid<m32, f32, i32, F, CellularValue<m32, f32, i32, F, D>>(
                 ref this,
                 destination,
                 xStart,
@@ -352,7 +351,7 @@ namespace SharpFastNoise2
             float yOffset,
             int seed)
         {
-            return NoiseGenerator2DHelper.GenPositionArray<m32, f32, i32, F, CellularValue<m32, f32, i32, F>>(
+            return NoiseGenerator2DHelper.GenPositionArray<m32, f32, i32, F, CellularValue<m32, f32, i32, F, D>>(
                 ref this,
                 destination,
                 xPosArray,
@@ -372,7 +371,7 @@ namespace SharpFastNoise2
             float zOffset,
             int seed)
         {
-            return NoiseGenerator3DHelper.GenPositionArray<m32, f32, i32, F, CellularValue<m32, f32, i32, F>>(
+            return NoiseGenerator3DHelper.GenPositionArray<m32, f32, i32, F, CellularValue<m32, f32, i32, F, D>>(
                 ref this,
                 destination,
                 xPosArray,
@@ -396,7 +395,7 @@ namespace SharpFastNoise2
             float wOffset,
             int seed)
         {
-            return NoiseGenerator4DHelper.GenPositionArray<m32, f32, i32, F, CellularValue<m32, f32, i32, F>>(
+            return NoiseGenerator4DHelper.GenPositionArray<m32, f32, i32, F, CellularValue<m32, f32, i32, F, D>>(
                 ref this,
                 destination,
                 xPosArray,
@@ -412,7 +411,7 @@ namespace SharpFastNoise2
 
         public float GenSingle2D(float x, float y, int seed)
         {
-            return NoiseGenerator2DHelper.GenSingle<m32, f32, i32, F, CellularValue<m32, f32, i32, F>>(
+            return NoiseGenerator2DHelper.GenSingle<m32, f32, i32, F, CellularValue<m32, f32, i32, F, D>>(
                 ref this,
                 x,
                 y,
@@ -421,7 +420,7 @@ namespace SharpFastNoise2
 
         public float GenSingle3D(float x, float y, float z, int seed)
         {
-            return NoiseGenerator3DHelper.GenSingle<m32, f32, i32, F, CellularValue<m32, f32, i32, F>>(
+            return NoiseGenerator3DHelper.GenSingle<m32, f32, i32, F, CellularValue<m32, f32, i32, F, D>>(
                 ref this,
                 x,
                 y,
@@ -431,7 +430,7 @@ namespace SharpFastNoise2
 
         public float GenSingle4D(float x, float y, float z, float w, int seed)
         {
-            return NoiseGenerator4DHelper.GenSingle<m32, f32, i32, F, CellularValue<m32, f32, i32, F>>(
+            return NoiseGenerator4DHelper.GenSingle<m32, f32, i32, F, CellularValue<m32, f32, i32, F, D>>(
                 ref this,
                 x,
                 y,
@@ -447,7 +446,7 @@ namespace SharpFastNoise2
             float frequency,
             int seed)
         {
-            return NoiseGenerator4DHelper.GenTileable<m32, f32, i32, F, CellularValue<m32, f32, i32, F>>(
+            return NoiseGenerator4DHelper.GenTileable<m32, f32, i32, F, CellularValue<m32, f32, i32, F, D>>(
                 ref this,
                 destination,
                 xSize,

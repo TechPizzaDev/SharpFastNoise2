@@ -35,7 +35,8 @@ namespace Sandbox
 
                 WriteTileable<
                     Vector256<float>, Vector256<int>,
-                    CellularValue<Vector256<int>, Vector256<float>, Vector256<int>, Avx2Functions>>(
+                    CellularValue<Vector256<int>, Vector256<float>, Vector256<int>, Avx2Functions,
+                        DistanceEuclidean<Vector256<int>, Vector256<float>, Vector256<int>, Avx2Functions>>>(
                     path,
                     generator: new(),
                     seed,
@@ -44,7 +45,8 @@ namespace Sandbox
 
                 WriteTileable<
                     Vector128<float>, Vector128<int>,
-                    CellularValue<Vector128<int>, Vector128<float>, Vector128<int>, Sse2Functions>>(
+                    CellularValue<Vector128<int>, Vector128<float>, Vector128<int>, Sse2Functions,
+                        DistanceEuclidean<Vector128<int>, Vector128<float>, Vector128<int>, Sse2Functions>>>(
                     path,
                     generator: new(),
                     seed,
@@ -53,7 +55,8 @@ namespace Sandbox
 
                 WriteTileable<
                     float, int,
-                    CellularValue<int, float, int, ScalarFunctions>>(
+                    CellularValue<int, float, int, ScalarFunctions,
+                        DistanceEuclidean<int, float, int, ScalarFunctions>>>(
                     path,
                     generator: new(),
                     seed,
@@ -69,7 +72,8 @@ namespace Sandbox
                 float dy = 8;
 
                 float pi = MathF.PI;
-                var noise = new CellularValue<int, float, int, ScalarFunctions>();
+                var noise = new CellularValue<int, float, int, ScalarFunctions,
+                    DistanceEuclidean<int, float, int, ScalarFunctions>>();
 
                 for (int y = 0; y < 256; y++)
                 {
@@ -95,28 +99,45 @@ namespace Sandbox
         {
             if (true)
             {
-                var distFuncs = Enum.GetValues<DistanceFunction>();
-
-                foreach (DistanceFunction distFunc in distFuncs)
+                void WriteDistanceFunc<D>()
+                    where D : IDistanceFunction<Vector256<int>, Vector256<float>, Vector256<int>, Avx2Functions>
                 {
-                    string dpath = Path.Combine(basePath, $"CellularValue_{{0}}_{distFunc}");
+                    string dpath = Path.Combine(basePath, $"CellularValue_{{0}}_{typeof(D).Name}");
 
                     Write<
                         Vector256<int>, Vector256<float>, Vector256<int>, Avx2Functions,
-                        CellularValue<Vector256<int>, Vector256<float>, Vector256<int>, Avx2Functions>>(
+                        CellularValue<Vector256<int>, Vector256<float>, Vector256<int>, Avx2Functions, D>>(
                         dpath,
-                        generator: new() { DistanceFunction = distFunc },
+                        generator: new(),
                         seed,
                         offsetX,
                         width,
                         height);
                 }
 
+                WriteDistanceFunc<DistanceEuclidean<Vector256<int>, Vector256<float>, Vector256<int>, Avx2Functions>>();
+                WriteDistanceFunc<DistanceEuclideanSquared<Vector256<int>, Vector256<float>, Vector256<int>, Avx2Functions>>();
+                WriteDistanceFunc<DistanceManhattan<Vector256<int>, Vector256<float>, Vector256<int>, Avx2Functions>>();
+                WriteDistanceFunc<DistanceHybrid<Vector256<int>, Vector256<float>, Vector256<int>, Avx2Functions>>();
+                WriteDistanceFunc<DistanceMaxAxis<Vector256<int>, Vector256<float>, Vector256<int>, Avx2Functions>>();
+                
                 string path = Path.Combine(basePath, $"CellularValue_{{0}}");
 
                 Write<
+                    Vector256<int>, Vector256<float>, Vector256<int>, Avx2Functions,
+                    CellularValue<Vector256<int>, Vector256<float>, Vector256<int>, Avx2Functions,
+                        DistanceEuclidean<Vector256<int>, Vector256<float>, Vector256<int>, Avx2Functions>>>(
+                    path,
+                    generator: new(),
+                    seed,
+                    offsetX,
+                    width,
+                    height);
+
+                Write<
                     Vector128<int>, Vector128<float>, Vector128<int>, Sse2Functions,
-                    CellularValue<Vector128<int>, Vector128<float>, Vector128<int>, Sse2Functions>>(
+                    CellularValue<Vector128<int>, Vector128<float>, Vector128<int>, Sse2Functions,
+                        DistanceEuclidean<Vector128<int>, Vector128<float>, Vector128<int>, Sse2Functions>>>(
                     path,
                     generator: new(),
                     seed,
@@ -126,7 +147,8 @@ namespace Sandbox
 
                 Write<
                     int, float, int, ScalarFunctions,
-                    CellularValue<int, float, int, ScalarFunctions>>(
+                    CellularValue<int, float, int, ScalarFunctions,
+                        DistanceEuclidean<int, float, int, ScalarFunctions>>>(
                     path,
                     generator: new(),
                     seed,
@@ -419,11 +441,11 @@ namespace Sandbox
                     row[x] = new L16((ushort)(value * 0.5f * ushort.MaxValue));
                 }
             }
+
+            image.Save(path);
             w.Stop();
 
             Console.WriteLine($"({w.Elapsed.TotalMilliseconds,4:0.0}ms encode)");
-
-            image.Save(path);
         }
     }
 }

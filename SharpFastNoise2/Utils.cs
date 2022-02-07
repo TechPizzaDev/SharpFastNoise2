@@ -149,15 +149,6 @@ namespace SharpFastNoise2
             }
         }
 
-        //template<typename SIMD = FS, std::enable_if_t<SIMD::SIMD_Level == FastSIMD::Level_AVX2>* = nullptr>
-        //F.INLINE static float32v GetGradientDot(int32v hash, float32v fX, float32v fY)
-        //{
-        //    float32v gX = _mm256_permutevar8x32_ps(float32v(1 + ROOT2, -1 - ROOT2, 1 + ROOT2, -1 - ROOT2, 1, -1, 1, -1), hash);
-        //    float32v gY = _mm256_permutevar8x32_ps(float32v(1, 1, -1, -1, 1 + ROOT2, 1 + ROOT2, -1 - ROOT2, -1 - ROOT2), hash);
-        //
-        //    return F.FMulAdd_f32(gX, fX, fY * gY);
-        //}
-
         //template<typename SIMD = FS, std::enable_if_t<SIMD::SIMD_Level == FastSIMD::Level_AVX512>* = nullptr>
         // F.INLINE static float32v GetGradientDot(int32v hash, float32v fX, float32v fY)
         //{
@@ -328,39 +319,19 @@ namespace SharpFastNoise2
             {
                 default:
                 case DistanceFunction.Euclidean:
-                    {
-                        f32 distSqr = F.Mul(dX, dX);
-                        distSqr = F.FMulAdd_f32(dY, dY, distSqr);
-                        return F.Mul(F.InvSqrt_f32(distSqr), distSqr);
-                    }
+                    return DistanceEuclidean<m32, f32, i32, F>.CalcDistance(dX, dY);
 
                 case DistanceFunction.EuclideanSquared:
-                    {
-                        f32 distSqr = F.Mul(dX, dX);
-                        distSqr = F.FMulAdd_f32(dY, dY, distSqr);
-                        return distSqr;
-                    }
+                    return DistanceEuclideanSquared<m32, f32, i32, F>.CalcDistance(dX, dY);
 
                 case DistanceFunction.Manhattan:
-                    {
-                        f32 dist = F.Abs_f32(dX);
-                        dist = F.Add(dist, F.Abs_f32(dY));
-                        return dist;
-                    }
+                    return DistanceManhattan<m32, f32, i32, F>.CalcDistance(dX, dY);
 
                 case DistanceFunction.Hybrid:
-                    {
-                        f32 both = F.FMulAdd_f32(dX, dX, F.Abs_f32(dX));
-                        both = F.Add(both, F.FMulAdd_f32(dY, dY, F.Abs_f32(dY)));
-                        return both;
-                    }
+                    return DistanceHybrid<m32, f32, i32, F>.CalcDistance(dX, dY);
 
                 case DistanceFunction.MaxAxis:
-                    {
-                        f32 max = F.Abs_f32(dX);
-                        max = F.Max_f32(F.Abs_f32(dY), max);
-                        return max;
-                    }
+                    return DistanceMaxAxis<m32, f32, i32, F>.CalcDistance(dX, dY);
             }
         }
 
@@ -371,44 +342,19 @@ namespace SharpFastNoise2
             {
                 default:
                 case DistanceFunction.Euclidean:
-                    {
-                        f32 distSqr = F.Mul(dX, dX);
-                        distSqr = F.FMulAdd_f32(dY, dY, distSqr);
-                        distSqr = F.FMulAdd_f32(dZ, dZ, distSqr);
-                        return F.Mul(F.InvSqrt_f32(distSqr), distSqr);
-                    }
+                    return DistanceEuclidean<m32, f32, i32, F>.CalcDistance(dX, dY, dZ);
 
                 case DistanceFunction.EuclideanSquared:
-                    {
-                        f32 distSqr = F.Mul(dX, dX);
-                        distSqr = F.FMulAdd_f32(dY, dY, distSqr);
-                        distSqr = F.FMulAdd_f32(dZ, dZ, distSqr);
-                        return distSqr;
-                    }
+                    return DistanceEuclideanSquared<m32, f32, i32, F>.CalcDistance(dX, dY, dZ);
 
                 case DistanceFunction.Manhattan:
-                    {
-                        f32 dist = F.Abs_f32(dX);
-                        dist = F.Add(dist, F.Abs_f32(dY));
-                        dist = F.Add(dist, F.Abs_f32(dZ));
-                        return dist;
-                    }
+                    return DistanceManhattan<m32, f32, i32, F>.CalcDistance(dX, dY, dZ);
 
                 case DistanceFunction.Hybrid:
-                    {
-                        f32 both = F.FMulAdd_f32(dX, dX, F.Abs_f32(dX));
-                        both = F.Add(both, F.FMulAdd_f32(dY, dY, F.Abs_f32(dY)));
-                        both = F.Add(both, F.FMulAdd_f32(dZ, dZ, F.Abs_f32(dZ)));
-                        return both;
-                    }
+                    return DistanceHybrid<m32, f32, i32, F>.CalcDistance(dX, dY, dZ);
 
                 case DistanceFunction.MaxAxis:
-                    {
-                        f32 max = F.Abs_f32(dX);
-                        max = F.Max_f32(F.Abs_f32(dY), max);
-                        max = F.Max_f32(F.Abs_f32(dZ), max);
-                        return max;
-                    }
+                    return DistanceMaxAxis<m32, f32, i32, F>.CalcDistance(dX, dY, dZ);
             }
         }
 
@@ -419,49 +365,19 @@ namespace SharpFastNoise2
             {
                 default:
                 case DistanceFunction.Euclidean:
-                    {
-                        f32 distSqr = F.Mul(dX, dX);
-                        distSqr = F.FMulAdd_f32(dY, dY, distSqr);
-                        distSqr = F.FMulAdd_f32(dZ, dZ, distSqr);
-                        distSqr = F.FMulAdd_f32(dW, dW, distSqr);
-                        return F.Mul(F.InvSqrt_f32(distSqr), distSqr);
-                    }
+                    return DistanceEuclidean<m32, f32, i32, F>.CalcDistance(dX, dY, dZ, dW);
 
                 case DistanceFunction.EuclideanSquared:
-                    {
-                        f32 distSqr = F.Mul(dX, dX);
-                        distSqr = F.FMulAdd_f32(dY, dY, distSqr);
-                        distSqr = F.FMulAdd_f32(dZ, dZ, distSqr);
-                        distSqr = F.FMulAdd_f32(dW, dW, distSqr);
-                        return distSqr;
-                    }
+                    return DistanceEuclideanSquared<m32, f32, i32, F>.CalcDistance(dX, dY, dZ, dW);
 
                 case DistanceFunction.Manhattan:
-                    {
-                        f32 dist = F.Abs_f32(dX);
-                        dist = F.Add(dist, F.Abs_f32(dY));
-                        dist = F.Add(dist, F.Abs_f32(dZ));
-                        dist = F.Add(dist, F.Abs_f32(dW));
-                        return dist;
-                    }
+                    return DistanceManhattan<m32, f32, i32, F>.CalcDistance(dX, dY, dZ, dW);
 
                 case DistanceFunction.Hybrid:
-                    {
-                        f32 both = F.FMulAdd_f32(dX, dX, F.Abs_f32(dX));
-                        both = F.Add(both, F.FMulAdd_f32(dY, dY, F.Abs_f32(dY)));
-                        both = F.Add(both, F.FMulAdd_f32(dZ, dZ, F.Abs_f32(dZ)));
-                        both = F.Add(both, F.FMulAdd_f32(dW, dW, F.Abs_f32(dW)));
-                        return both;
-                    }
+                    return DistanceHybrid<m32, f32, i32, F>.CalcDistance(dX, dY, dZ, dW);
 
                 case DistanceFunction.MaxAxis:
-                    {
-                        f32 max = F.Abs_f32(dX);
-                        max = F.Max_f32(F.Abs_f32(dY), max);
-                        max = F.Max_f32(F.Abs_f32(dZ), max);
-                        max = F.Max_f32(F.Abs_f32(dW), max);
-                        return max;
-                    }
+                    return DistanceMaxAxis<m32, f32, i32, F>.CalcDistance(dX, dY, dZ, dW);
             }
         }
     }
