@@ -96,35 +96,34 @@ namespace SharpFastNoise2
 
         public static f32 Cos_f32(f32 value)
         {
-            unchecked
-            {
-                value = F.Abs_f32(value);
-                value = F.Sub(value, F.Mul(F.Floor_f32(F.Mul(value, F.Broad_f32(0.1591549f))), F.Broad_f32(6.283185f)));
+            const int xorMask = unchecked((int)0x80000000);
 
-                m32 geHalfPi = F.GreaterThanOrEqual(value, F.Broad_f32(1.570796f));
-                m32 geHalfPi2 = F.GreaterThanOrEqual(value, F.Broad_f32(3.141593f));
-                m32 geHalfPi3 = F.GreaterThanOrEqual(value, F.Broad_f32(4.7123889f));
+            value = F.Abs_f32(value);
+            value = F.Sub(value, F.Mul(F.Floor_f32(F.Mul(value, F.Broad_f32(0.1591549f))), F.Broad_f32(6.283185f)));
 
-                f32 cosAngle = F.Xor(
-                    value, F.Mask_f32(F.Xor(value, F.Sub(F.Broad_f32(3.141593f), value)), geHalfPi));
+            m32 geHalfPi = F.GreaterThanOrEqual(value, F.Broad_f32(1.570796f));
+            m32 geHalfPi2 = F.GreaterThanOrEqual(value, F.Broad_f32(3.141593f));
+            m32 geHalfPi3 = F.GreaterThanOrEqual(value, F.Broad_f32(4.7123889f));
 
-                cosAngle = F.Xor(
-                    cosAngle, F.Mask_f32(F.Casti32_f32(F.Broad_i32((int)0x80000000)), geHalfPi2));
+            f32 cosAngle = F.Xor(
+                value, F.Mask_f32(F.Xor(value, F.Sub(F.Broad_f32(3.141593f), value)), geHalfPi));
 
-                cosAngle = F.Xor(
-                    cosAngle, F.Mask_f32(F.Xor(cosAngle, F.Sub(F.Broad_f32(6.283185f), value)), geHalfPi3));
+            cosAngle = F.Xor(
+                cosAngle, F.Mask_f32(F.Casti32_f32(F.Broad_i32(xorMask)), geHalfPi2));
 
-                cosAngle = F.Mul(cosAngle, cosAngle);
+            cosAngle = F.Xor(
+                cosAngle, F.Mask_f32(F.Xor(cosAngle, F.Sub(F.Broad_f32(6.283185f), value)), geHalfPi3));
 
-                cosAngle = F.FMulAdd_f32(
-                    cosAngle, 
-                    F.FMulAdd_f32(cosAngle, F.Broad_f32(0.03679168f), F.Broad_f32(-0.49558072f)),
-                    F.Broad_f32(0.99940307f));
+            cosAngle = F.Mul(cosAngle, cosAngle);
 
-                return F.Xor(cosAngle, F.Mask_f32(
-                    F.Casti32_f32(F.Broad_i32((int)0x80000000)), 
-                    F.BitwiseAndNot_m32(geHalfPi, geHalfPi3)));
-            }
+            cosAngle = F.FMulAdd_f32(
+                cosAngle,
+                F.FMulAdd_f32(cosAngle, F.Broad_f32(0.03679168f), F.Broad_f32(-0.49558072f)),
+                F.Broad_f32(0.99940307f));
+
+            return F.Xor(cosAngle, F.Mask_f32(
+                F.Casti32_f32(F.Broad_i32(xorMask)),
+                F.BitwiseAndNot_m32(geHalfPi, geHalfPi3)));
         }
 
         public static f32 Sin_f32(f32 value)
