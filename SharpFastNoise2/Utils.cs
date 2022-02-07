@@ -321,6 +321,7 @@ namespace SharpFastNoise2
                     F.Broad_f32(10)));
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static f32 CalcDistance(DistanceFunction distFunc, f32 dX, f32 dY)
         {
             switch (distFunc)
@@ -363,6 +364,7 @@ namespace SharpFastNoise2
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static f32 CalcDistance(DistanceFunction distFunc, f32 dX, f32 dY, f32 dZ)
         {
             switch (distFunc)
@@ -387,7 +389,8 @@ namespace SharpFastNoise2
                 case DistanceFunction.Manhattan:
                     {
                         f32 dist = F.Abs_f32(dX);
-                        dist = F.Add(dist, F.Add(F.Abs_f32(dY), F.Abs_f32(dZ)));
+                        dist = F.Add(dist, F.Abs_f32(dY));
+                        dist = F.Add(dist, F.Abs_f32(dZ));
                         return dist;
                     }
 
@@ -409,6 +412,7 @@ namespace SharpFastNoise2
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static f32 CalcDistance(DistanceFunction distFunc, f32 dX, f32 dY, f32 dZ, f32 dW)
         {
             switch (distFunc)

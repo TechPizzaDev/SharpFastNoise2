@@ -143,6 +143,7 @@ namespace SharpFastNoise2
 
         // Min, Max
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static f32 Min_f32(f32 a, f32 b)
         {
             if (Sse.IsSupported)
@@ -152,6 +153,7 @@ namespace SharpFastNoise2
             return MathF.Min(a, b);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static f32 Max_f32(f32 a, f32 b)
         {
             if (Sse.IsSupported)
@@ -217,33 +219,31 @@ namespace SharpFastNoise2
             return MathF.Sqrt(a);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static f32 InvSqrt_f32(f32 a)
         {
             if (Sse.IsSupported)
             {
                 return Sse.ReciprocalSqrtScalar(Vector128.CreateScalarUnsafe(a)).ToScalar();
             }
-            else
-            {
-                float xhalf = 0.5f * (float)a;
-                a = Casti32_f32(0x5f3759df - (Castf32_i32(a) >> 1));
-                a *= 1.5f - xhalf * (float)a * (float)a;
-                return a;
-            }
+
+            float xhalf = 0.5f * (float)a;
+            a = Casti32_f32(0x5f3759df - (Castf32_i32(a) >> 1));
+            a *= 1.5f - xhalf * (float)a * (float)a;
+            return a;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static f32 Reciprocal_f32(f32 a)
         {
             if (Sse.IsSupported)
             {
                 return Sse.ReciprocalScalar(Vector128.CreateScalarUnsafe(a)).ToScalar();
             }
-            else
-            {
-                // pow( pow(x,-0.5), 2 ) = pow( x, -1 ) = 1.0 / x
-                a = Casti32_f32((int)(0xbe6eb3beU - (uint)Castf32_i32(a)) >> 1);
-                return a * a;
-            }
+
+            // pow( pow(x,-0.5), 2 ) = pow( x, -1 ) = 1.0 / x
+            a = Casti32_f32((int)(0xbe6eb3beU - (uint)Castf32_i32(a)) >> 1);
+            return a * a;
         }
 
         // Floor, Ceil, Round
