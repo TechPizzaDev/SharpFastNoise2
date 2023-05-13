@@ -14,10 +14,6 @@
 
         // Load
 
-        static abstract f32 Load_f32(ref byte p);
-
-        static abstract i32 Load_i32(ref byte p);
-
         static abstract f32 Load_f32(ref float p);
 
         static abstract i32 Load_i32(ref int p);
@@ -29,10 +25,6 @@
         static abstract i32 Incremented_i32();
 
         // Store
-
-        static abstract void Store_f32(ref byte p, f32 a);
-
-        static abstract void Store_i32(ref byte p, i32 a);
 
         static abstract void Store_f32(ref float p, f32 a);
 

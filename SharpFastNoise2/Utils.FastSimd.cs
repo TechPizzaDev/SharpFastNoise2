@@ -79,7 +79,7 @@ namespace SharpFastNoise2
         public static i32 MaskedIncrement_i32(i32 a, m32 m)
         {
             if (typeof(i32) == typeof(m32))
-                return F.Sub(a, Unsafe.As<m32, i32>(ref m));
+                return F.Sub(a, Unsafe.As<m32, i32>(ref m)); // TODO: Bitcast
             else
                 return MaskedSub_i32(a, F.Broad_i32(-1), m);
         }
@@ -87,7 +87,7 @@ namespace SharpFastNoise2
         public static i32 MaskedDecrement_i32(i32 a, m32 m)
         {
             if (typeof(i32) == typeof(m32))
-                return F.Add(a, Unsafe.As<m32, i32>(ref m));
+                return F.Add(a, Unsafe.As<m32, i32>(ref m)); // TODO: Bitcast
             else
                 return MaskedAdd_i32(a, F.Broad_i32(-1), m);
         }

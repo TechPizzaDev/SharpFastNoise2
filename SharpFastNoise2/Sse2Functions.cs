@@ -29,24 +29,14 @@ namespace SharpFastNoise2
 
         // Load
 
-        public static f32 Load_f32(ref byte p)
-        {
-            return Unsafe.ReadUnaligned<f32>(ref p);
-        }
-
-        public static i32 Load_i32(ref byte p)
-        {
-            return Unsafe.ReadUnaligned<i32>(ref p);
-        }
-
         public static f32 Load_f32(ref float p)
         {
-            return Unsafe.ReadUnaligned<f32>(ref Unsafe.As<float, byte>(ref p));
+            return Vector128.LoadUnsafe(ref p);
         }
 
         public static i32 Load_i32(ref int p)
         {
-            return Unsafe.ReadUnaligned<i32>(ref Unsafe.As<int, byte>(ref p));
+            return Vector128.LoadUnsafe(ref p);
         }
 
         // Incremented
@@ -63,24 +53,14 @@ namespace SharpFastNoise2
 
         // Store
 
-        public static void Store_f32(ref byte p, f32 a)
-        {
-            Unsafe.WriteUnaligned(ref p, a);
-        }
-
-        public static void Store_i32(ref byte p, i32 a)
-        {
-            Unsafe.WriteUnaligned(ref p, a);
-        }
-
         public static void Store_f32(ref float p, f32 a)
         {
-            Unsafe.WriteUnaligned(ref Unsafe.As<float, byte>(ref p), a);
+            Vector128.StoreUnsafe(a, ref p);
         }
 
         public static void Store_i32(ref int p, i32 a)
         {
-            Unsafe.WriteUnaligned(ref Unsafe.As<int, byte>(ref p), a);
+            Vector128.StoreUnsafe(a, ref p);
         }
 
         // Extract
@@ -109,12 +89,12 @@ namespace SharpFastNoise2
 
         public static f32 Casti32_f32(i32 a)
         {
-            return Unsafe.As<i32, f32>(ref a);
+            return a.AsSingle();
         }
 
         public static i32 Castf32_i32(f32 a)
         {
-            return Unsafe.As<f32, i32>(ref a);
+            return a.AsInt32();
         }
 
         // Convert

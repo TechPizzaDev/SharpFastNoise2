@@ -17,12 +17,12 @@ namespace SharpFastNoise2.Generators
             where F : IFunctionList<m32, f32, i32>
         {
             OutputMinMax minMax = new();
-            nuint remaining = totalValues - index;
+            int remaining = (int)(totalValues - index);
             ref float noiseOut = ref Unsafe.Add(ref destination, index);
 
-            for (nuint i = 0; i < remaining; i++)
+            for (int i = 0; i < remaining; i++)
             {
-                float f = Unsafe.Add(ref Unsafe.As<f32, float>(ref finalGen), i);
+                float f = F.Extract_f32(finalGen, i);
                 Unsafe.Add(ref noiseOut, i) = f;
                 minMax.Apply(f);
             }
