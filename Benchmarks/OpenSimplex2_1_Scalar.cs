@@ -1,5 +1,6 @@
 ﻿using BenchmarkDotNet.Attributes;
 using SharpFastNoise2;
+using SharpFastNoise2.Functions;
 
 namespace Benchmarks
 {

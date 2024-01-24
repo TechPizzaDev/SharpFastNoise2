@@ -1,11 +1,12 @@
 ﻿using System.Runtime.Intrinsics;
 using BenchmarkDotNet.Attributes;
 using SharpFastNoise2;
+using SharpFastNoise2.Functions;
 
 namespace Benchmarks
 {
     using OpenSimplex2Noise8 = OpenSimplex2<Vector256<int>, Vector256<float>, Vector256<int>, Avx2Functions>;
-    
+
     public class OpenSimplex2_8_Avx2 : BenchNoiseBase<Vector256<int>, Vector256<float>, Vector256<int>, Avx2Functions>
     {
         [Benchmark]

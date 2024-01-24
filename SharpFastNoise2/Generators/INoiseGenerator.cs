@@ -1,5 +1,4 @@
-﻿
-namespace SharpFastNoise2
+﻿namespace SharpFastNoise2.Generators
 {
     public interface INoiseGenerator
     {

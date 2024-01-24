@@ -1,4 +1,6 @@
-﻿namespace SharpFastNoise2
+﻿using SharpFastNoise2.Functions;
+
+namespace SharpFastNoise2.Distance
 {
     public interface IDistanceFunction<m32, f32, i32, F>
         where m32 : unmanaged

@@ -4,6 +4,8 @@ using System.IO;
 using System.Runtime.Intrinsics;
 using System.Runtime.Versioning;
 using SharpFastNoise2;
+using SharpFastNoise2.Distance;
+using SharpFastNoise2.Functions;
 using SharpFastNoise2.Generators;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;

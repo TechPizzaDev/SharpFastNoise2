@@ -1,4 +1,4 @@
-﻿namespace SharpFastNoise2
+﻿namespace SharpFastNoise2.Functions
 {
     public interface IFunctionList<m32, f32, i32>
     {

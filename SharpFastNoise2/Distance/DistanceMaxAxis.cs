@@ -1,6 +1,7 @@
 ﻿using System.Runtime.CompilerServices;
+using SharpFastNoise2.Functions;
 
-namespace SharpFastNoise2
+namespace SharpFastNoise2.Distance
 {
     public struct DistanceMaxAxis<m32, f32, i32, F> : IDistanceFunction<m32, f32, i32, F>
         where m32 : unmanaged

@@ -3,7 +3,7 @@ using System.Runtime.CompilerServices;
 using System.Runtime.Intrinsics;
 using System.Runtime.Intrinsics.X86;
 
-namespace SharpFastNoise2
+namespace SharpFastNoise2.Functions
 {
     using f32 = Single;
     using i32 = Int32;
@@ -121,7 +121,7 @@ namespace SharpFastNoise2
 
         public static f32 Converti32_f32(i32 a)
         {
-            return (float)a;
+            return a;
         }
 
         public static i32 Convertf32_i32(f32 a)

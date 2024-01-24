@@ -1,5 +1,5 @@
 ﻿using BenchmarkDotNet.Attributes;
-using SharpFastNoise2;
+using SharpFastNoise2.Functions;
 using SharpFastNoise2.Generators;
 
 namespace Benchmarks

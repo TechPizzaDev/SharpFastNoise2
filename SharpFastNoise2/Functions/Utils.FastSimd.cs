@@ -1,4 +1,5 @@
 ﻿using System.Runtime.CompilerServices;
+using SharpFastNoise2.Functions;
 
 namespace SharpFastNoise2
 {

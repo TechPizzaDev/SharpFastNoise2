@@ -2,8 +2,9 @@
 using System.Runtime.CompilerServices;
 using System.Runtime.Intrinsics;
 using System.Runtime.Intrinsics.X86;
+using SharpFastNoise2;
 
-namespace SharpFastNoise2
+namespace SharpFastNoise2.Functions
 {
     using f32 = Vector256<float>;
     using i32 = Vector256<int>;
