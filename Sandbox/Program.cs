@@ -34,6 +34,16 @@ namespace Sandbox
                 string path = Path.Combine(tileableBasePath, "CellularValue_{0}");
 
                 WriteTileable<
+                    Vector512<float>, Vector512<int>,
+                    CellularValue<Vector512<int>, Vector512<float>, Vector512<int>, Avx512Functions,
+                        DistanceEuclidean<Vector512<int>, Vector512<float>, Vector512<int>, Avx512Functions>>>(
+                    path,
+                    generator: new(),
+                    seed,
+                    1024,
+                    1024);
+
+                WriteTileable<
                     Vector256<float>, Vector256<int>,
                     CellularValue<Vector256<int>, Vector256<float>, Vector256<int>, Avx2Functions,
                         DistanceEuclidean<Vector256<int>, Vector256<float>, Vector256<int>, Avx2Functions>>>(
@@ -124,6 +134,17 @@ namespace Sandbox
                 string path = Path.Combine(basePath, $"CellularValue_{{0}}");
 
                 Write<
+                    Vector512<int>, Vector512<float>, Vector512<int>, Avx512Functions,
+                    CellularValue<Vector512<int>, Vector512<float>, Vector512<int>, Avx512Functions,
+                        DistanceEuclidean<Vector512<int>, Vector512<float>, Vector512<int>, Avx512Functions>>>(
+                    path,
+                    generator: new(),
+                    seed,
+                    offsetX,
+                    width,
+                    height);
+
+                Write<
                     Vector256<int>, Vector256<float>, Vector256<int>, Avx2Functions,
                     CellularValue<Vector256<int>, Vector256<float>, Vector256<int>, Avx2Functions,
                         DistanceEuclidean<Vector256<int>, Vector256<float>, Vector256<int>, Avx2Functions>>>(
@@ -162,6 +183,16 @@ namespace Sandbox
                 string path = Path.Combine(basePath, "Perlin_{0}");
 
                 Write<
+                    Vector512<int>, Vector512<float>, Vector512<int>, Avx512Functions,
+                    Perlin<Vector512<int>, Vector512<float>, Vector512<int>, Avx512Functions>>(
+                    path,
+                    generator: new(),
+                    seed,
+                    offsetX,
+                    width,
+                    height);
+
+                Write<
                     Vector256<int>, Vector256<float>, Vector256<int>, Avx2Functions,
                     Perlin<Vector256<int>, Vector256<float>, Vector256<int>, Avx2Functions>>(
                     path,
@@ -197,6 +228,16 @@ namespace Sandbox
                 string path = Path.Combine(basePath, "Simplex_{0}");
 
                 Write<
+                    Vector512<int>, Vector512<float>, Vector512<int>, Avx512Functions,
+                    Simplex<Vector512<int>, Vector512<float>, Vector512<int>, Avx512Functions>>(
+                    path,
+                    generator: new(),
+                    seed,
+                    offsetX,
+                    width,
+                    height);
+
+                Write<
                     Vector256<int>, Vector256<float>, Vector256<int>, Avx2Functions,
                     Simplex<Vector256<int>, Vector256<float>, Vector256<int>, Avx2Functions>>(
                     path,
@@ -230,6 +271,16 @@ namespace Sandbox
             if (true)
             {
                 string path = Path.Combine(basePath, "OpenSimplex2_{0}");
+
+                Write<
+                    Vector512<int>, Vector512<float>, Vector512<int>, Avx512Functions,
+                    OpenSimplex2<Vector512<int>, Vector512<float>, Vector512<int>, Avx512Functions>>(
+                    path,
+                    generator: new(),
+                    seed,
+                    offsetX,
+                    width,
+                    height);
 
                 Write<
                     Vector256<int>, Vector256<float>, Vector256<int>, Avx2Functions,
