@@ -2,7 +2,6 @@
 using System.Diagnostics;
 using System.IO;
 using System.Runtime.Intrinsics;
-using System.Runtime.Versioning;
 using SharpFastNoise2;
 using SharpFastNoise2.Distance;
 using SharpFastNoise2.Functions;
@@ -12,7 +11,6 @@ using SixLabors.ImageSharp.PixelFormats;
 
 namespace Sandbox
 {
-    [RequiresPreviewFeatures]
     class Program
     {
         static void Main(string[] args)
@@ -432,17 +430,20 @@ namespace Sandbox
             w.Restart();
             using Image<L16> image = new(width, height);
 
-            for (int y = 0; y < image.Height; y++)
+            image.ProcessPixelRows(accessor =>
             {
-                Span<L16> row = image.GetPixelRowSpan(y);
-                Span<float> dstSlice = dst.AsSpan(y * row.Length, row.Length);
-
-                for (int x = 0; x < row.Length; x++)
+                for (int y = 0; y < accessor.Height; y++)
                 {
-                    float value = dstSlice[x] + 1;
-                    row[x] = new L16((ushort)(value * 0.5f * ushort.MaxValue));
+                    Span<L16> row = accessor.GetRowSpan(y).Slice(0, width);
+                    Span<float> dstSlice = dst.AsSpan(y * width, width);
+
+                    for (int x = 0; x < row.Length; x++)
+                    {
+                        float value = dstSlice[x] + 1;
+                        row[x] = new L16((ushort) (value * 0.5f * ushort.MaxValue));
+                    }
                 }
-            }
+            });
 
             image.Save(path);
             w.Stop();
