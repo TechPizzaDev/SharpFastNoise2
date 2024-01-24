@@ -1,8 +1,8 @@
 ﻿
 namespace SharpFastNoise2.Generators
 {
-    public interface INoiseGenerator4D<f, i> : INoiseGenerator4D
+    public interface INoiseGenerator4D<F, I> : INoiseGenerator4D
     {
-        public f Gen(f x, f y, f z, f w, i seed);
+        public F Gen(F x, F y, F z, F w, I seed);
     }
 }

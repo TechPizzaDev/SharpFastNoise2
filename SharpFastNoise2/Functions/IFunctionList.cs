@@ -1,4 +1,6 @@
-﻿namespace SharpFastNoise2.Functions
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace SharpFastNoise2.Functions
 {
     public interface IFunctionList<m32, f32, i32>
     {
@@ -14,9 +16,9 @@
 
         // Load
 
-        static abstract f32 Load_f32(ref float p);
+        static abstract f32 Load_f32(ref readonly float p);
 
-        static abstract i32 Load_i32(ref int p);
+        static abstract i32 Load_i32(ref readonly int p);
 
         // Incremented
 
@@ -76,9 +78,9 @@
 
         static abstract m32 BitwiseAndNot_m32(m32 a, m32 b);
 
-        static abstract f32 BitwiseShiftRightZX_f32(f32 a, byte b);
+        static abstract f32 BitwiseShiftRightZX_f32(f32 a, [ConstantExpected] byte b);
 
-        static abstract i32 BitwiseShiftRightZX_i32(i32 a, byte b);
+        static abstract i32 BitwiseShiftRightZX_i32(i32 a, [ConstantExpected] byte b);
 
         // Abs
 
@@ -128,14 +130,14 @@
         static abstract m32 Equal(f32 lhs, f32 rhs);
         static abstract m32 GreaterThan(f32 lhs, f32 rhs);
         static abstract m32 GreaterThanOrEqual(f32 lhs, f32 rhs);
-        static abstract f32 LeftShift(f32 lhs, byte rhs);
+        static abstract f32 LeftShift(f32 lhs, [ConstantExpected] byte rhs);
         static abstract m32 LessThan(f32 lhs, f32 rhs);
         static abstract m32 LessThanOrEqual(f32 lhs, f32 rhs);
         static abstract f32 Mul(f32 lhs, f32 rhs);
         static abstract f32 Negate(f32 lhs);
         static abstract m32 NotEqual(f32 lhs, f32 rhs);
         static abstract f32 Or(f32 lhs, f32 rhs);
-        static abstract f32 RightShift(f32 lhs, byte rhs);
+        static abstract f32 RightShift(f32 lhs, [ConstantExpected] byte rhs);
         static abstract f32 Sub(f32 lhs, f32 rhs);
         static abstract f32 Xor(f32 lhs, f32 rhs);
 
@@ -147,14 +149,14 @@
         static abstract m32 Equal(i32 lhs, i32 rhs);
         static abstract m32 GreaterThan(i32 lhs, i32 rhs);
         static abstract m32 GreaterThanOrEqual(i32 lhs, i32 rhs);
-        static abstract i32 LeftShift(i32 lhs, byte rhs);
+        static abstract i32 LeftShift(i32 lhs, [ConstantExpected] byte rhs);
         static abstract m32 LessThan(i32 lhs, i32 rhs);
         static abstract m32 LessThanOrEqual(i32 lhs, i32 rhs);
         static abstract i32 Mul(i32 lhs, i32 rhs);
         static abstract i32 Negate(i32 lhs);
         static abstract m32 NotEqual(i32 lhs, i32 rhs);
         static abstract i32 Or(i32 lhs, i32 rhs);
-        static abstract i32 RightShift(i32 lhs, byte rhs);
+        static abstract i32 RightShift(i32 lhs, [ConstantExpected] byte rhs);
         static abstract i32 Sub(i32 lhs, i32 rhs);
         static abstract i32 Xor(i32 lhs, i32 rhs);
 

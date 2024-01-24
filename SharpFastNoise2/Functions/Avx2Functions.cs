@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using System.Runtime.Intrinsics;
 using System.Runtime.Intrinsics.X86;
@@ -30,14 +31,14 @@ namespace SharpFastNoise2.Functions
 
         // Load
 
-        public static f32 Load_f32(ref float p)
+        public static f32 Load_f32(ref readonly float p)
         {
-            return Vector256.LoadUnsafe(ref p);
+            return Vector256.LoadUnsafe(in p);
         }
 
-        public static i32 Load_i32(ref int p)
+        public static i32 Load_i32(ref readonly int p)
         {
-            return Vector256.LoadUnsafe(ref p);
+            return Vector256.LoadUnsafe(in p);
         }
 
         // Incremented
@@ -161,12 +162,12 @@ namespace SharpFastNoise2.Functions
             return Avx2.AndNot(b, a);
         }
 
-        public static f32 BitwiseShiftRightZX_f32(f32 a, byte b)
+        public static f32 BitwiseShiftRightZX_f32(f32 a, [ConstantExpected] byte b)
         {
             return Casti32_f32(Avx2.ShiftRightLogical(Castf32_i32(a), b));
         }
 
-        public static i32 BitwiseShiftRightZX_i32(i32 a, byte b)
+        public static i32 BitwiseShiftRightZX_i32(i32 a, [ConstantExpected] byte b)
         {
             return Avx2.ShiftRightLogical(a, b);
         }
@@ -282,14 +283,14 @@ namespace SharpFastNoise2.Functions
         public static m32 Equal(f32 lhs, f32 rhs) => Avx.CompareEqual(lhs, rhs).AsInt32();
         public static m32 GreaterThan(f32 lhs, f32 rhs) => Avx.CompareGreaterThan(lhs, rhs).AsInt32();
         public static m32 GreaterThanOrEqual(f32 lhs, f32 rhs) => Avx.CompareGreaterThanOrEqual(lhs, rhs).AsInt32();
-        public static f32 LeftShift(f32 lhs, byte rhs) => throw new NotSupportedException();
+        public static f32 LeftShift(f32 lhs, [ConstantExpected] byte rhs) => throw new NotSupportedException();
         public static m32 LessThan(f32 lhs, f32 rhs) => Avx.CompareLessThan(lhs, rhs).AsInt32();
         public static m32 LessThanOrEqual(f32 lhs, f32 rhs) => Avx.CompareLessThanOrEqual(lhs, rhs).AsInt32();
         public static f32 Mul(f32 lhs, f32 rhs) => Avx.Multiply(lhs, rhs);
         public static f32 Negate(f32 lhs) => Avx.Xor(lhs, Vector256.Create(0x80000000).AsSingle());
         public static m32 NotEqual(f32 lhs, f32 rhs) => Avx.CompareNotEqual(lhs, rhs).AsInt32();
         public static f32 Or(f32 lhs, f32 rhs) => Avx.Or(lhs, rhs);
-        public static f32 RightShift(f32 lhs, byte rhs) => throw new NotSupportedException();
+        public static f32 RightShift(f32 lhs, [ConstantExpected] byte rhs) => throw new NotSupportedException();
         public static f32 Sub(f32 lhs, f32 rhs) => Avx.Subtract(lhs, rhs);
         public static f32 Xor(f32 lhs, f32 rhs) => Avx.Xor(lhs, rhs);
 
@@ -301,14 +302,14 @@ namespace SharpFastNoise2.Functions
         public static m32 Equal(i32 lhs, i32 rhs) => Avx2.CompareEqual(lhs, rhs);
         public static m32 GreaterThan(i32 lhs, i32 rhs) => Avx2.CompareGreaterThan(lhs, rhs);
         public static m32 GreaterThanOrEqual(i32 lhs, i32 rhs) => throw new NotSupportedException();
-        public static i32 LeftShift(i32 lhs, byte rhs) => Avx2.ShiftLeftLogical(lhs, rhs);
+        public static i32 LeftShift(i32 lhs, [ConstantExpected] byte rhs) => Avx2.ShiftLeftLogical(lhs, rhs);
         public static m32 LessThan(i32 lhs, i32 rhs) => Avx2.CompareGreaterThan(rhs, lhs);
         public static m32 LessThanOrEqual(i32 lhs, i32 rhs) => throw new NotSupportedException();
         public static i32 Mul(i32 lhs, i32 rhs) => Avx2.MultiplyLow(lhs, rhs);
         public static i32 Negate(i32 lhs) => Avx2.Subtract(i32.Zero, lhs);
         public static m32 NotEqual(i32 lhs, i32 rhs) => NotEqual(lhs.AsSingle(), rhs.AsSingle());
         public static i32 Or(i32 lhs, i32 rhs) => Avx2.Or(lhs, rhs);
-        public static i32 RightShift(i32 lhs, byte rhs) => Avx2.ShiftRightArithmetic(lhs, rhs);
+        public static i32 RightShift(i32 lhs, [ConstantExpected] byte rhs) => Avx2.ShiftRightArithmetic(lhs, rhs);
         public static i32 Sub(i32 lhs, i32 rhs) => Avx2.Subtract(lhs, rhs);
         public static i32 Xor(i32 lhs, i32 rhs) => Avx2.Xor(lhs, rhs);
     }
