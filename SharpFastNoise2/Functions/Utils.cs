@@ -29,6 +29,7 @@ namespace SharpFastNoise2
             return Unsafe.BitCast<Vector512<float>, f32>(m);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static f32 PermuteVar16x32x2(Vector512<float> a, i32 idx, Vector512<float> b)
         {
             Vector512<float> m = Avx512F.PermuteVar16x32x2(a, Unsafe.BitCast<i32, Vector512<int>>(idx), b);

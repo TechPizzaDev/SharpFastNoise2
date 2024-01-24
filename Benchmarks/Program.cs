@@ -50,6 +50,9 @@ namespace Benchmarks
             if (true)
             {
                 var switcher = new BenchmarkSwitcher(new[] {
+                    typeof(Perlin_8_Avx2),
+                    typeof(Perlin_16_Avx512),
+
                     //typeof(Simplex_1_Scalar),
                     //typeof(Simplex_4_Sse2),
                     typeof(Simplex_8_Avx2),
