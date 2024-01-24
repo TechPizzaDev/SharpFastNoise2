@@ -29,16 +29,6 @@ namespace SharpFastNoise2.Functions
 
         // Load
 
-        public static f32 Load_f32(ref byte p)
-        {
-            return Unsafe.ReadUnaligned<f32>(ref p);
-        }
-
-        public static i32 Load_i32(ref byte p)
-        {
-            return Unsafe.ReadUnaligned<i32>(ref p);
-        }
-
         public static f32 Load_f32(ref float p)
         {
             return Unsafe.ReadUnaligned<f32>(ref Unsafe.As<float, byte>(ref p));
@@ -62,16 +52,6 @@ namespace SharpFastNoise2.Functions
         }
 
         // Store
-
-        public static void Store_f32(ref byte p, f32 a)
-        {
-            Unsafe.WriteUnaligned(ref p, a);
-        }
-
-        public static void Store_i32(ref byte p, i32 a)
-        {
-            Unsafe.WriteUnaligned(ref p, a);
-        }
 
         public static void Store_f32(ref float p, f32 a)
         {
@@ -109,12 +89,12 @@ namespace SharpFastNoise2.Functions
 
         public static f32 Casti32_f32(i32 a)
         {
-            return Unsafe.As<i32, f32>(ref a);
+            return Unsafe.As<i32, f32>(ref a); // TODO: Bitcast
         }
 
         public static i32 Castf32_i32(f32 a)
         {
-            return Unsafe.As<f32, i32>(ref a);
+            return Unsafe.As<f32, i32>(ref a); // TODO: Bitcast
         }
 
         // Convert
@@ -306,7 +286,7 @@ namespace SharpFastNoise2.Functions
 
         public static f32 Add(f32 lhs, f32 rhs) => lhs + rhs;
         public static f32 And(f32 lhs, f32 rhs) => AsSingle(And(AsInt32(lhs), AsInt32(rhs)));
-        public static i32 AsInt32(f32 lhs) => Unsafe.As<f32, i32>(ref lhs);
+        public static i32 AsInt32(f32 lhs) => Unsafe.As<f32, i32>(ref lhs); // TODO: Bitcast
         public static f32 Complement(f32 lhs) => AsSingle(Complement(AsInt32(lhs)));
         public static f32 Div(f32 lhs, f32 rhs) => lhs / rhs;
         public static i32 Equal(f32 lhs, f32 rhs) => (lhs == rhs).AsInt32();
@@ -325,7 +305,7 @@ namespace SharpFastNoise2.Functions
 
         public static i32 Add(i32 lhs, i32 rhs) => lhs + rhs;
         public static i32 And(i32 lhs, i32 rhs) => lhs & rhs;
-        public static f32 AsSingle(i32 lhs) => Unsafe.As<i32, f32>(ref lhs);
+        public static f32 AsSingle(i32 lhs) => Unsafe.As<i32, f32>(ref lhs); // TODO: Bitcast
         public static i32 Complement(i32 lhs) => ~lhs;
         public static i32 Div(i32 lhs, i32 rhs) => lhs / rhs;
         public static i32 Equal(i32 lhs, i32 rhs) => (lhs == rhs).AsInt32();

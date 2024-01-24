@@ -20,6 +20,8 @@ namespace SharpFastNoise2
         {
             if (typeof(i32) == typeof(Vector256<int>))
             {
+                // TODO: Bitcast
+
                 i32 index = F.Convertf32_i32(F.Mul(
                     F.Converti32_f32(F.And(hash, F.Broad_i32(0x3FFFFF))),
                     F.Broad_f32(1.3333333333333333f)));
@@ -58,7 +60,7 @@ namespace SharpFastNoise2
                     {
                         xyV = F.RightShift(xyV, 31);
                     }
-                    xy = Unsafe.As<i32, m32>(ref xyV);
+                    xy = Unsafe.As<i32, m32>(ref xyV); // TODO: Bitcast
                 }
 
                 f32 a = F.Select_f32(xy, fY, fX);
@@ -77,7 +79,7 @@ namespace SharpFastNoise2
                 else
                 {
                     i32 aMul2V = F.RightShift(F.LeftShift(index, 30), 31);
-                    aMul2 = Unsafe.As<i32, m32>(ref aMul2V);
+                    aMul2 = Unsafe.As<i32, m32>(ref aMul2V); // TODO: Bitcast
                 }
 
                 a = F.Mul(a, F.Select_f32(aMul2, F.Broad_f32(2), F.Broad_f32(ROOT3)));
@@ -105,6 +107,8 @@ namespace SharpFastNoise2
         {
             if (typeof(i32) == typeof(Vector256<int>))
             {
+                // TODO: Bitcast
+
                 Vector256<float> gX = Avx2.PermuteVar8x32(
                     Vector256.Create(1 + ROOT2, -1 - ROOT2, 1 + ROOT2, -1 - ROOT2, 1, -1, 1, -1),
                     Unsafe.As<i32, Vector256<int>>(ref hash));
@@ -138,7 +142,7 @@ namespace SharpFastNoise2
                     {
                         bit4 = F.RightShift(bit4, 31);
                     }
-                    mbit4 = Unsafe.As<i32, m32>(ref bit4);
+                    mbit4 = Unsafe.As<i32, m32>(ref bit4); // TODO: Bitcast
                 }
 
                 fX = F.Xor(fX, F.Casti32_f32(bit1));
@@ -203,7 +207,7 @@ namespace SharpFastNoise2
             else
             {
                 i32 mask = F.LeftShift(hash, 27);
-                b = F.Select_f32(Unsafe.As<i32, m32>(ref mask), fY, fZ);
+                b = F.Select_f32(Unsafe.As<i32, m32>(ref mask), fY, fZ); // TODO: Bitcast
             }
 
             f32 c = F.Select_f32(F.GreaterThan(p, F.Broad_i32(2 << 3)), fZ, fW);
