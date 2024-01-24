@@ -15,6 +15,26 @@ namespace SharpFastNoise2
         public const float ROOT2 = 1.4142135623730950488f;
         public const float ROOT3 = 1.7320508075688772935f;
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static f32 PermuteVar8x32(i32 idx, Vector256<float> a)
+        {
+            Vector256<float> m = Avx2.PermuteVar8x32(a, Unsafe.BitCast<i32, Vector256<int>>(idx));
+            return Unsafe.BitCast<Vector256<float>, f32>(m);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static f32 PermuteVar16x32(i32 idx, Vector512<float> a)
+        {
+            Vector512<float> m = Avx512F.PermuteVar16x32(a, Unsafe.BitCast<i32, Vector512<int>>(idx));
+            return Unsafe.BitCast<Vector512<float>, f32>(m);
+        }
+
+        private static f32 PermuteVar16x32x2(Vector512<float> a, i32 idx, Vector512<float> b)
+        {
+            Vector512<float> m = Avx512F.PermuteVar16x32x2(a, Unsafe.BitCast<i32, Vector512<int>>(idx), b);
+            return Unsafe.BitCast<Vector512<float>, f32>(m);
+        }
+
         [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
         public static f32 GetGradientDotFancy(i32 hash, f32 fX, f32 fY)
         {
@@ -24,25 +44,19 @@ namespace SharpFastNoise2
                     F.Converti32_f32(F.And(hash, F.Broad_i32(0x3FFFFF))),
                     F.Broad_f32(1.3333333333333333f)));
 
-                Vector256<float> gX = Avx2.PermuteVar8x32(
-                    Vector256.Create(ROOT3, ROOT3, 2, 2, 1, -1, 0, 0),
-                    Unsafe.BitCast<i32, Vector256<int>>(index));
-
-                Vector256<float> gY = Avx2.PermuteVar8x32(
-                    Vector256.Create(1, -1, 0, 0, ROOT3, ROOT3, 2, 2),
-                    Unsafe.BitCast<i32, Vector256<int>>(index));
+                f32 gX = PermuteVar8x32(index, Vector256.Create(ROOT3, ROOT3, 2, 2, 1, -1, 0, 0));
+                f32 gY = PermuteVar8x32(index, Vector256.Create(1, -1, 0, 0, ROOT3, ROOT3, 2, 2));
 
                 // Bit-8 = Flip sign of a + b
                 return F.Xor(
-                    F.FMulAdd_f32(
-                        Unsafe.BitCast<Vector256<float>, f32>(gX),
-                        fX,
-                        F.Mul(fY, Unsafe.BitCast<Vector256<float>, f32>(gY))),
+                    F.FMulAdd_f32(gX, fX, F.Mul(fY, gY)),
                     F.Casti32_f32(F.LeftShift(F.RightShift(index, 3), 31)));
             }
-            else
+            else if (typeof(i32) != typeof(Vector512<int>))
             {
-                i32 index = F.Convertf32_i32(F.Mul(F.Converti32_f32(F.And(hash, F.Broad_i32(0x3FFFFF))), F.Broad_f32(1.3333333333333333f)));
+                i32 index = F.Convertf32_i32(F.Mul(
+                    F.Converti32_f32(F.And(hash, F.Broad_i32(0x3FFFFF))),
+                    F.Broad_f32(1.3333333333333333f)));
 
                 // Bit-4 = Choose X Y ordering
                 m32 xy;
@@ -87,38 +101,30 @@ namespace SharpFastNoise2
                 // Bit-8 = Flip sign of a + b
                 return F.Xor(F.Add(a, b), F.Casti32_f32(F.LeftShift(F.RightShift(index, 3), 31)));
             }
-        }
+            else
+            {
+                i32 index = F.Convertf32_i32(F.Mul(
+                    F.Converti32_f32(F.And(hash, F.Broad_i32(0x3FFFFF))),
+                    F.Broad_f32(1.3333333333333333f)));
 
-        //template<typename SIMD = FS, std::enable_if_t<(SIMD::SIMD_Level == FastSIMD::Level_AVX512)>* = nullptr>
-        //F.INLINE static float32v GetGradientDotFancy(int32v hash, float32v fX, float32v fY)
-        //{
-        //    int32v index = F.Convertf32_i32(F.Converti32_f32(hash & F.Broadcast(0x3FFFFF)) * float32v(1.3333333333333333f));
-        //
-        //    float32v gX = _mm512_permutexvar_ps(index, float32v(ROOT3, ROOT3, 2, 2, 1, -1, 0, 0, -ROOT3, -ROOT3, -2, -2, -1, 1, 0, 0));
-        //    float32v gY = _mm512_permutexvar_ps(index, float32v(1, -1, 0, 0, ROOT3, ROOT3, 2, 2, -1, 1, 0, 0, -ROOT3, -ROOT3, -2, -2));
-        //
-        //    return F.FMulAdd_f32(gX, fX, fY * gY);
-        //}
+                f32 gX = PermuteVar16x32(index, Vector512.Create(ROOT3, ROOT3, 2, 2, 1, -1, 0, 0, -ROOT3, -ROOT3, -2, -2, -1, 1, 0, 0));
+                f32 gY = PermuteVar16x32(index, Vector512.Create(1, -1, 0, 0, ROOT3, ROOT3, 2, 2, -1, 1, 0, 0, -ROOT3, -ROOT3, -2, -2));
+
+                return F.FMulAdd_f32(gX, fX, F.Mul(fY, gY));
+            }
+        }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
         public static f32 GetGradientDot(i32 hash, f32 fX, f32 fY)
         {
             if (typeof(i32) == typeof(Vector256<int>))
             {
-                Vector256<float> gX = Avx2.PermuteVar8x32(
-                    Vector256.Create(1 + ROOT2, -1 - ROOT2, 1 + ROOT2, -1 - ROOT2, 1, -1, 1, -1),
-                    Unsafe.BitCast<i32, Vector256<int>>(hash));
+                f32 gX = PermuteVar8x32(hash, Vector256.Create(1 + ROOT2, -1 - ROOT2, 1 + ROOT2, -1 - ROOT2, 1, -1, 1, -1));
+                f32 gY = PermuteVar8x32(hash, Vector256.Create(1, 1, -1, -1, 1 + ROOT2, 1 + ROOT2, -1 - ROOT2, -1 - ROOT2));
 
-                Vector256<float> gY = Avx2.PermuteVar8x32(
-                    Vector256.Create(1, 1, -1, -1, 1 + ROOT2, 1 + ROOT2, -1 - ROOT2, -1 - ROOT2),
-                    Unsafe.BitCast<i32, Vector256<int>>(hash));
-
-                return F.FMulAdd_f32(
-                    Unsafe.BitCast<Vector256<float>, f32>(gX),
-                    fX,
-                    F.Mul(fY, Unsafe.BitCast<Vector256<float>, f32>(gY)));
+                return F.FMulAdd_f32(gX, fX, F.Mul(fY, gY));
             }
-            else
+            else if (typeof(i32) != typeof(Vector512<int>))
             {
                 // ( 1+R2, 1 ) ( -1-R2, 1 ) ( 1+R2, -1 ) ( -1-R2, -1 )
                 // ( 1, 1+R2 ) ( 1, -1-R2 ) ( -1, 1+R2 ) ( -1, -1-R2 )
@@ -149,84 +155,101 @@ namespace SharpFastNoise2
 
                 return F.FMulAdd_f32(F.Broad_f32(1.0f + ROOT2), a, b);
             }
-        }
+            else
+            {
+                f32 gX = PermuteVar16x32(hash, Vector512.Create(
+                    1 + ROOT2, -1 - ROOT2, 1 + ROOT2, -1 - ROOT2, 1, -1, 1, -1,
+                    1 + ROOT2, -1 - ROOT2, 1 + ROOT2, -1 - ROOT2, 1, -1, 1, -1));
 
-        //template<typename SIMD = FS, std::enable_if_t<SIMD::SIMD_Level == FastSIMD::Level_AVX512>* = nullptr>
-        // F.INLINE static float32v GetGradientDot(int32v hash, float32v fX, float32v fY)
-        //{
-        //    float32v gX = _mm512_permutexvar_ps(hash, float32v(1 + ROOT2, -1 - ROOT2, 1 + ROOT2, -1 - ROOT2, 1, -1, 1, -1, 1 + ROOT2, -1 - ROOT2, 1 + ROOT2, -1 - ROOT2, 1, -1, 1, -1));
-        //    float32v gY = _mm512_permutexvar_ps(hash, float32v(1, 1, -1, -1, 1 + ROOT2, 1 + ROOT2, -1 - ROOT2, -1 - ROOT2, 1, 1, -1, -1, 1 + ROOT2, 1 + ROOT2, -1 - ROOT2, -1 - ROOT2));
-        //
-        //    return F.FMulAdd_f32(gX, fX, fY * gY);
-        //}
+                f32 gY = PermuteVar16x32(hash, Vector512.Create(
+                    1, 1, -1, -1, 1 + ROOT2, 1 + ROOT2, -1 - ROOT2, -1 - ROOT2,
+                    1, 1, -1, -1, 1 + ROOT2, 1 + ROOT2, -1 - ROOT2, -1 - ROOT2));
+
+                return F.FMulAdd_f32(gX, fX, F.Mul(fY, gY));
+            }
+        }
 
         public static f32 GetGradientDot(i32 hash, f32 fX, f32 fY, f32 fZ)
         {
-            i32 hasha13 = F.And(hash, F.Broad_i32(13));
-
-            //if h < 8 then x, else y
-            f32 u = F.Select_f32(F.LessThan(hasha13, F.Broad_i32(8)), fX, fY);
-
-            //if h < 4 then y else if h is 12 or 14 then x else z
-            f32 v = F.Select_f32(F.Equal(hasha13, F.Broad_i32(12)), fX, fZ);
-            v = F.Select_f32(F.LessThan(hasha13, F.Broad_i32(2)), fY, v);
-
-            //if h1 then -u else u
-            //if h2 then -v else v
-            f32 h1 = F.Casti32_f32(F.LeftShift(hash, 31));
-            f32 h2 = F.Casti32_f32(F.LeftShift(F.And(hash, F.Broad_i32(2)), 30));
-            //then add them
-            return F.Add(F.Xor(u, h1), F.Xor(v, h2));
-        }
-
-        //template<typename SIMD = FS, std::enable_if_t<SIMD::SIMD_Level == FastSIMD::Level_AVX512>* = nullptr>
-        //F.INLINE static float32v GetGradientDot(int32v hash, float32v fX, float32v fY, float32v fZ)
-        //{
-        //    float32v gX = _mm512_permutexvar_ps(hash, float32v(1, -1, 1, -1, 1, -1, 1, -1, 0, 0, 0, 0, 1, 0, -1, 0));
-        //    float32v gY = _mm512_permutexvar_ps(hash, float32v(1, 1, -1, -1, 0, 0, 0, 0, 1, -1, 1, -1, 1, -1, 1, -1));
-        //    float32v gZ = _mm512_permutexvar_ps(hash, float32v(0, 0, 0, 0, 1, 1, -1, -1, 1, 1, -1, -1, 0, 1, 0, -1));
-        //
-        //    return F.FMulAdd_f32(gX, fX, F.FMulAdd_f32(fY, gY, fZ * gZ));
-        //}
-
-        public static f32 GetGradientDot(i32 hash, f32 fX, f32 fY, f32 fZ, f32 fW)
-        {
-            i32 p = F.And(hash, F.Broad_i32(3 << 3));
-
-            f32 a = F.Select_f32(F.GreaterThan(p, F.Broad_i32(0)), fX, fY);
-            f32 b;
-
-            if (Sse41.IsSupported)
+            if (typeof(i32) != typeof(Vector512<int>))
             {
-                b = F.Select_f32(F.GreaterThan(p, F.Broad_i32(1 << 3)), fY, fZ);
+                i32 hasha13 = F.And(hash, F.Broad_i32(13));
+
+                //if h < 8 then x, else y
+                f32 u = F.Select_f32(F.LessThan(hasha13, F.Broad_i32(8)), fX, fY);
+
+                //if h < 4 then y else if h is 12 or 14 then x else z
+                f32 v = F.Select_f32(F.Equal(hasha13, F.Broad_i32(12)), fX, fZ);
+                v = F.Select_f32(F.LessThan(hasha13, F.Broad_i32(2)), fY, v);
+
+                //if h1 then -u else u
+                //if h2 then -v else v
+                f32 h1 = F.Casti32_f32(F.LeftShift(hash, 31));
+                f32 h2 = F.Casti32_f32(F.LeftShift(F.And(hash, F.Broad_i32(2)), 30));
+                //then add them
+                return F.Add(F.Xor(u, h1), F.Xor(v, h2));
             }
             else
             {
-                i32 mask = F.LeftShift(hash, 27);
-                b = F.Select_f32(Unsafe.BitCast<i32, m32>(mask), fY, fZ);
-            }
+                f32 gX = PermuteVar16x32(hash, Vector512.Create(1f, -1, 1, -1, 1, -1, 1, -1, 0, 0, 0, 0, 1, 0, -1, 0));
+                f32 gY = PermuteVar16x32(hash, Vector512.Create(1f, 1, -1, -1, 0, 0, 0, 0, 1, -1, 1, -1, 1, -1, 1, -1));
+                f32 gZ = PermuteVar16x32(hash, Vector512.Create(0f, 0, 0, 0, 1, 1, -1, -1, 1, 1, -1, -1, 0, 1, 0, -1));
 
-            f32 c = F.Select_f32(F.GreaterThan(p, F.Broad_i32(2 << 3)), fZ, fW);
-
-            unchecked
-            {
-                f32 aSign = F.Casti32_f32(F.LeftShift(hash, 31));
-                f32 bSign = F.Casti32_f32(F.And(F.LeftShift(hash, 30), F.Broad_i32((int) 0x80000000)));
-                f32 cSign = F.Casti32_f32(F.And(F.LeftShift(hash, 29), F.Broad_i32((int) 0x80000000)));
-                return F.Add(F.Add(F.Xor(a, aSign), F.Xor(b, bSign)), F.Xor(c, cSign));
+                return F.FMulAdd_f32(gX, fX, F.FMulAdd_f32(fY, gY, F.Mul(fZ, gZ)));
             }
         }
 
-        //template<typename SIMD = FS, std::enable_if_t<SIMD::SIMD_Level == FastSIMD::Level_AVX512>* = nullptr>
-        //F.INLINE static float32v GetGradientDot(int32v hash, float32v fX, float32v fY, float32v fZ, float32v fW)
-        //{
-        //    float32v gX = _mm512_permutex2var_ps(float32v(0, 0, 0, 0, 0, 0, 0, 0, 1, -1, 1, -1, 1, -1, 1, -1), hash, float32v(1, -1, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1));
-        //    float32v gY = _mm512_permutex2var_ps(float32v(1, -1, 1, -1, 1, -1, 1, -1, 0, 0, 0, 0, 0, 0, 0, 0), hash, float32v(1, 1, -1, -1, 1, 1, -1, -1, 1, 1, -1, -1, 1, 1, -1, -1));
-        //    float32v gZ = _mm512_permutex2var_ps(float32v(1, 1, -1, -1, 1, 1, -1, -1, 1, 1, -1, -1, 1, 1, -1, -1), hash, float32v(0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, -1, -1, -1, -1));
-        //    float32v gW = _mm512_permutex2var_ps(float32v(1, 1, 1, 1, -1, -1, -1, -1, 1, 1, 1, 1, -1, -1, -1, -1), hash, float32v(1, 1, 1, 1, -1, -1, -1, -1, 0, 0, 0, 0, 0, 0, 0, 0));
-        //
-        //    return F.FMulAdd_f32(gX, fX, F.FMulAdd_f32(fY, gY, F.FMulAdd_f32(fZ, gZ, fW * gW)));
-        //}
+        public static f32 GetGradientDot(i32 hash, f32 fX, f32 fY, f32 fZ, f32 fW)
+        {
+            if (typeof(i32) != typeof(Vector512<int>))
+            {
+                i32 p = F.And(hash, F.Broad_i32(3 << 3));
+
+                f32 a = F.Select_f32(F.GreaterThan(p, F.Broad_i32(0)), fX, fY);
+                f32 b;
+
+                if (Sse41.IsSupported)
+                {
+                    b = F.Select_f32(F.GreaterThan(p, F.Broad_i32(1 << 3)), fY, fZ);
+                }
+                else
+                {
+                    i32 mask = F.LeftShift(hash, 27);
+                    b = F.Select_f32(Unsafe.BitCast<i32, m32>(mask), fY, fZ);
+                }
+
+                f32 c = F.Select_f32(F.GreaterThan(p, F.Broad_i32(2 << 3)), fZ, fW);
+
+                f32 aSign = F.Casti32_f32(F.LeftShift(hash, 31));
+                f32 bSign = F.Casti32_f32(F.And(F.LeftShift(hash, 30), F.Broad_i32(unchecked((int) 0x80000000))));
+                f32 cSign = F.Casti32_f32(F.And(F.LeftShift(hash, 29), F.Broad_i32(unchecked((int) 0x80000000))));
+                return F.Add(F.Add(F.Xor(a, aSign), F.Xor(b, bSign)), F.Xor(c, cSign));
+            }
+            else
+            {
+                f32 gX = PermuteVar16x32x2(
+                    Vector512.Create(0f, 0, 0, 0, 0, 0, 0, 0, 1, -1, 1, -1, 1, -1, 1, -1),
+                    hash,
+                    Vector512.Create(1f, -1, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1));
+
+                f32 gY = PermuteVar16x32x2(
+                    Vector512.Create(1f, -1, 1, -1, 1, -1, 1, -1, 0, 0, 0, 0, 0, 0, 0, 0),
+                    hash,
+                    Vector512.Create(1f, 1, -1, -1, 1, 1, -1, -1, 1, 1, -1, -1, 1, 1, -1, -1));
+
+                f32 gZ = PermuteVar16x32x2(
+                    Vector512.Create(1f, 1, -1, -1, 1, 1, -1, -1, 1, 1, -1, -1, 1, 1, -1, -1),
+                    hash,
+                    Vector512.Create(0f, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, -1, -1, -1, -1));
+
+                f32 gW = PermuteVar16x32x2(
+                    Vector512.Create(1f, 1, 1, 1, -1, -1, -1, -1, 1, 1, 1, 1, -1, -1, -1, -1),
+                    hash,
+                    Vector512.Create(1f, 1, 1, 1, -1, -1, -1, -1, 0, 0, 0, 0, 0, 0, 0, 0));
+
+                return F.FMulAdd_f32(gX, fX, F.FMulAdd_f32(fY, gY, F.FMulAdd_f32(fZ, gZ, F.Mul(fW, gW))));
+            }
+        }
 
         public static i32 HashPrimes(i32 seed, i32 x, i32 y)
         {

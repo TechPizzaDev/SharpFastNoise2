@@ -284,12 +284,9 @@ namespace SharpFastNoise2.Functions
             }
             else
             {
-                unchecked
-                {
-                    f32 aSign = And(a, Broad_i32((int) 0x80000000).AsSingle());
-                    f32 v = Add(a, Or(aSign, Broad_f32(0.5f)));
-                    return Sse2.ConvertToVector128Single(Sse2.ConvertToVector128Int32WithTruncation(v));
-                }
+                f32 aSign = And(a, Broad_i32(unchecked((int) 0x80000000)).AsSingle());
+                f32 v = Add(a, Or(aSign, Broad_f32(0.5f)));
+                return Sse2.ConvertToVector128Single(Sse2.ConvertToVector128Int32WithTruncation(v));
             }
         }
 
