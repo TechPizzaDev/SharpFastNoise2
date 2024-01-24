@@ -20,26 +20,24 @@ namespace SharpFastNoise2
         {
             if (typeof(i32) == typeof(Vector256<int>))
             {
-                // TODO: Bitcast
-
                 i32 index = F.Convertf32_i32(F.Mul(
                     F.Converti32_f32(F.And(hash, F.Broad_i32(0x3FFFFF))),
                     F.Broad_f32(1.3333333333333333f)));
 
                 Vector256<float> gX = Avx2.PermuteVar8x32(
                     Vector256.Create(ROOT3, ROOT3, 2, 2, 1, -1, 0, 0),
-                    Unsafe.As<i32, Vector256<int>>(ref index));
+                    Unsafe.BitCast<i32, Vector256<int>>(index));
 
                 Vector256<float> gY = Avx2.PermuteVar8x32(
                     Vector256.Create(1, -1, 0, 0, ROOT3, ROOT3, 2, 2),
-                    Unsafe.As<i32, Vector256<int>>(ref index));
+                    Unsafe.BitCast<i32, Vector256<int>>(index));
 
                 // Bit-8 = Flip sign of a + b
                 return F.Xor(
                     F.FMulAdd_f32(
-                        Unsafe.As<Vector256<float>, f32>(ref gX),
+                        Unsafe.BitCast<Vector256<float>, f32>(gX),
                         fX,
-                        F.Mul(fY, Unsafe.As<Vector256<float>, f32>(ref gY))),
+                        F.Mul(fY, Unsafe.BitCast<Vector256<float>, f32>(gY))),
                     F.Casti32_f32(F.LeftShift(F.RightShift(index, 3), 31)));
             }
             else
@@ -60,7 +58,7 @@ namespace SharpFastNoise2
                     {
                         xyV = F.RightShift(xyV, 31);
                     }
-                    xy = Unsafe.As<i32, m32>(ref xyV); // TODO: Bitcast
+                    xy = Unsafe.BitCast<i32, m32>(xyV);
                 }
 
                 f32 a = F.Select_f32(xy, fY, fX);
@@ -79,7 +77,7 @@ namespace SharpFastNoise2
                 else
                 {
                     i32 aMul2V = F.RightShift(F.LeftShift(index, 30), 31);
-                    aMul2 = Unsafe.As<i32, m32>(ref aMul2V); // TODO: Bitcast
+                    aMul2 = Unsafe.BitCast<i32, m32>(aMul2V);
                 }
 
                 a = F.Mul(a, F.Select_f32(aMul2, F.Broad_f32(2), F.Broad_f32(ROOT3)));
@@ -107,20 +105,18 @@ namespace SharpFastNoise2
         {
             if (typeof(i32) == typeof(Vector256<int>))
             {
-                // TODO: Bitcast
-
                 Vector256<float> gX = Avx2.PermuteVar8x32(
                     Vector256.Create(1 + ROOT2, -1 - ROOT2, 1 + ROOT2, -1 - ROOT2, 1, -1, 1, -1),
-                    Unsafe.As<i32, Vector256<int>>(ref hash));
+                    Unsafe.BitCast<i32, Vector256<int>>(hash));
 
                 Vector256<float> gY = Avx2.PermuteVar8x32(
                     Vector256.Create(1, 1, -1, -1, 1 + ROOT2, 1 + ROOT2, -1 - ROOT2, -1 - ROOT2),
-                    Unsafe.As<i32, Vector256<int>>(ref hash));
+                    Unsafe.BitCast<i32, Vector256<int>>(hash));
 
                 return F.FMulAdd_f32(
-                    Unsafe.As<Vector256<float>, f32>(ref gX),
+                    Unsafe.BitCast<Vector256<float>, f32>(gX),
                     fX,
-                    F.Mul(fY, Unsafe.As<Vector256<float>, f32>(ref gY)));
+                    F.Mul(fY, Unsafe.BitCast<Vector256<float>, f32>(gY)));
             }
             else
             {
@@ -142,7 +138,7 @@ namespace SharpFastNoise2
                     {
                         bit4 = F.RightShift(bit4, 31);
                     }
-                    mbit4 = Unsafe.As<i32, m32>(ref bit4); // TODO: Bitcast
+                    mbit4 = Unsafe.BitCast<i32, m32>(bit4);
                 }
 
                 fX = F.Xor(fX, F.Casti32_f32(bit1));
@@ -207,7 +203,7 @@ namespace SharpFastNoise2
             else
             {
                 i32 mask = F.LeftShift(hash, 27);
-                b = F.Select_f32(Unsafe.As<i32, m32>(ref mask), fY, fZ); // TODO: Bitcast
+                b = F.Select_f32(Unsafe.BitCast<i32, m32>(mask), fY, fZ);
             }
 
             f32 c = F.Select_f32(F.GreaterThan(p, F.Broad_i32(2 << 3)), fZ, fW);
@@ -215,8 +211,8 @@ namespace SharpFastNoise2
             unchecked
             {
                 f32 aSign = F.Casti32_f32(F.LeftShift(hash, 31));
-                f32 bSign = F.Casti32_f32(F.And(F.LeftShift(hash, 30), F.Broad_i32((int)0x80000000)));
-                f32 cSign = F.Casti32_f32(F.And(F.LeftShift(hash, 29), F.Broad_i32((int)0x80000000)));
+                f32 bSign = F.Casti32_f32(F.And(F.LeftShift(hash, 30), F.Broad_i32((int) 0x80000000)));
+                f32 cSign = F.Casti32_f32(F.And(F.LeftShift(hash, 29), F.Broad_i32((int) 0x80000000)));
                 return F.Add(F.Add(F.Xor(a, aSign), F.Xor(b, bSign)), F.Xor(c, cSign));
             }
         }

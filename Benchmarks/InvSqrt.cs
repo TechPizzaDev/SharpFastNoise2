@@ -44,12 +44,12 @@ namespace Benchmarks
 
         public static float Casti32_f32(int a)
         {
-            return Unsafe.As<int, float>(ref a);
+            return Unsafe.BitCast<int, float>(a);
         }
 
         public static int Castf32_i32(float a)
         {
-            return Unsafe.As<float, int>(ref a);
+            return Unsafe.BitCast<float, int>(a);
         }
     }
 }

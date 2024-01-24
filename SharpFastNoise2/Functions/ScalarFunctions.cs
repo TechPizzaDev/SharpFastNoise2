@@ -90,12 +90,12 @@ namespace SharpFastNoise2.Functions
 
         public static f32 Casti32_f32(i32 a)
         {
-            return Unsafe.As<i32, f32>(ref a); // TODO: Bitcast
+            return Unsafe.BitCast<i32, f32>(a);
         }
 
         public static i32 Castf32_i32(f32 a)
         {
-            return Unsafe.As<f32, i32>(ref a); // TODO: Bitcast
+            return Unsafe.BitCast<f32, i32>(a);
         }
 
         // Convert
@@ -287,7 +287,7 @@ namespace SharpFastNoise2.Functions
 
         public static f32 Add(f32 lhs, f32 rhs) => lhs + rhs;
         public static f32 And(f32 lhs, f32 rhs) => AsSingle(And(AsInt32(lhs), AsInt32(rhs)));
-        public static i32 AsInt32(f32 lhs) => Unsafe.As<f32, i32>(ref lhs); // TODO: Bitcast
+        public static i32 AsInt32(f32 lhs) => Unsafe.BitCast<f32, i32>(lhs);
         public static f32 Complement(f32 lhs) => AsSingle(Complement(AsInt32(lhs)));
         public static f32 Div(f32 lhs, f32 rhs) => lhs / rhs;
         public static i32 Equal(f32 lhs, f32 rhs) => (lhs == rhs).AsInt32();
@@ -306,7 +306,7 @@ namespace SharpFastNoise2.Functions
 
         public static i32 Add(i32 lhs, i32 rhs) => lhs + rhs;
         public static i32 And(i32 lhs, i32 rhs) => lhs & rhs;
-        public static f32 AsSingle(i32 lhs) => Unsafe.As<i32, f32>(ref lhs); // TODO: Bitcast
+        public static f32 AsSingle(i32 lhs) => Unsafe.BitCast<i32, f32>(lhs);
         public static i32 Complement(i32 lhs) => ~lhs;
         public static i32 Div(i32 lhs, i32 rhs) => lhs / rhs;
         public static i32 Equal(i32 lhs, i32 rhs) => (lhs == rhs).AsInt32();
