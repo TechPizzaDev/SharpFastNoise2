@@ -256,13 +256,11 @@ namespace SharpFastNoise2.Functions
 
         // FMA
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static f32 FMulAdd_f32(f32 a, f32 b, f32 c)
         {
             return Avx512F.FusedMultiplyAdd(a, b, c);
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static f32 FNMulAdd_f32(f32 a, f32 b, f32 c)
         {
             return Avx512F.FusedMultiplyAddNegated(a, b, c);

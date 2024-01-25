@@ -36,15 +36,15 @@ namespace SharpFastNoise2
             return Unsafe.BitCast<Vector512<float>, f32>(m);
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static f32 GetGradientDotFancy(i32 hash, f32 fX, f32 fY)
         {
+            i32 index = F.Convertf32_i32(F.Mul(
+                F.Converti32_f32(F.And(hash, F.Broad_i32(0x3FFFFF))),
+                F.Broad_f32(1.3333333333333333f)));
+
             if (typeof(i32) == typeof(Vector256<int>))
             {
-                i32 index = F.Convertf32_i32(F.Mul(
-                    F.Converti32_f32(F.And(hash, F.Broad_i32(0x3FFFFF))),
-                    F.Broad_f32(1.3333333333333333f)));
-
                 f32 gX = PermuteVar8x32(index, Vector256.Create(ROOT3, ROOT3, 2, 2, 1, -1, 0, 0));
                 f32 gY = PermuteVar8x32(index, Vector256.Create(1, -1, 0, 0, ROOT3, ROOT3, 2, 2));
 
@@ -53,12 +53,21 @@ namespace SharpFastNoise2
                     F.FMulAdd_f32(gX, fX, F.Mul(fY, gY)),
                     F.Casti32_f32(F.LeftShift(F.RightShift(index, 3), 31)));
             }
-            else if (typeof(i32) != typeof(Vector512<int>))
+            else if (typeof(i32) == typeof(Vector512<int>))
             {
-                i32 index = F.Convertf32_i32(F.Mul(
-                    F.Converti32_f32(F.And(hash, F.Broad_i32(0x3FFFFF))),
-                    F.Broad_f32(1.3333333333333333f)));
+                f32 gX = PermuteVar16x32(index, Vector512.Create(ROOT3, ROOT3, 2, 2, 1, -1, 0, 0, -ROOT3, -ROOT3, -2, -2, -1, 1, 0, 0));
+                f32 gY = PermuteVar16x32(index, Vector512.Create(1, -1, 0, 0, ROOT3, ROOT3, 2, 2, -1, 1, 0, 0, -ROOT3, -ROOT3, -2, -2));
 
+                return F.FMulAdd_f32(gX, fX, F.Mul(fY, gY));
+            }
+            else
+            {
+                return Fallback(index, fX, fY);
+            }
+
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            static f32 Fallback(i32 index, f32 fX, f32 fY)
+            {
                 // Bit-4 = Choose X Y ordering
                 m32 xy;
 
@@ -102,20 +111,9 @@ namespace SharpFastNoise2
                 // Bit-8 = Flip sign of a + b
                 return F.Xor(F.Add(a, b), F.Casti32_f32(F.LeftShift(F.RightShift(index, 3), 31)));
             }
-            else
-            {
-                i32 index = F.Convertf32_i32(F.Mul(
-                    F.Converti32_f32(F.And(hash, F.Broad_i32(0x3FFFFF))),
-                    F.Broad_f32(1.3333333333333333f)));
-
-                f32 gX = PermuteVar16x32(index, Vector512.Create(ROOT3, ROOT3, 2, 2, 1, -1, 0, 0, -ROOT3, -ROOT3, -2, -2, -1, 1, 0, 0));
-                f32 gY = PermuteVar16x32(index, Vector512.Create(1, -1, 0, 0, ROOT3, ROOT3, 2, 2, -1, 1, 0, 0, -ROOT3, -ROOT3, -2, -2));
-
-                return F.FMulAdd_f32(gX, fX, F.Mul(fY, gY));
-            }
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static f32 GetGradientDot(i32 hash, f32 fX, f32 fY)
         {
             if (typeof(i32) == typeof(Vector256<int>))
@@ -125,7 +123,25 @@ namespace SharpFastNoise2
 
                 return F.FMulAdd_f32(gX, fX, F.Mul(fY, gY));
             }
-            else if (typeof(i32) != typeof(Vector512<int>))
+            else if (typeof(i32) == typeof(Vector512<int>))
+            {
+                f32 gX = PermuteVar16x32(hash, Vector512.Create(
+                    1 + ROOT2, -1 - ROOT2, 1 + ROOT2, -1 - ROOT2, 1, -1, 1, -1,
+                    1 + ROOT2, -1 - ROOT2, 1 + ROOT2, -1 - ROOT2, 1, -1, 1, -1));
+
+                f32 gY = PermuteVar16x32(hash, Vector512.Create(
+                    1, 1, -1, -1, 1 + ROOT2, 1 + ROOT2, -1 - ROOT2, -1 - ROOT2,
+                    1, 1, -1, -1, 1 + ROOT2, 1 + ROOT2, -1 - ROOT2, -1 - ROOT2));
+
+                return F.FMulAdd_f32(gX, fX, F.Mul(fY, gY));
+            }
+            else
+            {
+                return Fallback(hash, fX, fY);
+            }
+
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            static f32 Fallback(i32 hash, f32 fX, f32 fY)
             {
                 // ( 1+R2, 1 ) ( -1-R2, 1 ) ( 1+R2, -1 ) ( -1-R2, -1 )
                 // ( 1, 1+R2 ) ( 1, -1-R2 ) ( -1, 1+R2 ) ( -1, -1-R2 )
@@ -156,23 +172,26 @@ namespace SharpFastNoise2
 
                 return F.FMulAdd_f32(F.Broad_f32(1.0f + ROOT2), a, b);
             }
-            else
-            {
-                f32 gX = PermuteVar16x32(hash, Vector512.Create(
-                    1 + ROOT2, -1 - ROOT2, 1 + ROOT2, -1 - ROOT2, 1, -1, 1, -1,
-                    1 + ROOT2, -1 - ROOT2, 1 + ROOT2, -1 - ROOT2, 1, -1, 1, -1));
-
-                f32 gY = PermuteVar16x32(hash, Vector512.Create(
-                    1, 1, -1, -1, 1 + ROOT2, 1 + ROOT2, -1 - ROOT2, -1 - ROOT2,
-                    1, 1, -1, -1, 1 + ROOT2, 1 + ROOT2, -1 - ROOT2, -1 - ROOT2));
-
-                return F.FMulAdd_f32(gX, fX, F.Mul(fY, gY));
-            }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static f32 GetGradientDot(i32 hash, f32 fX, f32 fY, f32 fZ)
         {
-            if (typeof(i32) != typeof(Vector512<int>))
+            if (typeof(i32) == typeof(Vector512<int>))
+            {
+                f32 gX = PermuteVar16x32(hash, Vector512.Create(1f, -1, 1, -1, 1, -1, 1, -1, 0, 0, 0, 0, 1, 0, -1, 0));
+                f32 gY = PermuteVar16x32(hash, Vector512.Create(1f, 1, -1, -1, 0, 0, 0, 0, 1, -1, 1, -1, 1, -1, 1, -1));
+                f32 gZ = PermuteVar16x32(hash, Vector512.Create(0f, 0, 0, 0, 1, 1, -1, -1, 1, 1, -1, -1, 0, 1, 0, -1));
+
+                return F.FMulAdd_f32(gX, fX, F.FMulAdd_f32(fY, gY, F.Mul(fZ, gZ)));
+            }
+            else
+            {
+                return Fallback(hash, fX, fY, fZ);
+            }
+
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            static f32 Fallback(i32 hash, f32 fX, f32 fY, f32 fZ)
             {
                 i32 hasha13 = F.And(hash, F.Broad_i32(13));
 
@@ -190,43 +209,12 @@ namespace SharpFastNoise2
                 //then add them
                 return F.Add(F.Xor(u, h1), F.Xor(v, h2));
             }
-            else
-            {
-                f32 gX = PermuteVar16x32(hash, Vector512.Create(1f, -1, 1, -1, 1, -1, 1, -1, 0, 0, 0, 0, 1, 0, -1, 0));
-                f32 gY = PermuteVar16x32(hash, Vector512.Create(1f, 1, -1, -1, 0, 0, 0, 0, 1, -1, 1, -1, 1, -1, 1, -1));
-                f32 gZ = PermuteVar16x32(hash, Vector512.Create(0f, 0, 0, 0, 1, 1, -1, -1, 1, 1, -1, -1, 0, 1, 0, -1));
-
-                return F.FMulAdd_f32(gX, fX, F.FMulAdd_f32(fY, gY, F.Mul(fZ, gZ)));
-            }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static f32 GetGradientDot(i32 hash, f32 fX, f32 fY, f32 fZ, f32 fW)
         {
-            if (typeof(i32) != typeof(Vector512<int>))
-            {
-                i32 p = F.And(hash, F.Broad_i32(3 << 3));
-
-                f32 a = F.Select_f32(F.GreaterThan(p, F.Broad_i32(0)), fX, fY);
-                f32 b;
-
-                if (Sse41.IsSupported)
-                {
-                    b = F.Select_f32(F.GreaterThan(p, F.Broad_i32(1 << 3)), fY, fZ);
-                }
-                else
-                {
-                    i32 mask = F.LeftShift(hash, 27);
-                    b = F.Select_f32(Unsafe.BitCast<i32, m32>(mask), fY, fZ);
-                }
-
-                f32 c = F.Select_f32(F.GreaterThan(p, F.Broad_i32(2 << 3)), fZ, fW);
-
-                f32 aSign = F.Casti32_f32(F.LeftShift(hash, 31));
-                f32 bSign = F.Casti32_f32(F.And(F.LeftShift(hash, 30), F.Broad_i32(unchecked((int) 0x80000000))));
-                f32 cSign = F.Casti32_f32(F.And(F.LeftShift(hash, 29), F.Broad_i32(unchecked((int) 0x80000000))));
-                return F.Add(F.Add(F.Xor(a, aSign), F.Xor(b, bSign)), F.Xor(c, cSign));
-            }
-            else
+            if (typeof(i32) == typeof(Vector512<int>))
             {
                 f32 gX = PermuteVar16x32x2(
                     Vector512.Create(0f, 0, 0, 0, 0, 0, 0, 0, 1, -1, 1, -1, 1, -1, 1, -1),
@@ -250,8 +238,39 @@ namespace SharpFastNoise2
 
                 return F.FMulAdd_f32(gX, fX, F.FMulAdd_f32(fY, gY, F.FMulAdd_f32(fZ, gZ, F.Mul(fW, gW))));
             }
+            else
+            {
+                return Fallback(hash, fX, fY, fZ, fW);
+            }
+
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            static f32 Fallback(i32 hash, f32 fX, f32 fY, f32 fZ, f32 fW)
+            {
+                i32 p = F.And(hash, F.Broad_i32(3 << 3));
+
+                f32 a = F.Select_f32(F.GreaterThan(p, F.Broad_i32(0)), fX, fY);
+                f32 b;
+
+                if (Sse41.IsSupported)
+                {
+                    b = F.Select_f32(F.GreaterThan(p, F.Broad_i32(1 << 3)), fY, fZ);
+                }
+                else
+                {
+                    i32 mask = F.LeftShift(hash, 27);
+                    b = F.Select_f32(Unsafe.BitCast<i32, m32>(mask), fY, fZ);
+                }
+
+                f32 c = F.Select_f32(F.GreaterThan(p, F.Broad_i32(2 << 3)), fZ, fW);
+
+                f32 aSign = F.Casti32_f32(F.LeftShift(hash, 31));
+                f32 bSign = F.Casti32_f32(F.And(F.LeftShift(hash, 30), F.Broad_i32(unchecked((int) 0x80000000))));
+                f32 cSign = F.Casti32_f32(F.And(F.LeftShift(hash, 29), F.Broad_i32(unchecked((int) 0x80000000))));
+                return F.Add(F.Add(F.Xor(a, aSign), F.Xor(b, bSign)), F.Xor(c, cSign));
+            }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static i32 HashPrimes(i32 seed, i32 x, i32 y)
         {
             i32 hash = seed;
@@ -261,6 +280,7 @@ namespace SharpFastNoise2
             return F.Xor(F.RightShift(hash, 15), hash);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static i32 HashPrimes(i32 seed, i32 x, i32 y, i32 z)
         {
             i32 hash = seed;
@@ -270,6 +290,7 @@ namespace SharpFastNoise2
             return F.Xor(F.RightShift(hash, 15), hash);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static i32 HashPrimes(i32 seed, i32 x, i32 y, i32 z, i32 w)
         {
             i32 hash = seed;
@@ -279,6 +300,7 @@ namespace SharpFastNoise2
             return F.Xor(F.RightShift(hash, 15), hash);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static i32 HashPrimesHB(i32 seed, i32 x, i32 y)
         {
             i32 hash = seed;
@@ -288,6 +310,7 @@ namespace SharpFastNoise2
             return hash;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static i32 HashPrimesHB(i32 seed, i32 x, i32 y, i32 z)
         {
             i32 hash = seed;
@@ -297,6 +320,7 @@ namespace SharpFastNoise2
             return hash;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static i32 HashPrimesHB(i32 seed, i32 x, i32 y, i32 z, i32 w)
         {
             i32 hash = seed;
