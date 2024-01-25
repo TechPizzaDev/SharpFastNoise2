@@ -6,6 +6,18 @@ using SharpFastNoise2.Generators;
 
 namespace SharpFastNoise2
 {
+    [InlineArray(Count)]
+    file struct DistanceArray<T>
+    {
+        public const int Count = 4;
+
+#pragma warning disable IDE0044 // Add readonly modifier
+#pragma warning disable IDE0051 // Remove unused private members
+        private T _e0;
+#pragma warning restore IDE0051 // Remove unused private members
+#pragma warning restore IDE0044 // Add readonly modifier
+    }
+
     public unsafe struct CellularValue<m32, f32, i32, F, D> :
         INoiseGenerator2D<f32, i32>,
         INoiseGenerator3D<f32, i32>,
@@ -16,8 +28,6 @@ namespace SharpFastNoise2
         where F : IFunctionList<m32, f32, i32>
         where D : IDistanceFunction<m32, f32, i32, F>
     {
-        private const int kMaxDistanceCount = 4;
-
         private int _valueIndex;
 
         public static int Count => F.Count;
@@ -25,18 +35,17 @@ namespace SharpFastNoise2
         public int ValueIndex
         {
             get => _valueIndex;
-            set => _valueIndex = Math.Min(Math.Max(value, 0), kMaxDistanceCount - 1);
+            set => _valueIndex = Math.Min(Math.Max(value, 0), DistanceArray<f32>.Count - 1);
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveOptimization)]
         public f32 Gen(f32 x, f32 y, i32 seed)
         {
             f32 jitter = F.Mul(F.Broad_f32(Cellular.kJitter2D), F.Broad_f32(1f)); //this->GetSourceValue(mJitterModifier, seed, x, y);
-            f32* value = stackalloc f32[kMaxDistanceCount];
-            f32* distance = stackalloc f32[kMaxDistanceCount];
+            DistanceArray<f32> value = new();
+            DistanceArray<f32> distance = new();
 
             f32 initDistValue = F.Broad_f32(float.PositiveInfinity);
-            for (int i = 0; i < kMaxDistanceCount; i++)
+            for (int i = 0; i < DistanceArray<f32>.Count; i++)
             {
                 value[i] = initDistValue;
                 distance[i] = initDistValue;
@@ -65,7 +74,7 @@ namespace SharpFastNoise2
                     xd = F.FMulAdd_f32(xd, invMag, xcf);
                     yd = F.FMulAdd_f32(yd, invMag, ycf);
 
-                    f32 newCellValue = F.Mul(F.Broad_f32((float)(1.0 / int.MaxValue)), F.Converti32_f32(hash));
+                    f32 newCellValue = F.Mul(F.Broad_f32((float) (1.0 / int.MaxValue)), F.Converti32_f32(hash));
                     f32 newDistance = D.CalcDistance(xd, yd);
 
                     for (int i = 0; ; i++)
@@ -101,11 +110,11 @@ namespace SharpFastNoise2
         public f32 Gen(f32 x, f32 y, f32 z, i32 seed)
         {
             f32 jitter = F.Mul(F.Broad_f32(Cellular.kJitter3D), F.Broad_f32(1)); //this->GetSourceValue(mJitterModifier, seed, x, y, z);
-            f32* value = stackalloc f32[kMaxDistanceCount];
-            f32* distance = stackalloc f32[kMaxDistanceCount];
+            DistanceArray<f32> value = new();
+            DistanceArray<f32> distance = new();
 
             f32 initDistValue = F.Broad_f32(float.PositiveInfinity);
-            for (int i = 0; i < kMaxDistanceCount; i++)
+            for (int i = 0; i < DistanceArray<f32>.Count; i++)
             {
                 value[i] = initDistValue;
                 distance[i] = initDistValue;
@@ -143,7 +152,7 @@ namespace SharpFastNoise2
                         yd = F.FMulAdd_f32(yd, invMag, ycf);
                         zd = F.FMulAdd_f32(zd, invMag, zcf);
 
-                        f32 newCellValue = F.Mul(F.Broad_f32((float)(1.0 / int.MaxValue)), F.Converti32_f32(hash));
+                        f32 newCellValue = F.Mul(F.Broad_f32((float) (1.0 / int.MaxValue)), F.Converti32_f32(hash));
                         f32 newDistance = D.CalcDistance(xd, yd, zd);
 
                         for (int i = 0; ; i++)
@@ -182,11 +191,11 @@ namespace SharpFastNoise2
         public f32 Gen(f32 x, f32 y, f32 z, f32 w, i32 seed)
         {
             f32 jitter = F.Mul(F.Broad_f32(Cellular.kJitter4D), F.Broad_f32(1)); //this->GetSourceValue(mJitterModifier, seed, x, y, z, w);
-            f32* value = stackalloc f32[kMaxDistanceCount];
-            f32* distance = stackalloc f32[kMaxDistanceCount];
+            DistanceArray<f32> value = new();
+            DistanceArray<f32> distance = new();
 
             f32 initDistValue = F.Broad_f32(float.PositiveInfinity);
-            for (int i = 0; i < kMaxDistanceCount; i++)
+            for (int i = 0; i < DistanceArray<f32>.Count; i++)
             {
                 value[i] = initDistValue;
                 distance[i] = initDistValue;
@@ -235,7 +244,7 @@ namespace SharpFastNoise2
                             zd = F.FMulAdd_f32(zd, invMag, zcf);
                             wd = F.FMulAdd_f32(wd, invMag, wcf);
 
-                            f32 newCellValue = F.Mul(F.Broad_f32((float)(1.0 / int.MaxValue)), F.Converti32_f32(hash));
+                            f32 newCellValue = F.Mul(F.Broad_f32((float) (1.0 / int.MaxValue)), F.Converti32_f32(hash));
                             f32 newDistance = D.CalcDistance(xd, yd, zd, wd);
 
                             for (int i = 0; ; i++)
