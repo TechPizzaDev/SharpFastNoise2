@@ -18,7 +18,7 @@ namespace SharpFastNoise2
 #pragma warning restore IDE0044 // Add readonly modifier
     }
 
-    public unsafe struct CellularValue<m32, f32, i32, F, D> :
+    public struct CellularValue<m32, f32, i32, F, D> :
         INoiseGenerator2D<f32, i32>,
         INoiseGenerator3D<f32, i32>,
         INoiseGenerator4D<f32, i32>
@@ -30,7 +30,9 @@ namespace SharpFastNoise2
     {
         private int _valueIndex;
 
-        public static int Count => F.Count;
+        public static int UnitSize => F.Count;
+
+        readonly int INoiseGenerator.UnitSize => F.Count;
 
         public int ValueIndex
         {

@@ -16,7 +16,9 @@ namespace SharpFastNoise2
 
         public static bool IsSupported => ScalarFunctions.IsSupported;
 
-        public static int Count => Simplex<m32, f32, i32, ScalarFunctions>.Count;
+        public static int UnitSize => Simplex<m32, f32, i32, ScalarFunctions>.UnitSize;
+
+        readonly int INoiseGenerator.UnitSize => UnitSize;
 
         public f32 Gen(f32 x, f32 y, i32 seed)
         {

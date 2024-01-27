@@ -17,7 +17,9 @@ namespace SharpFastNoise2
 
         public static bool IsSupported => Sse2Functions.IsSupported;
 
-        public static int Count => OpenSimplex2<m32, f32, i32, Sse2Functions>.Count;
+        public static int UnitSize => OpenSimplex2<m32, f32, i32, Sse2Functions>.UnitSize;
+
+        readonly int INoiseGenerator.UnitSize => UnitSize;
 
         public f32 Gen(f32 x, f32 y, i32 seed)
         {

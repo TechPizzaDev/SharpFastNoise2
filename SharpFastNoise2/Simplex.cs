@@ -14,7 +14,9 @@ namespace SharpFastNoise2
         where i32 : unmanaged
         where F : IFunctionList<m32, f32, i32>
     {
-        public static int Count => F.Count;
+        public static int UnitSize => F.Count;
+
+        readonly int INoiseGenerator.UnitSize => F.Count;
 
         [MethodImpl(MethodImplOptions.AggressiveOptimization)]
         public f32 Gen(f32 x, f32 y, i32 seed)

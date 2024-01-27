@@ -2,6 +2,6 @@
 {
     public interface INoiseGenerator
     {
-        static abstract int Count { get; }
+        int UnitSize { get; }
     }
 }
