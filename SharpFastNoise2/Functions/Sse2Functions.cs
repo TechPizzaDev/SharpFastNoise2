@@ -122,7 +122,7 @@ namespace SharpFastNoise2.Functions
             }
             else
             {
-                return Xor(b, And(m.AsSingle(), Xor(a, b)));
+                return Vector128.ConditionalSelect(m.AsSingle(), a, b);
             }
         }
 
@@ -135,7 +135,7 @@ namespace SharpFastNoise2.Functions
             }
             else
             {
-                return Xor(b, And(m, Xor(a, b)));
+                return Vector128.ConditionalSelect(m, a, b);
             }
         }
 
@@ -151,30 +151,14 @@ namespace SharpFastNoise2.Functions
             return Sse.Max(a, b);
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static i32 Min_i32(i32 a, i32 b)
         {
-            if (Sse41.IsSupported)
-            {
-                return Sse41.Min(a, b);
-            }
-            else
-            {
-                return Select_i32(LessThan(a, b), a, b);
-            }
+            return Vector128.Min(a, b);
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static i32 Max_i32(i32 a, i32 b)
         {
-            if (Sse41.IsSupported)
-            {
-                return Sse41.Max(a, b);
-            }
-            else
-            {
-                return Select_i32(GreaterThan(a, b), a, b);
-            }
+            return Vector128.Max(a, b);
         }
 
         // Bitwise       
@@ -196,7 +180,7 @@ namespace SharpFastNoise2.Functions
 
         public static f32 BitwiseShiftRightZX_f32(f32 a, [ConstantExpected] byte b)
         {
-            return Casti32_f32(Sse2.ShiftRightLogical(Castf32_i32(a), b));
+            return Sse2.ShiftRightLogical(a.AsInt32(), b).AsSingle();
         }
 
         public static i32 BitwiseShiftRightZX_i32(i32 a, [ConstantExpected] byte b)
@@ -208,22 +192,12 @@ namespace SharpFastNoise2.Functions
 
         public static f32 Abs_f32(f32 a)
         {
-            i32 intMax = Sse2.ShiftRightLogical(m32.AllBitsSet, 1);
-            return And(a, intMax.AsSingle());
+            return Vector128.Abs(a);
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static i32 Abs_i32(i32 a)
         {
-            if (Ssse3.IsSupported)
-            {
-                return Ssse3.Abs(a).AsInt32();
-            }
-            else
-            {
-                i32 signMask = Sse2.ShiftRightArithmetic(a, 31);
-                return Sub(Xor(a, signMask), signMask);
-            }
+            return Vector128.Abs(a);
         }
 
         // Float math
@@ -256,7 +230,7 @@ namespace SharpFastNoise2.Functions
             {
                 f32 fval = Sse2.ConvertToVector128Single(Sse2.ConvertToVector128Int32WithTruncation(a));
                 f32 cmp = Sse.CompareLessThan(a, fval);
-                return Sse.Subtract(fval, Sse.And(cmp, Vector128.Create(1f)));
+                return fval - (cmp & Vector128.Create(1f));
             }
         }
 
@@ -271,7 +245,7 @@ namespace SharpFastNoise2.Functions
             {
                 f32 fval = Sse2.ConvertToVector128Single(Sse2.ConvertToVector128Int32WithTruncation(a));
                 f32 cmp = Sse.CompareLessThan(fval, a);
-                return Sse.Add(fval, Sse.And(cmp, Vector128.Create(1f)));
+                return fval + (cmp & Vector128.Create(1f));
             }
         }
 
@@ -284,8 +258,8 @@ namespace SharpFastNoise2.Functions
             }
             else
             {
-                f32 aSign = And(a, Broad_i32(unchecked((int) 0x80000000)).AsSingle());
-                f32 v = Add(a, Or(aSign, Broad_f32(0.5f)));
+                f32 aSign = a & Vector128.Create(unchecked((int) 0x80000000)).AsSingle();
+                f32 v = a & (aSign | Vector128.Create(0.5f));
                 return Sse2.ConvertToVector128Single(Sse2.ConvertToVector128Int32WithTruncation(v));
             }
         }
@@ -294,12 +268,12 @@ namespace SharpFastNoise2.Functions
 
         public static i32 Mask_i32(i32 a, m32 m)
         {
-            return And(a, m);
+            return a & m;
         }
 
         public static f32 Mask_f32(f32 a, m32 m)
         {
-            return And(a, m.AsSingle());
+            return a & m.AsSingle();
         }
 
         public static i32 NMask_i32(i32 a, m32 m)
@@ -321,7 +295,7 @@ namespace SharpFastNoise2.Functions
             }
             else
             {
-                return Sse.MoveMask(m.AsSingle()) != 0;
+                return m.ExtractMostSignificantBits() != 0;
             }
         }
 
@@ -336,7 +310,7 @@ namespace SharpFastNoise2.Functions
             }
             else
             {
-                return Add(Mul(a, b), c);
+                return (a * b) + c;
             }
         }
 
@@ -349,7 +323,7 @@ namespace SharpFastNoise2.Functions
             }
             else
             {
-                return Add(Negate(Mul(a, b)), c);
+                return -(a * b) + c;
             }
         }
 
@@ -357,7 +331,6 @@ namespace SharpFastNoise2.Functions
 
         public static f32 Add(f32 lhs, f32 rhs) => Sse.Add(lhs, rhs);
         public static f32 And(f32 lhs, f32 rhs) => Sse.And(lhs, rhs);
-        public static i32 AsInt32(f32 lhs) => lhs.AsInt32();
         public static f32 Complement(f32 lhs) => Vector128.OnesComplement(lhs);
         public static f32 Div(f32 lhs, f32 rhs) => Sse.Divide(lhs, rhs);
         public static m32 Equal(f32 lhs, f32 rhs) => Sse.CompareEqual(lhs, rhs).AsInt32();
@@ -376,7 +349,6 @@ namespace SharpFastNoise2.Functions
 
         public static i32 Add(i32 lhs, i32 rhs) => Sse2.Add(lhs, rhs);
         public static i32 And(i32 lhs, i32 rhs) => Sse2.And(lhs, rhs);
-        public static f32 AsSingle(i32 lhs) => lhs.AsSingle();
         public static i32 Complement(i32 lhs) => Vector128.OnesComplement(lhs);
         public static i32 Div(i32 lhs, i32 rhs) => throw new NotSupportedException();
         public static m32 Equal(i32 lhs, i32 rhs) => Sse2.CompareEqual(lhs, rhs);
@@ -385,30 +357,9 @@ namespace SharpFastNoise2.Functions
         public static i32 LeftShift(i32 lhs, [ConstantExpected] byte rhs) => Sse2.ShiftLeftLogical(lhs, rhs);
         public static m32 LessThan(i32 lhs, i32 rhs) => Sse2.CompareLessThan(lhs, rhs);
         public static m32 LessThanOrEqual(i32 lhs, i32 rhs) => throw new NotSupportedException();
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static i32 Mul(i32 lhs, i32 rhs)
-        {
-            if (Sse41.IsSupported)
-            {
-                return Sse41.MultiplyLow(lhs, rhs);
-            }
-            else
-            {
-                var tmp1 = Sse2.Multiply(lhs.AsUInt32(), rhs.AsUInt32()); // mul 2,0
-                var tmp2 = Sse2.Multiply(
-                    Sse2.ShiftRightLogical128BitLane(lhs, 4).AsUInt32(),
-                    Sse2.ShiftRightLogical128BitLane(rhs, 4).AsUInt32()); // mul 3,1
-
-                const byte control = 8; // _MM_SHUFFLE(0,0,2,0)
-                return Sse2.UnpackLow(
-                    Sse2.Shuffle(tmp1.AsInt32(), control),
-                    Sse2.Shuffle(tmp2.AsInt32(), control)); // shuffle results to [63..0] and pack
-            }
-        }
-
+        public static i32 Mul(i32 lhs, i32 rhs) => lhs * rhs;
         public static i32 Negate(i32 lhs) => Vector128.Negate(lhs);
-        public static m32 NotEqual(i32 lhs, i32 rhs) => NotEqual(lhs.AsSingle(), rhs.AsSingle());
+        public static m32 NotEqual(i32 lhs, i32 rhs) => Sse.CompareNotEqual(lhs.AsSingle(), rhs.AsSingle()).AsInt32();
         public static i32 Or(i32 lhs, i32 rhs) => Sse2.Or(lhs, rhs);
         public static i32 RightShift(i32 lhs, [ConstantExpected] byte rhs) => Sse2.ShiftRightArithmetic(lhs, rhs);
         public static i32 Sub(i32 lhs, i32 rhs) => Sse2.Subtract(lhs, rhs);

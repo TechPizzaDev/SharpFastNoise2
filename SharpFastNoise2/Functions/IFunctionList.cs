@@ -124,7 +124,6 @@ namespace SharpFastNoise2.Functions
 
         static abstract f32 Add(f32 lhs, f32 rhs);
         static abstract f32 And(f32 lhs, f32 rhs);
-        static abstract i32 AsInt32(f32 lhs);
         static abstract f32 Div(f32 lhs, f32 rhs);
         static abstract f32 Complement(f32 lhs);
         static abstract m32 Equal(f32 lhs, f32 rhs);
@@ -143,7 +142,6 @@ namespace SharpFastNoise2.Functions
 
         static abstract i32 Add(i32 lhs, i32 rhs);
         static abstract i32 And(i32 lhs, i32 rhs);
-        static abstract f32 AsSingle(i32 lhs);
         static abstract i32 Div(i32 lhs, i32 rhs);
         static abstract i32 Complement(i32 lhs);
         static abstract m32 Equal(i32 lhs, i32 rhs);

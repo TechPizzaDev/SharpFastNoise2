@@ -91,12 +91,12 @@ namespace SharpFastNoise2.Functions
 
         public static f32 Casti32_f32(i32 a)
         {
-            return Unsafe.BitCast<i32, f32>(a);
+            return a.AsSingle();
         }
 
         public static i32 Castf32_i32(f32 a)
         {
-            return Unsafe.BitCast<f32, i32>(a);
+            return a.AsInt32();
         }
 
         // Convert
@@ -145,7 +145,7 @@ namespace SharpFastNoise2.Functions
             return Avx512F.Max(a, b);
         }
 
-        // Bitwise       
+        // Bitwise
 
         public static f32 BitwiseAndNot_f32(f32 a, f32 b)
         {
@@ -164,7 +164,7 @@ namespace SharpFastNoise2.Functions
 
         public static f32 BitwiseShiftRightZX_f32(f32 a, [ConstantExpected] byte b)
         {
-            return Casti32_f32(Avx512F.ShiftRightLogical(Castf32_i32(a), b));
+            return Avx512F.ShiftRightLogical(a.AsInt32(), b).AsSingle();
         }
 
         public static i32 BitwiseShiftRightZX_i32(i32 a, [ConstantExpected] byte b)
@@ -270,7 +270,6 @@ namespace SharpFastNoise2.Functions
 
         public static f32 Add(f32 lhs, f32 rhs) => Avx512F.Add(lhs, rhs);
         public static f32 And(f32 lhs, f32 rhs) => Avx512DQ.And(lhs, rhs);
-        public static i32 AsInt32(f32 lhs) => lhs.AsInt32();
         public static f32 Complement(f32 lhs) => Vector512.OnesComplement(lhs);
         public static f32 Div(f32 lhs, f32 rhs) => Avx512F.Divide(lhs, rhs);
         public static m32 Equal(f32 lhs, f32 rhs) => Avx512F.CompareEqual(lhs, rhs).AsInt32();
@@ -281,7 +280,6 @@ namespace SharpFastNoise2.Functions
         public static m32 LessThanOrEqual(f32 lhs, f32 rhs) => Avx512F.CompareLessThanOrEqual(lhs, rhs).AsInt32();
         public static f32 Mul(f32 lhs, f32 rhs) => Avx512F.Multiply(lhs, rhs);
         public static f32 Negate(f32 lhs) => Vector512.Negate(lhs);
-
         public static m32 NotEqual(f32 lhs, f32 rhs) => Avx512F.CompareNotEqual(lhs, rhs).AsInt32();
         public static f32 Or(f32 lhs, f32 rhs) => Avx512DQ.Or(lhs, rhs);
         public static f32 RightShift(f32 lhs, [ConstantExpected] byte rhs) => throw new NotSupportedException();
@@ -290,7 +288,6 @@ namespace SharpFastNoise2.Functions
 
         public static i32 Add(i32 lhs, i32 rhs) => Avx512F.Add(lhs, rhs);
         public static i32 And(i32 lhs, i32 rhs) => Avx512F.And(lhs, rhs);
-        public static f32 AsSingle(i32 lhs) => lhs.AsSingle();
         public static i32 Complement(i32 lhs) => Vector512.OnesComplement(lhs);
         public static i32 Div(i32 lhs, i32 rhs) => throw new NotSupportedException();
         public static m32 Equal(i32 lhs, i32 rhs) => Avx512F.CompareEqual(lhs, rhs);
@@ -301,7 +298,7 @@ namespace SharpFastNoise2.Functions
         public static m32 LessThanOrEqual(i32 lhs, i32 rhs) => throw new NotSupportedException();
         public static i32 Mul(i32 lhs, i32 rhs) => Avx512F.MultiplyLow(lhs, rhs);
         public static i32 Negate(i32 lhs) => Avx512F.Subtract(i32.Zero, lhs);
-        public static m32 NotEqual(i32 lhs, i32 rhs) => NotEqual(lhs.AsSingle(), rhs.AsSingle());
+        public static m32 NotEqual(i32 lhs, i32 rhs) => Avx512F.CompareNotEqual(lhs, rhs);
         public static i32 Or(i32 lhs, i32 rhs) => Avx512F.Or(lhs, rhs);
         public static i32 RightShift(i32 lhs, [ConstantExpected] byte rhs) => Avx512F.ShiftRightArithmetic(lhs, rhs);
         public static i32 Sub(i32 lhs, i32 rhs) => Avx512F.Subtract(lhs, rhs);
