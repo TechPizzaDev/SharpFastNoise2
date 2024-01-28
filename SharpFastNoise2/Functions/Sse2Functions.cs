@@ -106,6 +106,7 @@ namespace SharpFastNoise2.Functions
             return Vector128.ConvertToSingle(a);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static i32 Convertf32_i32(f32 a)
         {
             if (Sse2.IsSupported)
@@ -114,6 +115,12 @@ namespace SharpFastNoise2.Functions
             }
             else
             {
+                // More accurate hack:
+                // f32 sign = a & Vector128.Create(-0.0f);
+                // f32 val_2p23_f32 = sign | Vector128.Create(8388608.0f);
+                // val_2p23_f32 = (a + val_2p23_f32) - val_2p23_f32;
+                // return val_2p23_f32 | sign;
+
                 f32 aSign = a & Vector128.Create(unchecked((int) 0x80000000)).AsSingle();
                 f32 v = a & (aSign | Vector128.Create(0.5f));
                 return Vector128.ConvertToInt32(v);
@@ -216,6 +223,7 @@ namespace SharpFastNoise2.Functions
             return Vector128.Sqrt(a);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static f32 InvSqrt_f32(f32 a)
         {
             if (Sse.IsSupported)
@@ -228,6 +236,7 @@ namespace SharpFastNoise2.Functions
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static f32 Reciprocal_f32(f32 a)
         {
             if (Sse.IsSupported)
@@ -281,9 +290,7 @@ namespace SharpFastNoise2.Functions
             }
             else
             {
-                f32 aSign = a & Vector128.Create(unchecked((int) 0x80000000)).AsSingle();
-                f32 v = a & (aSign | Vector128.Create(0.5f));
-                return Vector128.ConvertToSingle(Vector128.ConvertToInt32(v));
+                return Vector128.ConvertToSingle(Convertf32_i32(a));
             }
         }
 
