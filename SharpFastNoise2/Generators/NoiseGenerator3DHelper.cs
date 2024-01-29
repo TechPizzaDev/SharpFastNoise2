@@ -46,8 +46,8 @@ namespace SharpFastNoise2.Generators
 
             xIdx = F.Add(xIdx, F.Incremented_i32());
 
-            GeneratorHelper.AxisResetTrue<m32, f32, i32, F>(ref xIdx, ref yIdx, xMax, xSizeV, xStep);
-            GeneratorHelper.AxisResetTrue<m32, f32, i32, F>(ref yIdx, ref zIdx, yMax, ySizeV, yStep);
+            GeneratorHelper.AxisReset<m32, f32, i32, F>(true, ref xIdx, ref yIdx, xMax, xSizeV, xStep);
+            GeneratorHelper.AxisReset<m32, f32, i32, F>(true, ref yIdx, ref zIdx, yMax, ySizeV, yStep);
 
             while (index <= totalValues - (nuint)F.Count)
             {
@@ -64,8 +64,8 @@ namespace SharpFastNoise2.Generators
                 index += (nuint)F.Count;
                 xIdx = F.Add(xIdx, F.Broad_i32(F.Count));
 
-                GeneratorHelper.AxisResetFalse<m32, f32, i32, F>(ref xIdx, ref yIdx, xMax, xSizeV, xStep);
-                GeneratorHelper.AxisResetFalse<m32, f32, i32, F>(ref yIdx, ref zIdx, yMax, ySizeV, yStep);
+                GeneratorHelper.AxisReset<m32, f32, i32, F>(false, ref xIdx, ref yIdx, xMax, xSizeV, xStep);
+                GeneratorHelper.AxisReset<m32, f32, i32, F>(false, ref yIdx, ref zIdx, yMax, ySizeV, yStep);
             }
 
             {

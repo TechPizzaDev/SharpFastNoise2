@@ -36,29 +36,14 @@ namespace SharpFastNoise2.Generators
             return minMax;
         }
 
-        public static void AxisResetTrue<m32, f32, i32, F>(
-            ref i32 aIdx, ref i32 bIdx, i32 aMax, i32 aSize, nuint aStep)
+        public static void AxisReset<m32, f32, i32, F>(
+            bool initial, ref i32 aIdx, ref i32 bIdx, i32 aMax, i32 aSize, nuint aStep)
             where m32 : unmanaged
             where f32 : unmanaged
             where i32 : unmanaged
             where F : IFunctionList<m32, f32, i32, F>
         {
-            for (nuint resetLoop = aStep; resetLoop < (nuint)F.Count; resetLoop += aStep)
-            {
-                m32 aReset = F.GreaterThan(aIdx, aMax);
-                bIdx = F.MaskedIncrement_i32(bIdx, aReset);
-                aIdx = F.MaskedSub_i32(aIdx, aSize, aReset);
-            }
-        }
-
-        public static void AxisResetFalse<m32, f32, i32, F>(
-            ref i32 aIdx, ref i32 bIdx, i32 aMax, i32 aSize, nuint aStep)
-            where m32 : unmanaged
-            where f32 : unmanaged
-            where i32 : unmanaged
-            where F : IFunctionList<m32, f32, i32, F>
-        {
-            for (nuint resetLoop = 0; resetLoop < (nuint)F.Count; resetLoop += aStep)
+            for (nuint resetLoop = initial ? aStep : 0; resetLoop < (nuint)F.Count; resetLoop += aStep)
             {
                 m32 aReset = F.GreaterThan(aIdx, aMax);
                 bIdx = F.MaskedIncrement_i32(bIdx, aReset);
