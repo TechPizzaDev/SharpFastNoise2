@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
-using System.Runtime.CompilerServices;
 using System.Runtime.Intrinsics;
 using System.Runtime.Intrinsics.X86;
 using SharpFastNoise2;
@@ -9,7 +8,7 @@ namespace SharpFastNoise2.Functions
 {
     using f32 = Vector512<float>;
     using i32 = Vector512<int>;
-    using m32 = Vector512<int>;
+    using m32 = Vector512<uint>;
 
     public struct Avx512Functions : IFunctionList<m32, f32, i32, Avx512Functions>
     {
@@ -120,7 +119,7 @@ namespace SharpFastNoise2.Functions
 
         public static i32 Select_i32(m32 m, i32 a, i32 b)
         {
-            return Avx512F.BlendVariable(b, a, m);
+            return Avx512F.BlendVariable(b, a, m.AsInt32());
         }
 
         // Min, Max
@@ -228,7 +227,7 @@ namespace SharpFastNoise2.Functions
         public static i32 Mask_i32(i32 a, m32 m)
         {
             // return _mm512_maskz_mov_epi32(m, a);
-            return Avx512F.And(a, m);
+            return Avx512F.And(a, m.AsInt32());
         }
 
         public static f32 Mask_f32(f32 a, m32 m)
@@ -240,7 +239,7 @@ namespace SharpFastNoise2.Functions
         public static i32 NMask_i32(i32 a, m32 m)
         {
             // return _mm512_maskz_mov_epi32( ~m, a );
-            return Avx512F.AndNot(m, a);
+            return Avx512F.AndNot(m.AsInt32(), a);
         }
 
         public static f32 NMask_f32(f32 a, m32 m)
@@ -304,15 +303,15 @@ namespace SharpFastNoise2.Functions
         public static f32 And(f32 lhs, f32 rhs) => Avx512DQ.And(lhs, rhs);
         public static f32 Complement(f32 lhs) => Vector512.OnesComplement(lhs);
         public static f32 Div(f32 lhs, f32 rhs) => Avx512F.Divide(lhs, rhs);
-        public static m32 Equal(f32 lhs, f32 rhs) => Avx512F.CompareEqual(lhs, rhs).AsInt32();
-        public static m32 GreaterThan(f32 lhs, f32 rhs) => Avx512F.CompareGreaterThan(lhs, rhs).AsInt32();
-        public static m32 GreaterThanOrEqual(f32 lhs, f32 rhs) => Avx512F.CompareGreaterThanOrEqual(lhs, rhs).AsInt32();
+        public static m32 Equal(f32 lhs, f32 rhs) => Avx512F.CompareEqual(lhs, rhs).AsUInt32();
+        public static m32 GreaterThan(f32 lhs, f32 rhs) => Avx512F.CompareGreaterThan(lhs, rhs).AsUInt32();
+        public static m32 GreaterThanOrEqual(f32 lhs, f32 rhs) => Avx512F.CompareGreaterThanOrEqual(lhs, rhs).AsUInt32();
         public static f32 LeftShift(f32 lhs, [ConstantExpected] byte rhs) => throw new NotSupportedException();
-        public static m32 LessThan(f32 lhs, f32 rhs) => Avx512F.CompareLessThan(lhs, rhs).AsInt32();
-        public static m32 LessThanOrEqual(f32 lhs, f32 rhs) => Avx512F.CompareLessThanOrEqual(lhs, rhs).AsInt32();
+        public static m32 LessThan(f32 lhs, f32 rhs) => Avx512F.CompareLessThan(lhs, rhs).AsUInt32();
+        public static m32 LessThanOrEqual(f32 lhs, f32 rhs) => Avx512F.CompareLessThanOrEqual(lhs, rhs).AsUInt32();
         public static f32 Mul(f32 lhs, f32 rhs) => Avx512F.Multiply(lhs, rhs);
         public static f32 Negate(f32 lhs) => Vector512.Negate(lhs);
-        public static m32 NotEqual(f32 lhs, f32 rhs) => Avx512F.CompareNotEqual(lhs, rhs).AsInt32();
+        public static m32 NotEqual(f32 lhs, f32 rhs) => Avx512F.CompareNotEqual(lhs, rhs).AsUInt32();
         public static f32 Or(f32 lhs, f32 rhs) => Avx512DQ.Or(lhs, rhs);
         public static f32 RightShift(f32 lhs, [ConstantExpected] byte rhs) => throw new NotSupportedException();
         public static f32 Sub(f32 lhs, f32 rhs) => Avx512F.Subtract(lhs, rhs);
@@ -322,18 +321,22 @@ namespace SharpFastNoise2.Functions
         public static i32 And(i32 lhs, i32 rhs) => Avx512F.And(lhs, rhs);
         public static i32 Complement(i32 lhs) => Vector512.OnesComplement(lhs);
         public static i32 Div(i32 lhs, i32 rhs) => throw new NotSupportedException();
-        public static m32 Equal(i32 lhs, i32 rhs) => Avx512F.CompareEqual(lhs, rhs);
-        public static m32 GreaterThan(i32 lhs, i32 rhs) => Avx512F.CompareGreaterThan(lhs, rhs);
+        public static m32 Equal(i32 lhs, i32 rhs) => Avx512F.CompareEqual(lhs, rhs).AsUInt32();
+        public static m32 GreaterThan(i32 lhs, i32 rhs) => Avx512F.CompareGreaterThan(lhs, rhs).AsUInt32();
         public static m32 GreaterThanOrEqual(i32 lhs, i32 rhs) => throw new NotSupportedException();
         public static i32 LeftShift(i32 lhs, [ConstantExpected] byte rhs) => Avx512F.ShiftLeftLogical(lhs, rhs);
-        public static m32 LessThan(i32 lhs, i32 rhs) => Avx512F.CompareGreaterThan(rhs, lhs);
+        public static m32 LessThan(i32 lhs, i32 rhs) => Avx512F.CompareGreaterThan(rhs, lhs).AsUInt32();
         public static m32 LessThanOrEqual(i32 lhs, i32 rhs) => throw new NotSupportedException();
         public static i32 Mul(i32 lhs, i32 rhs) => Avx512F.MultiplyLow(lhs, rhs);
         public static i32 Negate(i32 lhs) => Avx512F.Subtract(i32.Zero, lhs);
-        public static m32 NotEqual(i32 lhs, i32 rhs) => Avx512F.CompareNotEqual(lhs, rhs);
+        public static m32 NotEqual(i32 lhs, i32 rhs) => Avx512F.CompareNotEqual(lhs, rhs).AsUInt32();
         public static i32 Or(i32 lhs, i32 rhs) => Avx512F.Or(lhs, rhs);
         public static i32 RightShift(i32 lhs, [ConstantExpected] byte rhs) => Avx512F.ShiftRightArithmetic(lhs, rhs);
         public static i32 Sub(i32 lhs, i32 rhs) => Avx512F.Subtract(lhs, rhs);
         public static i32 Xor(i32 lhs, i32 rhs) => Avx512F.Xor(lhs, rhs);
+
+        public static m32 And(m32 lhs, m32 rhs) => lhs & rhs;
+        public static m32 Complement(m32 lhs) => ~lhs;
+        public static m32 Or(m32 lhs, m32 rhs) => lhs | rhs;
     }
 }

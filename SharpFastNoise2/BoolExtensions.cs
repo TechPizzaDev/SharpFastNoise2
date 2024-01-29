@@ -5,9 +5,9 @@ namespace SharpFastNoise2
     internal static class BoolExtensions
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static int AsInt32(this bool value)
+        public static uint AsUInt32(this bool value)
         {
-            return value ? -1 : 0;
+            return value ? uint.MaxValue : 0;
         }
     }
 }

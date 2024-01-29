@@ -8,7 +8,7 @@ namespace SharpFastNoise2.Functions
 {
     using f32 = Single;
     using i32 = Int32;
-    using m32 = Int32;
+    using m32 = UInt32;
 
     public struct ScalarFunctions : IFunctionList<m32, f32, i32, ScalarFunctions>
     {
@@ -273,12 +273,12 @@ namespace SharpFastNoise2.Functions
 
         public static i32 MaskedIncrement_i32(i32 a, m32 m)
         {
-            return a - m;
+            return a - (int) m;
         }
 
         public static i32 MaskedDecrement_i32(i32 a, m32 m)
         {
-            return a + m;
+            return a + (int) m;
         }
 
         // FMA
@@ -296,41 +296,43 @@ namespace SharpFastNoise2.Functions
         // Generic math
 
         public static f32 Add(f32 lhs, f32 rhs) => lhs + rhs;
-        public static f32 And(f32 lhs, f32 rhs) => AsSingle(And(AsInt32(lhs), AsInt32(rhs)));
-        public static i32 AsInt32(f32 lhs) => Unsafe.BitCast<f32, i32>(lhs);
-        public static f32 Complement(f32 lhs) => AsSingle(Complement(AsInt32(lhs)));
+        public static f32 And(f32 lhs, f32 rhs) => Casti32_f32(And(Castf32_i32(lhs), Castf32_i32(rhs)));
+        public static f32 Complement(f32 lhs) => Casti32_f32(Complement(Castf32_i32(lhs)));
         public static f32 Div(f32 lhs, f32 rhs) => lhs / rhs;
-        public static i32 Equal(f32 lhs, f32 rhs) => (lhs == rhs).AsInt32();
-        public static i32 GreaterThan(f32 lhs, f32 rhs) => (lhs > rhs).AsInt32();
-        public static i32 GreaterThanOrEqual(f32 lhs, f32 rhs) => (lhs >= rhs).AsInt32();
-        public static f32 LeftShift(f32 lhs, [ConstantExpected] byte rhs) => AsSingle(LeftShift(AsInt32(lhs), rhs));
-        public static i32 LessThan(f32 lhs, f32 rhs) => (lhs < rhs).AsInt32();
-        public static i32 LessThanOrEqual(f32 lhs, f32 rhs) => (lhs <= rhs).AsInt32();
+        public static m32 Equal(f32 lhs, f32 rhs) => (lhs == rhs).AsUInt32();
+        public static m32 GreaterThan(f32 lhs, f32 rhs) => (lhs > rhs).AsUInt32();
+        public static m32 GreaterThanOrEqual(f32 lhs, f32 rhs) => (lhs >= rhs).AsUInt32();
+        public static f32 LeftShift(f32 lhs, [ConstantExpected] byte rhs) => Casti32_f32(LeftShift(Castf32_i32(lhs), rhs));
+        public static m32 LessThan(f32 lhs, f32 rhs) => (lhs < rhs).AsUInt32();
+        public static m32 LessThanOrEqual(f32 lhs, f32 rhs) => (lhs <= rhs).AsUInt32();
         public static f32 Mul(f32 lhs, f32 rhs) => lhs * rhs;
         public static f32 Negate(f32 lhs) => -lhs;
-        public static i32 NotEqual(f32 lhs, f32 rhs) => (lhs != rhs).AsInt32();
-        public static f32 Or(f32 lhs, f32 rhs) => AsSingle(Or(AsInt32(lhs), AsInt32(rhs)));
-        public static f32 RightShift(f32 lhs, [ConstantExpected] byte rhs) => AsSingle(RightShift(AsInt32(lhs), rhs));
+        public static m32 NotEqual(f32 lhs, f32 rhs) => (lhs != rhs).AsUInt32();
+        public static f32 Or(f32 lhs, f32 rhs) => Casti32_f32(Or(Castf32_i32(lhs), Castf32_i32(rhs)));
+        public static f32 RightShift(f32 lhs, [ConstantExpected] byte rhs) => Casti32_f32(RightShift(Castf32_i32(lhs), rhs));
         public static f32 Sub(f32 lhs, f32 rhs) => lhs - rhs;
-        public static f32 Xor(f32 lhs, f32 rhs) => AsSingle(Xor(AsInt32(lhs), AsInt32(rhs)));
+        public static f32 Xor(f32 lhs, f32 rhs) => Casti32_f32(Xor(Castf32_i32(lhs), Castf32_i32(rhs)));
 
         public static i32 Add(i32 lhs, i32 rhs) => lhs + rhs;
         public static i32 And(i32 lhs, i32 rhs) => lhs & rhs;
-        public static f32 AsSingle(i32 lhs) => Unsafe.BitCast<i32, f32>(lhs);
         public static i32 Complement(i32 lhs) => ~lhs;
         public static i32 Div(i32 lhs, i32 rhs) => lhs / rhs;
-        public static i32 Equal(i32 lhs, i32 rhs) => (lhs == rhs).AsInt32();
-        public static i32 GreaterThan(i32 lhs, i32 rhs) => (lhs > rhs).AsInt32();
-        public static i32 GreaterThanOrEqual(i32 lhs, i32 rhs) => (lhs >= rhs).AsInt32();
+        public static m32 Equal(i32 lhs, i32 rhs) => (lhs == rhs).AsUInt32();
+        public static m32 GreaterThan(i32 lhs, i32 rhs) => (lhs > rhs).AsUInt32();
+        public static m32 GreaterThanOrEqual(i32 lhs, i32 rhs) => (lhs >= rhs).AsUInt32();
         public static i32 LeftShift(i32 lhs, [ConstantExpected] byte rhs) => lhs << rhs;
-        public static i32 LessThan(i32 lhs, i32 rhs) => (lhs < rhs).AsInt32();
-        public static i32 LessThanOrEqual(i32 lhs, i32 rhs) => (lhs <= rhs).AsInt32();
+        public static m32 LessThan(i32 lhs, i32 rhs) => (lhs < rhs).AsUInt32();
+        public static m32 LessThanOrEqual(i32 lhs, i32 rhs) => (lhs <= rhs).AsUInt32();
         public static i32 Mul(i32 lhs, i32 rhs) => lhs * rhs;
         public static i32 Negate(i32 lhs) => -lhs;
-        public static i32 NotEqual(i32 lhs, i32 rhs) => (lhs != rhs).AsInt32();
+        public static m32 NotEqual(i32 lhs, i32 rhs) => (lhs != rhs).AsUInt32();
         public static i32 Or(i32 lhs, i32 rhs) => lhs | rhs;
         public static i32 RightShift(i32 lhs, [ConstantExpected] byte rhs) => lhs >> rhs;
         public static i32 Sub(i32 lhs, i32 rhs) => lhs - rhs;
         public static i32 Xor(i32 lhs, i32 rhs) => lhs ^ rhs;
+
+        public static m32 And(m32 lhs, m32 rhs) => lhs & rhs;
+        public static m32 Complement(m32 lhs) => ~lhs;
+        public static m32 Or(m32 lhs, m32 rhs) => lhs | rhs;
     }
 }

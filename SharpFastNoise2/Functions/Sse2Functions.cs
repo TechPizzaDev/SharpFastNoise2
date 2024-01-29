@@ -9,7 +9,7 @@ namespace SharpFastNoise2.Functions
 {
     using f32 = Vector128<float>;
     using i32 = Vector128<int>;
-    using m32 = Vector128<int>;
+    using m32 = Vector128<uint>;
 
     public struct Sse2Functions : IFunctionList<m32, f32, i32, Sse2Functions>
     {
@@ -147,11 +147,11 @@ namespace SharpFastNoise2.Functions
         {
             if (Sse41.IsSupported)
             {
-                return Sse41.BlendVariable(b, a, m);
+                return Sse41.BlendVariable(b, a, m.AsInt32());
             }
             else
             {
-                return Vector128.ConditionalSelect(m, a, b);
+                return Vector128.ConditionalSelect(m.AsInt32(), a, b);
             }
         }
 
@@ -298,7 +298,7 @@ namespace SharpFastNoise2.Functions
 
         public static i32 Mask_i32(i32 a, m32 m)
         {
-            return a & m;
+            return a & m.AsInt32();
         }
 
         public static f32 Mask_f32(f32 a, m32 m)
@@ -308,7 +308,7 @@ namespace SharpFastNoise2.Functions
 
         public static i32 NMask_i32(i32 a, m32 m)
         {
-            return Vector128.AndNot(a, m);
+            return Vector128.AndNot(a, m.AsInt32());
         }
 
         public static f32 NMask_f32(f32 a, m32 m)
@@ -331,12 +331,12 @@ namespace SharpFastNoise2.Functions
 
         public static i32 MaskedIncrement_i32(i32 a, m32 m)
         {
-            return a - m;
+            return a - m.AsInt32();
         }
 
         public static i32 MaskedDecrement_i32(i32 a, m32 m)
         {
-            return a + m;
+            return a + m.AsInt32();
         }
 
         // FMA
@@ -373,12 +373,12 @@ namespace SharpFastNoise2.Functions
         public static f32 And(f32 lhs, f32 rhs) => Vector128.BitwiseAnd(lhs, rhs);
         public static f32 Complement(f32 lhs) => Vector128.OnesComplement(lhs);
         public static f32 Div(f32 lhs, f32 rhs) => Vector128.Divide(lhs, rhs);
-        public static m32 Equal(f32 lhs, f32 rhs) => Vector128.Equals(lhs, rhs).AsInt32();
-        public static m32 GreaterThan(f32 lhs, f32 rhs) => Vector128.GreaterThan(lhs, rhs).AsInt32();
-        public static m32 GreaterThanOrEqual(f32 lhs, f32 rhs) => Vector128.GreaterThanOrEqual(lhs, rhs).AsInt32();
+        public static m32 Equal(f32 lhs, f32 rhs) => Vector128.Equals(lhs, rhs).AsUInt32();
+        public static m32 GreaterThan(f32 lhs, f32 rhs) => Vector128.GreaterThan(lhs, rhs).AsUInt32();
+        public static m32 GreaterThanOrEqual(f32 lhs, f32 rhs) => Vector128.GreaterThanOrEqual(lhs, rhs).AsUInt32();
         public static f32 LeftShift(f32 lhs, [ConstantExpected] byte rhs) => throw new NotSupportedException();
-        public static m32 LessThan(f32 lhs, f32 rhs) => Vector128.LessThan(lhs, rhs).AsInt32();
-        public static m32 LessThanOrEqual(f32 lhs, f32 rhs) => Vector128.LessThanOrEqual(lhs, rhs).AsInt32();
+        public static m32 LessThan(f32 lhs, f32 rhs) => Vector128.LessThan(lhs, rhs).AsUInt32();
+        public static m32 LessThanOrEqual(f32 lhs, f32 rhs) => Vector128.LessThanOrEqual(lhs, rhs).AsUInt32();
         public static f32 Mul(f32 lhs, f32 rhs) => Vector128.Multiply(lhs, rhs);
         public static f32 Negate(f32 lhs) => Vector128.Negate(lhs);
 
@@ -387,11 +387,11 @@ namespace SharpFastNoise2.Functions
         {
             if (Sse.IsSupported)
             {
-                return Sse.CompareNotEqual(lhs, rhs).AsInt32();
+                return Sse.CompareNotEqual(lhs, rhs).AsUInt32();
             }
             else
             {
-                return ~Vector128.Equals(lhs, rhs).AsInt32();
+                return ~Vector128.Equals(lhs, rhs).AsUInt32();
             }
         }
 
@@ -404,11 +404,11 @@ namespace SharpFastNoise2.Functions
         public static i32 And(i32 lhs, i32 rhs) => Vector128.BitwiseAnd(lhs, rhs);
         public static i32 Complement(i32 lhs) => Vector128.OnesComplement(lhs);
         public static i32 Div(i32 lhs, i32 rhs) => throw new NotSupportedException();
-        public static m32 Equal(i32 lhs, i32 rhs) => Vector128.Equals(lhs, rhs);
-        public static m32 GreaterThan(i32 lhs, i32 rhs) => Vector128.GreaterThan(lhs, rhs);
+        public static m32 Equal(i32 lhs, i32 rhs) => Vector128.Equals(lhs, rhs).AsUInt32();
+        public static m32 GreaterThan(i32 lhs, i32 rhs) => Vector128.GreaterThan(lhs, rhs).AsUInt32();
         public static m32 GreaterThanOrEqual(i32 lhs, i32 rhs) => throw new NotSupportedException();
         public static i32 LeftShift(i32 lhs, [ConstantExpected] byte rhs) => Vector128.ShiftLeft(lhs, rhs);
-        public static m32 LessThan(i32 lhs, i32 rhs) => Vector128.LessThan(lhs, rhs);
+        public static m32 LessThan(i32 lhs, i32 rhs) => Vector128.LessThan(lhs, rhs).AsUInt32();
         public static m32 LessThanOrEqual(i32 lhs, i32 rhs) => throw new NotSupportedException();
         public static i32 Mul(i32 lhs, i32 rhs) => lhs * rhs;
         public static i32 Negate(i32 lhs) => Vector128.Negate(lhs);
@@ -418,11 +418,11 @@ namespace SharpFastNoise2.Functions
         {
             if (Sse.IsSupported)
             {
-                return Sse.CompareNotEqual(lhs.AsSingle(), rhs.AsSingle()).AsInt32();
+                return Sse.CompareNotEqual(lhs.AsSingle(), rhs.AsSingle()).AsUInt32();
             }
             else
             {
-                return ~Vector128.Equals(lhs.AsSingle(), rhs.AsSingle()).AsInt32();
+                return ~Vector128.Equals(lhs.AsSingle(), rhs.AsSingle()).AsUInt32();
             }
         }
 
@@ -430,5 +430,9 @@ namespace SharpFastNoise2.Functions
         public static i32 RightShift(i32 lhs, [ConstantExpected] byte rhs) => Vector128.ShiftRightArithmetic(lhs, rhs);
         public static i32 Sub(i32 lhs, i32 rhs) => Vector128.Subtract(lhs, rhs);
         public static i32 Xor(i32 lhs, i32 rhs) => Vector128.Xor(lhs, rhs);
+
+        public static m32 And(m32 lhs, m32 rhs) => lhs & rhs;
+        public static m32 Complement(m32 lhs) => ~lhs;
+        public static m32 Or(m32 lhs, m32 rhs) => lhs | rhs;
     }
 }
