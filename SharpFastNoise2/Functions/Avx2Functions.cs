@@ -11,7 +11,7 @@ namespace SharpFastNoise2.Functions
     using i32 = Vector256<int>;
     using m32 = Vector256<int>;
 
-    public struct Avx2Functions : IFunctionList<m32, f32, i32>
+    public struct Avx2Functions : IFunctionList<m32, f32, i32, Avx2Functions>
     {
         public static bool IsSupported => Avx2.IsSupported;
 

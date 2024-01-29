@@ -11,7 +11,7 @@ namespace SharpFastNoise2.Functions
     using i32 = Vector512<int>;
     using m32 = Vector512<int>;
 
-    public struct Avx512Functions : IFunctionList<m32, f32, i32>
+    public struct Avx512Functions : IFunctionList<m32, f32, i32, Avx512Functions>
     {
         public static bool IsSupported => Avx512F.IsSupported && Avx512DQ.IsSupported;
 

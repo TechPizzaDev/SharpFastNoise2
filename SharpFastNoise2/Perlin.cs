@@ -12,7 +12,7 @@ namespace SharpFastNoise2
         where m32 : unmanaged
         where f32 : unmanaged
         where i32 : unmanaged
-        where F : IFunctionList<m32, f32, i32>
+        where F : IFunctionList<m32, f32, i32, F>
     {
         public static int UnitSize => F.Count;
 

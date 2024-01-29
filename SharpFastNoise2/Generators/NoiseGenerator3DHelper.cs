@@ -21,7 +21,7 @@ namespace SharpFastNoise2.Generators
             where m32 : unmanaged
             where f32 : unmanaged
             where i32 : unmanaged
-            where F : IFunctionList<m32, f32, i32>
+            where F : IFunctionList<m32, f32, i32, F>
             where G : INoiseGenerator3D<f32, i32>
         {
             f32 min = F.Broad_f32(float.PositiveInfinity);
@@ -93,7 +93,7 @@ namespace SharpFastNoise2.Generators
             where m32 : unmanaged
             where f32 : unmanaged
             where i32 : unmanaged
-            where F : IFunctionList<m32, f32, i32>
+            where F : IFunctionList<m32, f32, i32, F>
             where G : INoiseGenerator3D<f32, i32>
         {
             f32 min = F.Broad_f32(float.PositiveInfinity);
@@ -146,7 +146,7 @@ namespace SharpFastNoise2.Generators
             where m32 : unmanaged
             where f32 : unmanaged
             where i32 : unmanaged
-            where F : IFunctionList<m32, f32, i32>
+            where F : IFunctionList<m32, f32, i32, F>
             where G : INoiseGenerator3D<f32, i32>
         {
             return F.Extract0_f32(generator.Gen(

@@ -5,7 +5,7 @@ using SharpFastNoise2.Generators;
 namespace Benchmarks
 {
     public class BenchNoiseBase<m32, f32, i32, F>
-        where F : IFunctionList<m32, f32, i32>
+        where F : IFunctionList<m32, f32, i32, F>
     {
         [Params(
             16 * 16,

@@ -7,7 +7,7 @@ namespace SharpFastNoise2.Distance
         where m32 : unmanaged
         where f32 : unmanaged
         where i32 : unmanaged
-        where F : IFunctionList<m32, f32, i32>
+        where F : IFunctionList<m32, f32, i32, F>
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static f32 CalcDistance(f32 dX, f32 dY)

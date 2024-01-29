@@ -2,7 +2,8 @@
 
 namespace SharpFastNoise2.Functions
 {
-    public interface IFunctionList<m32, f32, i32>
+    public interface IFunctionList<m32, f32, i32, F>
+        where F : IFunctionList<m32, f32, i32, F>
     {
         static abstract bool IsSupported { get; }
 

@@ -11,7 +11,7 @@ namespace SharpFastNoise2.Functions
     using i32 = Vector128<int>;
     using m32 = Vector128<int>;
 
-    public struct Sse2Functions : IFunctionList<m32, f32, i32>
+    public struct Sse2Functions : IFunctionList<m32, f32, i32, Sse2Functions>
     {
         public static bool IsSupported => Sse2.IsSupported || Vector128.IsHardwareAccelerated;
 

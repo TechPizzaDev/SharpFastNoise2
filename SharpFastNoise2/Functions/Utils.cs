@@ -10,7 +10,7 @@ namespace SharpFastNoise2
         where m32 : unmanaged
         where f32 : unmanaged
         where i32 : unmanaged
-        where F : IFunctionList<m32, f32, i32>
+        where F : IFunctionList<m32, f32, i32, F>
     {
         public const float ROOT2 = 1.4142135623730950488f;
         public const float ROOT3 = 1.7320508075688772935f;

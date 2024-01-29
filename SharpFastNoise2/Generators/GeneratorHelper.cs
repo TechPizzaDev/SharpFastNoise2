@@ -15,7 +15,7 @@ namespace SharpFastNoise2.Generators
             where m32 : unmanaged
             where f32 : unmanaged
             where i32 : unmanaged
-            where F : IFunctionList<m32, f32, i32>
+            where F : IFunctionList<m32, f32, i32, F>
         {
             OutputMinMax minMax = new();
             int remaining = (int)(totalValues - index);
@@ -41,7 +41,7 @@ namespace SharpFastNoise2.Generators
             where m32 : unmanaged
             where f32 : unmanaged
             where i32 : unmanaged
-            where F : IFunctionList<m32, f32, i32>
+            where F : IFunctionList<m32, f32, i32, F>
         {
             for (nuint resetLoop = aStep; resetLoop < (nuint)F.Count; resetLoop += aStep)
             {
@@ -56,7 +56,7 @@ namespace SharpFastNoise2.Generators
             where m32 : unmanaged
             where f32 : unmanaged
             where i32 : unmanaged
-            where F : IFunctionList<m32, f32, i32>
+            where F : IFunctionList<m32, f32, i32, F>
         {
             for (nuint resetLoop = 0; resetLoop < (nuint)F.Count; resetLoop += aStep)
             {

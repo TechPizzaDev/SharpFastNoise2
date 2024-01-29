@@ -10,7 +10,7 @@ namespace SharpFastNoise2.Functions
     using i32 = Int32;
     using m32 = Int32;
 
-    public struct ScalarFunctions : IFunctionList<m32, f32, i32>
+    public struct ScalarFunctions : IFunctionList<m32, f32, i32, ScalarFunctions>
     {
         public static bool IsSupported => true;
 
