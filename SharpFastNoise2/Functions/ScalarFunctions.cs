@@ -227,7 +227,7 @@ namespace SharpFastNoise2.Functions
             return a * a;
         }
 
-        // Floor, Ceil, Round
+        // Rounding
 
         public static f32 Floor_f32(f32 a)
         {
@@ -269,6 +269,16 @@ namespace SharpFastNoise2.Functions
         public static bool AnyMask_bool(m32 m)
         {
             return m != 0;
+        }
+
+        public static i32 MaskedIncrement_i32(i32 a, m32 m)
+        {
+            return a - m;
+        }
+
+        public static i32 MaskedDecrement_i32(i32 a, m32 m)
+        {
+            return a + m;
         }
 
         // FMA

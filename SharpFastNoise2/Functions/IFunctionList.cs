@@ -97,7 +97,7 @@ namespace SharpFastNoise2.Functions
 
         static abstract f32 Reciprocal_f32(f32 a);
 
-        // Floor, Ceil, Round
+        // Rounding
 
         static abstract f32 Floor_f32(f32 a);
 
@@ -117,11 +117,49 @@ namespace SharpFastNoise2.Functions
 
         static abstract bool AnyMask_bool(m32 m);
 
-        //FMA
+        // Masked float
+
+        static virtual f32 MaskedAdd_f32(f32 a, f32 b, m32 m) => F.Add(a, F.Mask_f32(b, m));
+
+        static virtual f32 MaskedSub_f32(f32 a, f32 b, m32 m) => F.Sub(a, F.Mask_f32(b, m));
+
+        static virtual f32 MaskedMul_f32(f32 a, f32 b, m32 m) => F.Mul(a, F.Mask_f32(b, m));
+
+        // NMasked float
+
+        static virtual f32 NMaskedAdd_f32(f32 a, f32 b, m32 m) => F.Add(a, F.NMask_f32(b, m));
+        
+        static virtual f32 NMaskedSub_f32(f32 a, f32 b, m32 m) => F.Sub(a, F.NMask_f32(b, m));
+        
+        static virtual f32 NMaskedMul_f32(f32 a, f32 b, m32 m) => F.Mul(a, F.NMask_f32(b, m));
+
+        // Masked int32
+
+        static virtual i32 MaskedAdd_i32(i32 a, i32 b, m32 m) => F.Add(a, F.Mask_i32(b, m));
+
+        static virtual i32 MaskedSub_i32(i32 a, i32 b, m32 m) => F.Sub(a, F.Mask_i32(b, m));
+
+        static virtual i32 MaskedMul_i32(i32 a, i32 b, m32 m) => F.Mul(a, F.Mask_i32(b, m));
+
+        static virtual i32 MaskedIncrement_i32(i32 a, m32 m) => F.MaskedSub_i32(a, F.Broad_i32(-1), m);
+    
+        static virtual i32 MaskedDecrement_i32(i32 a, m32 m) => F.MaskedAdd_i32(a, F.Broad_i32(-1), m);
+
+        // NMasked int32
+
+        static virtual i32 NMaskedAdd_i32(i32 a, i32 b, m32 m) => F.Add(a, F.NMask_i32(b, m));
+
+        static virtual i32 NMaskedSub_i32(i32 a, i32 b, m32 m) => F.Sub(a, F.NMask_i32(b, m));
+
+        static virtual i32 NMaskedMul_i32(i32 a, i32 b, m32 m) => F.Mul(a, F.NMask_i32(b, m));
+
+        // FMA
 
         static abstract f32 FMulAdd_f32(f32 a, f32 b, f32 c);
 
         static abstract f32 FNMulAdd_f32(f32 a, f32 b, f32 c);
+
+        // Float math
 
         static abstract f32 Add(f32 lhs, f32 rhs);
         static abstract f32 And(f32 lhs, f32 rhs);
@@ -141,6 +179,8 @@ namespace SharpFastNoise2.Functions
         static abstract f32 Sub(f32 lhs, f32 rhs);
         static abstract f32 Xor(f32 lhs, f32 rhs);
 
+        // Int math
+
         static abstract i32 Add(i32 lhs, i32 rhs);
         static abstract i32 And(i32 lhs, i32 rhs);
         static abstract i32 Div(i32 lhs, i32 rhs);
@@ -158,6 +198,8 @@ namespace SharpFastNoise2.Functions
         static abstract i32 RightShift(i32 lhs, [ConstantExpected] byte rhs);
         static abstract i32 Sub(i32 lhs, i32 rhs);
         static abstract i32 Xor(i32 lhs, i32 rhs);
+
+        // Mask math
 
         static abstract m32 And(m32 lhs, m32 rhs);
         static abstract m32 Complement(m32 lhs);

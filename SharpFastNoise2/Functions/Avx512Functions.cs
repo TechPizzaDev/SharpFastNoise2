@@ -201,7 +201,7 @@ namespace SharpFastNoise2.Functions
             return Avx512F.Reciprocal14(a);
         }
 
-        // Floor, Ceil, Round: http://dss.stephanierct.com/DevBlog/?p=8
+        // Rounding: http://dss.stephanierct.com/DevBlog/?p=8
 
         private const byte _MM_FROUND_TO_NEAREST_INT = 0x00;
         private const byte _MM_FROUND_TO_NEG_INT = 0x01;
@@ -253,6 +253,38 @@ namespace SharpFastNoise2.Functions
         {
             return m.ExtractMostSignificantBits() != 0;
         }
+
+        // Masked float
+
+        public static f32 MaskedAdd_f32(f32 a, f32 b, m32 m) => Avx512F.BlendVariable(a + b, a, m.AsSingle());
+
+        public static f32 MaskedSub_f32(f32 a, f32 b, m32 m) => Avx512F.BlendVariable(a - b, a, m.AsSingle());
+
+        public static f32 MaskedMul_f32(f32 a, f32 b, m32 m) => Avx512F.BlendVariable(a * b, a, m.AsSingle());
+
+        // NMasked float
+
+        public static f32 NMaskedAdd_f32(f32 a, f32 b, m32 m) => Avx512F.BlendVariable(a + b, a, (~m).AsSingle());
+
+        public static f32 NMaskedSub_f32(f32 a, f32 b, m32 m) => Avx512F.BlendVariable(a - b, a, (~m).AsSingle());
+
+        public static f32 NMaskedMul_f32(f32 a, f32 b, m32 m) => Avx512F.BlendVariable(a * b, a, (~m).AsSingle());
+
+        // Masked int32
+
+        public static i32 MaskedAdd_i32(i32 a, i32 b, m32 m) => Avx512F.BlendVariable(a + b, a, m.AsInt32());
+
+        public static i32 MaskedSub_i32(i32 a, i32 b, m32 m) => Avx512F.BlendVariable(a - b, a, m.AsInt32());
+
+        public static i32 MaskedMul_i32(i32 a, i32 b, m32 m) => Avx512F.BlendVariable(a * b, a, m.AsInt32());
+
+        // NMasked int32
+
+        public static i32 NMaskedAdd_i32(i32 a, i32 b, m32 m) => Avx512F.BlendVariable(a + b, a, (~m).AsInt32());
+
+        public static i32 NMaskedSub_i32(i32 a, i32 b, m32 m) => Avx512F.BlendVariable(a - b, a, (~m).AsInt32());
+
+        public static i32 NMaskedMul_i32(i32 a, i32 b, m32 m) => Avx512F.BlendVariable(a * b, a, (~m).AsInt32());
 
         // FMA
 

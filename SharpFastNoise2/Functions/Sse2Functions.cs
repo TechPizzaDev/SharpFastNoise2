@@ -249,7 +249,7 @@ namespace SharpFastNoise2.Functions
             }
         }
 
-        // Floor, Ceil, Round: http://dss.stephanierct.com/DevBlog/?p=8
+        // Rounding: http://dss.stephanierct.com/DevBlog/?p=8
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static f32 Floor_f32(f32 a)
@@ -327,6 +327,16 @@ namespace SharpFastNoise2.Functions
             {
                 return m.ExtractMostSignificantBits() != 0;
             }
+        }
+
+        public static i32 MaskedIncrement_i32(i32 a, m32 m)
+        {
+            return a - m;
+        }
+
+        public static i32 MaskedDecrement_i32(i32 a, m32 m)
+        {
+            return a + m;
         }
 
         // FMA

@@ -1,5 +1,4 @@
-﻿using System.Runtime.CompilerServices;
-using SharpFastNoise2.Functions;
+﻿using SharpFastNoise2.Functions;
 
 namespace SharpFastNoise2
 {
@@ -7,92 +6,8 @@ namespace SharpFastNoise2
         where m32 : unmanaged
         where f32 : unmanaged
         where i32 : unmanaged
-        where F : IFunctionList<m32, f32, i32>
+        where F : IFunctionList<m32, f32, i32, F>
     {
-        // Masked float
-
-        public static f32 MaskedAdd_f32(f32 a, f32 b, m32 m)
-        {
-            return F.Add(a, F.Mask_f32(b, m));
-        }
-
-        public static f32 MaskedSub_f32(f32 a, f32 b, m32 m)
-        {
-            return F.Sub(a, F.Mask_f32(b, m));
-        }
-
-        public static f32 MaskedMul_f32(f32 a, f32 b, m32 m)
-        {
-            return F.Mul(a, F.Mask_f32(b, m));
-        }
-
-        // Masked int32
-
-        public static i32 MaskedAdd_i32(i32 a, i32 b, m32 m)
-        {
-            return F.Add(a, F.Mask_i32(b, m));
-        }
-
-        public static i32 MaskedSub_i32(i32 a, i32 b, m32 m)
-        {
-            return F.Sub(a, F.Mask_i32(b, m));
-        }
-
-        public static i32 MaskedMul_i32(i32 a, i32 b, m32 m)
-        {
-            return F.Mul(a, F.Mask_i32(b, m));
-        }
-
-        // NMasked float
-
-        public static f32 NMaskedAdd_f32(f32 a, f32 b, m32 m)
-        {
-            return F.Add(a, F.NMask_f32(b, m));
-        }
-
-        public static f32 NMaskedSub_f32(f32 a, f32 b, m32 m)
-        {
-            return F.Sub(a, F.NMask_f32(b, m));
-        }
-
-        public static f32 NMaskedMul_f32(f32 a, f32 b, m32 m)
-        {
-            return F.Mul(a, F.NMask_f32(b, m));
-        }
-
-        // NMasked int32
-
-        public static i32 NMaskedAdd_i32(i32 a, i32 b, m32 m)
-        {
-            return F.Add(a, F.NMask_i32(b, m));
-        }
-
-        public static i32 NMaskedSub_i32(i32 a, i32 b, m32 m)
-        {
-            return F.Sub(a, F.NMask_i32(b, m));
-        }
-
-        public static i32 NMaskedMul_i32(i32 a, i32 b, m32 m)
-        {
-            return F.Mul(a, F.NMask_i32(b, m));
-        }
-
-        public static i32 MaskedIncrement_i32(i32 a, m32 m)
-        {
-            if (typeof(i32) == typeof(m32))
-                return F.Sub(a, Unsafe.BitCast<m32, i32>(m));
-            else
-                return MaskedSub_i32(a, F.Broad_i32(-1), m);
-        }
-
-        public static i32 MaskedDecrement_i32(i32 a, m32 m)
-        {
-            if (typeof(i32) == typeof(m32))
-                return F.Add(a, Unsafe.BitCast<m32, i32>(m));
-            else
-                return MaskedAdd_i32(a, F.Broad_i32(-1), m);
-        }
-
         // Trig
 
         public static f32 Cos_f32(f32 value)
@@ -142,7 +57,7 @@ namespace SharpFastNoise2
             fx = F.Add(fx, F.Broad_f32(0.5f));
 
             f32 flr = F.Floor_f32(fx);
-            fx = MaskedSub_f32(flr, F.Broad_f32(1), F.GreaterThan(flr, fx));
+            fx = F.MaskedSub_f32(flr, F.Broad_f32(1), F.GreaterThan(flr, fx));
 
             x = F.Sub(x, F.Mul(fx, F.Broad_f32(0.693359375f)));
             x = F.Sub(x, F.Mul(fx, F.Broad_f32(-2.12194440e-4f)));
@@ -191,9 +106,9 @@ namespace SharpFastNoise2
             e = F.Add(e, F.Broad_f32(1));
 
             m32 mask = F.LessThan(x, F.Broad_f32(0.707106781186547524f));
-            x = MaskedAdd_f32(x, x, mask);
+            x = F.MaskedAdd_f32(x, x, mask);
             x = F.Sub(x, F.Broad_f32(1));
-            e = MaskedSub_f32(e, F.Broad_f32(1), mask);
+            e = F.MaskedSub_f32(e, F.Broad_f32(1), mask);
 
             f32 y = F.Broad_f32(7.0376836292E-2f);
             y = F.Mul(y, x);

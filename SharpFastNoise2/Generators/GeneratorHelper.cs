@@ -46,8 +46,8 @@ namespace SharpFastNoise2.Generators
             for (nuint resetLoop = aStep; resetLoop < (nuint)F.Count; resetLoop += aStep)
             {
                 m32 aReset = F.GreaterThan(aIdx, aMax);
-                bIdx = Utils<m32, f32, i32, F>.MaskedIncrement_i32(bIdx, aReset);
-                aIdx = Utils<m32, f32, i32, F>.MaskedSub_i32(aIdx, aSize, aReset);
+                bIdx = F.MaskedIncrement_i32(bIdx, aReset);
+                aIdx = F.MaskedSub_i32(aIdx, aSize, aReset);
             }
         }
 
@@ -61,8 +61,8 @@ namespace SharpFastNoise2.Generators
             for (nuint resetLoop = 0; resetLoop < (nuint)F.Count; resetLoop += aStep)
             {
                 m32 aReset = F.GreaterThan(aIdx, aMax);
-                bIdx = Utils<m32, f32, i32, F>.MaskedIncrement_i32(bIdx, aReset);
-                aIdx = Utils<m32, f32, i32, F>.MaskedSub_i32(aIdx, aSize, aReset);
+                bIdx = F.MaskedIncrement_i32(bIdx, aReset);
+                aIdx = F.MaskedSub_i32(aIdx, aSize, aReset);
             }
         }
     }
