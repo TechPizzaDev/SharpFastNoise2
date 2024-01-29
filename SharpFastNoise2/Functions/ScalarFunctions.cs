@@ -23,8 +23,17 @@ namespace SharpFastNoise2.Functions
 
         // Load
 
-        public static f32 Load_f32(ref readonly float p) => Unsafe.ReadUnaligned<f32>(ref Unsafe.As<float, byte>(ref Unsafe.AsRef(in p)));
-        public static i32 Load_i32(ref readonly int p) => Unsafe.ReadUnaligned<i32>(ref Unsafe.As<int, byte>(ref Unsafe.AsRef(in p)));
+        public static f32 Load_f32(ref readonly float p) => 
+            Unsafe.ReadUnaligned<f32>(in Unsafe.As<f32, byte>(ref Unsafe.AsRef(in p)));
+
+        public static i32 Load_i32(ref readonly int p) => 
+            Unsafe.ReadUnaligned<i32>(in Unsafe.As<i32, byte>(ref Unsafe.AsRef(in p)));
+
+        public static f32 Load_f32(ref readonly float p, nuint elementOffset) => 
+            Unsafe.ReadUnaligned<f32>(in Unsafe.Add(ref Unsafe.As<f32, byte>(ref Unsafe.AsRef(in p)), elementOffset));
+
+        public static i32 Load_i32(ref readonly int p, nuint elementOffset) =>
+            Unsafe.ReadUnaligned<i32>(in Unsafe.Add(ref Unsafe.As<i32, byte>(ref Unsafe.AsRef(in p)), elementOffset));
 
         // Incremented
 
@@ -34,8 +43,17 @@ namespace SharpFastNoise2.Functions
 
         // Store
 
-        public static void Store_f32(ref float p, f32 a) => Unsafe.WriteUnaligned(ref Unsafe.As<float, byte>(ref p), a);
-        public static void Store_i32(ref int p, i32 a) => Unsafe.WriteUnaligned(ref Unsafe.As<int, byte>(ref p), a);
+        public static void Store_f32(ref float p, f32 a) =>
+            Unsafe.WriteUnaligned(ref Unsafe.As<f32, byte>(ref p), a);
+
+        public static void Store_i32(ref int p, i32 a) =>
+            Unsafe.WriteUnaligned(ref Unsafe.As<i32, byte>(ref p), a);
+
+        public static void Store_f32(ref float p, nuint elementOffset, f32 a) => 
+            Unsafe.WriteUnaligned(ref Unsafe.Add(ref Unsafe.As<f32, byte>(ref p), elementOffset), a);
+
+        public static void Store_i32(ref int p, nuint elementOffset, i32 a) => 
+            Unsafe.WriteUnaligned(ref Unsafe.Add(ref Unsafe.As<i32, byte>(ref p), elementOffset), a);
 
         // Extract
 
