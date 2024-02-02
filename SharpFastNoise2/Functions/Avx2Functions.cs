@@ -196,16 +196,14 @@ namespace SharpFastNoise2.Functions
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static f32 GetGradientDotFancy(i32 hash, f32 fX, f32 fY)
         {
-            i32 index = Convertf32_i32(
-                Converti32_f32((hash & Vector256.Create(0x3FFFFF))) * Vector256.Create(1.3333333333333333f));
+            i32 index = Avx.ConvertToVector256Int32(
+                Avx.ConvertToVector256Single(hash & Vector256.Create(0x3FFFFF)) * Vector256.Create(1.3333333333333333f));
 
             f32 gX = Avx2.PermuteVar8x32(Vector256.Create(ROOT3, ROOT3, 2, 2, 1, -1, 0, 0), index);
             f32 gY = Avx2.PermuteVar8x32(Vector256.Create(1, -1, 0, 0, ROOT3, ROOT3, 2, 2), index);
 
             // Bit-8 = Flip sign of a + b
-            return Xor(
-                FMulAdd_f32(gX, fX, fY * gY),
-                Casti32_f32(LeftShift(RightShift(index, 3), 31)));
+            return FMulAdd_f32(gX, fX, fY * gY) ^ ((index >> 3) << 31).AsSingle();
         }
 
         // Gradient dot
