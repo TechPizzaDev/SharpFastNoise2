@@ -58,17 +58,17 @@ namespace SharpFastNoise2
             t2 = F.Mul(t2, t2);
             t2 = F.Mul(t2, t2);
 
-            f32 n0 = Utils<m32, f32, i32, F>.GetGradientDotFancy(
+            f32 n0 = F.GetGradientDotFancy(
                 Utils<m32, f32, i32, F>.HashPrimes(seed, i, j), x0, y0);
 
-            f32 n1 = Utils<m32, f32, i32, F>.GetGradientDotFancy(
+            f32 n1 = F.GetGradientDotFancy(
                 Utils<m32, f32, i32, F>.HashPrimes(
                     seed,
                     F.MaskedAdd_i32(i, F.Broad_i32(Primes.X), i1),
                     F.NMaskedAdd_i32(j, F.Broad_i32(Primes.Y), i1)),
                 x1, y1);
 
-            f32 n2 = Utils<m32, f32, i32, F>.GetGradientDotFancy(
+            f32 n2 = F.GetGradientDotFancy(
                 Utils<m32, f32, i32, F>.HashPrimes(
                     seed,
                     F.Add(i, F.Broad_i32(Primes.X)),
@@ -127,8 +127,8 @@ namespace SharpFastNoise2
                 t1 = F.Mul(t1, t1);
                 t1 = F.Mul(t1, t1);
 
-                f32 v0 = Utils<m32, f32, i32, F>.GetGradientDot(Utils<m32, f32, i32, F>.HashPrimes(seed, hv0xr, hv0yr, hv0zr), d0xr, d0yr, d0zr);
-                f32 v1 = Utils<m32, f32, i32, F>.GetGradientDot(Utils<m32, f32, i32, F>.HashPrimes(seed, hv1xr, hv1yr, hv1zr), d1xr, d1yr, d1zr);
+                f32 v0 = F.GetGradientDot(Utils<m32, f32, i32, F>.HashPrimes(seed, hv0xr, hv0yr, hv0zr), d0xr, d0yr, d0zr);
+                f32 v1 = F.GetGradientDot(Utils<m32, f32, i32, F>.HashPrimes(seed, hv1xr, hv1yr, hv1zr), d1xr, d1yr, d1zr);
 
                 val = F.FMulAdd_f32(v0, t0, F.FMulAdd_f32(v1, t1, val));
 

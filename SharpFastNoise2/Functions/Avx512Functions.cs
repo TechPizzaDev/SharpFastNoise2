@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Runtime.CompilerServices;
 using System.Runtime.Intrinsics;
 using System.Runtime.Intrinsics.X86;
 using SharpFastNoise2;
@@ -9,6 +10,7 @@ namespace SharpFastNoise2.Functions
     using f32 = Vector512<float>;
     using i32 = Vector512<int>;
     using m32 = Vector512<uint>;
+    using static Gradient;
 
     public struct Avx512Functions : IFunctionList<m32, f32, i32, Avx512Functions>
     {
@@ -201,5 +203,71 @@ namespace SharpFastNoise2.Functions
         public static m32 And(m32 lhs, m32 rhs) => lhs & rhs;
         public static m32 Complement(m32 lhs) => ~lhs;
         public static m32 Or(m32 lhs, m32 rhs) => lhs | rhs;
+
+        // Gradient dot fancy
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static f32 GetGradientDotFancy(i32 hash, f32 fX, f32 fY)
+        {
+            i32 index = Avx512F.ConvertToVector512Int32(
+                Avx512F.ConvertToVector512Single(hash & Vector512.Create(0x3FFFFF)) * Vector512.Create(1.3333333333333333f));
+            
+            f32 gX = Avx512F.PermuteVar16x32(Vector512.Create(ROOT3, ROOT3, 2, 2, 1, -1, 0, 0, -ROOT3, -ROOT3, -2, -2, -1, 1, 0, 0), index);
+            f32 gY = Avx512F.PermuteVar16x32(Vector512.Create(1, -1, 0, 0, ROOT3, ROOT3, 2, 2, -1, 1, 0, 0, -ROOT3, -ROOT3, -2, -2), index);
+
+            return Avx512F.FusedMultiplyAdd(gX, fX, fY * gY);
+        }
+
+        // Gradient dot
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static f32 GetGradientDot(i32 hash, f32 fX, f32 fY)
+        {
+            f32 gX = Avx512F.PermuteVar16x32(Vector512.Create(
+                1 + ROOT2, -1 - ROOT2, 1 + ROOT2, -1 - ROOT2, 1, -1, 1, -1,
+                1 + ROOT2, -1 - ROOT2, 1 + ROOT2, -1 - ROOT2, 1, -1, 1, -1), hash);
+
+            f32 gY = Avx512F.PermuteVar16x32(Vector512.Create(
+                1, 1, -1, -1, 1 + ROOT2, 1 + ROOT2, -1 - ROOT2, -1 - ROOT2,
+                1, 1, -1, -1, 1 + ROOT2, 1 + ROOT2, -1 - ROOT2, -1 - ROOT2), hash);
+
+            return Avx512F.FusedMultiplyAdd(gX, fX, fY * gY);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static f32 GetGradientDot(i32 hash, f32 fX, f32 fY, f32 fZ)
+        {
+            f32 gX = Avx512F.PermuteVar16x32(Vector512.Create(1f, -1, 1, -1, 1, -1, 1, -1, 0, 0, 0, 0, 1, 0, -1, 0), hash);
+            f32 gY = Avx512F.PermuteVar16x32(Vector512.Create(1f, 1, -1, -1, 0, 0, 0, 0, 1, -1, 1, -1, 1, -1, 1, -1), hash);
+            f32 gZ = Avx512F.PermuteVar16x32(Vector512.Create(0f, 0, 0, 0, 1, 1, -1, -1, 1, 1, -1, -1, 0, 1, 0, -1), hash);
+
+            return Avx512F.FusedMultiplyAdd(gX, fX, Avx512F.FusedMultiplyAdd(fY, gY, fZ * gZ));
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static f32 GetGradientDot(i32 hash, f32 fX, f32 fY, f32 fZ, f32 fW)
+        {
+            f32 gX = Avx512F.PermuteVar16x32x2(
+                Vector512.Create(0f, 0, 0, 0, 0, 0, 0, 0, 1, -1, 1, -1, 1, -1, 1, -1),
+                hash,
+                Vector512.Create(1f, -1, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1));
+
+            f32 gY = Avx512F.PermuteVar16x32x2(
+                Vector512.Create(1f, -1, 1, -1, 1, -1, 1, -1, 0, 0, 0, 0, 0, 0, 0, 0),
+                hash,
+                Vector512.Create(1f, 1, -1, -1, 1, 1, -1, -1, 1, 1, -1, -1, 1, 1, -1, -1));
+
+            f32 gZ = Avx512F.PermuteVar16x32x2(
+                Vector512.Create(1f, 1, -1, -1, 1, 1, -1, -1, 1, 1, -1, -1, 1, 1, -1, -1),
+                hash,
+                Vector512.Create(0f, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, -1, -1, -1, -1));
+
+            f32 gW = Avx512F.PermuteVar16x32x2(
+                Vector512.Create(1f, 1, 1, 1, -1, -1, -1, -1, 1, 1, 1, 1, -1, -1, -1, -1),
+                hash,
+                Vector512.Create(1f, 1, 1, 1, -1, -1, -1, -1, 0, 0, 0, 0, 0, 0, 0, 0));
+
+            return Avx512F.FusedMultiplyAdd(gX, fX, Avx512F.FusedMultiplyAdd(fY, gY, Avx512F.FusedMultiplyAdd(fZ, gZ, fW * gW)));
+        }
     }
 }

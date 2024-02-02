@@ -1,7 +1,7 @@
 ﻿
 namespace SharpFastNoise2
 {
-    public struct Cellular
+    internal static class Cellular
     {
         public const float kJitter2D = 0.437015f;
         public const float kJitter3D = 0.396143f;

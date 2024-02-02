@@ -1,6 +1,6 @@
 ﻿namespace SharpFastNoise2
 {
-    public struct Primes
+    internal static class Primes
     {
         public const int X = 501125321;
         public const int Y = 1136930381;
