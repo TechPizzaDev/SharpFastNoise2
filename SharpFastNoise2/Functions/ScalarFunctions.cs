@@ -23,13 +23,13 @@ namespace SharpFastNoise2.Functions
 
         // Load
 
-        public static f32 Load_f32(ref readonly float p) => 
+        public static f32 Load_f32(ref readonly float p) =>
             Unsafe.ReadUnaligned<f32>(in Unsafe.As<f32, byte>(ref Unsafe.AsRef(in p)));
 
-        public static i32 Load_i32(ref readonly int p) => 
+        public static i32 Load_i32(ref readonly int p) =>
             Unsafe.ReadUnaligned<i32>(in Unsafe.As<i32, byte>(ref Unsafe.AsRef(in p)));
 
-        public static f32 Load_f32(ref readonly float p, nuint elementOffset) => 
+        public static f32 Load_f32(ref readonly float p, nuint elementOffset) =>
             Unsafe.ReadUnaligned<f32>(in Unsafe.Add(ref Unsafe.As<f32, byte>(ref Unsafe.AsRef(in p)), elementOffset));
 
         public static i32 Load_i32(ref readonly int p, nuint elementOffset) =>
@@ -49,10 +49,10 @@ namespace SharpFastNoise2.Functions
         public static void Store_i32(ref int p, i32 a) =>
             Unsafe.WriteUnaligned(ref Unsafe.As<i32, byte>(ref p), a);
 
-        public static void Store_f32(ref float p, nuint elementOffset, f32 a) => 
+        public static void Store_f32(ref float p, nuint elementOffset, f32 a) =>
             Unsafe.WriteUnaligned(ref Unsafe.Add(ref Unsafe.As<f32, byte>(ref p), elementOffset), a);
 
-        public static void Store_i32(ref int p, nuint elementOffset, i32 a) => 
+        public static void Store_i32(ref int p, nuint elementOffset, i32 a) =>
             Unsafe.WriteUnaligned(ref Unsafe.Add(ref Unsafe.As<i32, byte>(ref p), elementOffset), a);
 
         // Extract
@@ -112,13 +112,13 @@ namespace SharpFastNoise2.Functions
         public static i32 BitwiseAndNot_i32(i32 a, i32 b) => a & ~b;
         public static m32 BitwiseAndNot_m32(m32 a, m32 b) => a & ~b;
 
-        public static f32 BitwiseShiftRightZX_f32(f32 a, [ConstantExpected] byte b) => Casti32_f32((int) ((uint) Castf32_i32(a) >> b));
-        public static i32 BitwiseShiftRightZX_i32(i32 a, [ConstantExpected] byte b) => (int) ((uint) a >> b);
+        public static f32 BitwiseShiftRightZX_f32(f32 a, [ConstantExpected] byte b) => Casti32_f32(Castf32_i32(a) >>> b);
+        public static i32 BitwiseShiftRightZX_i32(i32 a, [ConstantExpected] byte b) => a >>> b;
 
         // Abs
 
         public static f32 Abs_f32(f32 a) => MathF.Abs(a);
-        public static i32 Abs_i32(i32 a) => Math.Abs(a);
+        public static i32 Abs_i32(i32 a) => a < 0 ? -a : a;
 
         // Float math
 

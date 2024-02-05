@@ -83,13 +83,13 @@ namespace SharpFastNoise2.Functions
         public static i32 BitwiseAndNot_i32(i32 a, i32 b) => Avx2.AndNot(b, a);
         public static m32 BitwiseAndNot_m32(m32 a, m32 b) => Avx2.AndNot(b, a);
 
-        public static f32 BitwiseShiftRightZX_f32(f32 a, [ConstantExpected] byte b) => Avx2.ShiftRightLogical(a.AsInt32(), b).AsSingle();
-        public static i32 BitwiseShiftRightZX_i32(i32 a, [ConstantExpected] byte b) => Avx2.ShiftRightLogical(a, b);
+        public static f32 BitwiseShiftRightZX_f32(f32 a, [ConstantExpected] byte b) => a >>> b;
+        public static i32 BitwiseShiftRightZX_i32(i32 a, [ConstantExpected] byte b) => a >>> b;
 
         // Abs
 
-        public static f32 Abs_f32(f32 a) => a & Avx2.ShiftRightLogical(m32.AllBitsSet, 1).AsSingle();
-        public static i32 Abs_i32(i32 a) => Avx2.Abs(a).AsInt32();
+        public static f32 Abs_f32(f32 a) => Vector256.Abs(a);
+        public static i32 Abs_i32(i32 a) => Vector256.Abs(a);
 
         // Float math
 
@@ -174,14 +174,14 @@ namespace SharpFastNoise2.Functions
         public static m32 Equal(i32 lhs, i32 rhs) => Avx2.CompareEqual(lhs, rhs).AsUInt32();
         public static m32 GreaterThan(i32 lhs, i32 rhs) => Avx2.CompareGreaterThan(lhs, rhs).AsUInt32();
         public static m32 GreaterThanOrEqual(i32 lhs, i32 rhs) => throw new NotSupportedException();
-        public static i32 LeftShift(i32 lhs, [ConstantExpected] byte rhs) => Avx2.ShiftLeftLogical(lhs, rhs);
+        public static i32 LeftShift(i32 lhs, [ConstantExpected] byte rhs) => lhs << rhs;
         public static m32 LessThan(i32 lhs, i32 rhs) => Avx2.CompareGreaterThan(rhs, lhs).AsUInt32();
         public static m32 LessThanOrEqual(i32 lhs, i32 rhs) => throw new NotSupportedException();
         public static i32 Mul(i32 lhs, i32 rhs) => Avx2.MultiplyLow(lhs, rhs);
         public static i32 Negate(i32 lhs) => Vector256.Negate(lhs);
         public static m32 NotEqual(i32 lhs, i32 rhs) => Avx.CompareNotEqual(lhs.AsSingle(), rhs.AsSingle()).AsUInt32();
         public static i32 Or(i32 lhs, i32 rhs) => Avx2.Or(lhs, rhs);
-        public static i32 RightShift(i32 lhs, [ConstantExpected] byte rhs) => Avx2.ShiftRightArithmetic(lhs, rhs);
+        public static i32 RightShift(i32 lhs, [ConstantExpected] byte rhs) => lhs >> rhs;
         public static i32 Sub(i32 lhs, i32 rhs) => Avx2.Subtract(lhs, rhs);
         public static i32 Xor(i32 lhs, i32 rhs) => Avx2.Xor(lhs, rhs);
 

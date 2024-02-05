@@ -125,8 +125,8 @@ namespace SharpFastNoise2.Functions
         public static i32 BitwiseAndNot_i32(i32 a, i32 b) => Vector128.AndNot(a, b);
         public static m32 BitwiseAndNot_m32(m32 a, m32 b) => Vector128.AndNot(a, b);
 
-        public static f32 BitwiseShiftRightZX_f32(f32 a, [ConstantExpected] byte b) => Vector128.ShiftRightLogical(a.AsInt32(), b).AsSingle();
-        public static i32 BitwiseShiftRightZX_i32(i32 a, [ConstantExpected] byte b) => Vector128.ShiftRightLogical(a, b);
+        public static f32 BitwiseShiftRightZX_f32(f32 a, [ConstantExpected] byte b) => a >>> b;
+        public static i32 BitwiseShiftRightZX_i32(i32 a, [ConstantExpected] byte b) => a >>> b;
 
         // Abs
 
