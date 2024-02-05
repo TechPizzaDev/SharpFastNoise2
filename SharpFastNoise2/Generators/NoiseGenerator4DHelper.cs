@@ -216,11 +216,14 @@ namespace SharpFastNoise2.Generators
             {
                 f32 xF = F.Mul(F.Converti32_f32(xIdx), xMul);
                 f32 yF = F.Mul(F.Converti32_f32(yIdx), yMul);
+                
+                (f32 xFSin, f32 xFCos) = Utils<m32, f32, i32, F>.SinCos_f32(xF);
+                (f32 yFSin, f32 yFCos) = Utils<m32, f32, i32, F>.SinCos_f32(yF);
 
-                f32 xPos = F.Mul(Utils<m32, f32, i32, F>.Cos_f32(xF), xFreq);
-                f32 yPos = F.Mul(Utils<m32, f32, i32, F>.Cos_f32(yF), yFreq);
-                f32 zPos = F.Mul(Utils<m32, f32, i32, F>.Sin_f32(xF), xFreq);
-                f32 wPos = F.Mul(Utils<m32, f32, i32, F>.Sin_f32(yF), yFreq);
+                f32 xPos = F.Mul(xFCos, xFreq);
+                f32 yPos = F.Mul(yFCos, yFreq);
+                f32 zPos = F.Mul(xFSin, xFreq);
+                f32 wPos = F.Mul(yFSin, yFreq);
 
                 f32 gen = generator.Gen(xPos, yPos, zPos, wPos, vSeed);
                 F.Store_f32(ref noiseOut, index, gen);
@@ -237,11 +240,14 @@ namespace SharpFastNoise2.Generators
             {
                 f32 xF = F.Mul(F.Converti32_f32(xIdx), xMul);
                 f32 yF = F.Mul(F.Converti32_f32(yIdx), yMul);
+                
+                (f32 xFSin, f32 xFCos) = Utils<m32, f32, i32, F>.SinCos_f32(xF);
+                (f32 yFSin, f32 yFCos) = Utils<m32, f32, i32, F>.SinCos_f32(yF);
 
-                f32 xPos = F.Mul(Utils<m32, f32, i32, F>.Cos_f32(xF), xFreq);
-                f32 yPos = F.Mul(Utils<m32, f32, i32, F>.Cos_f32(yF), yFreq);
-                f32 zPos = F.Mul(Utils<m32, f32, i32, F>.Sin_f32(xF), xFreq);
-                f32 wPos = F.Mul(Utils<m32, f32, i32, F>.Sin_f32(yF), yFreq);
+                f32 xPos = F.Mul(xFCos, xFreq);
+                f32 yPos = F.Mul(yFCos, yFreq);
+                f32 zPos = F.Mul(xFSin, xFreq);
+                f32 wPos = F.Mul(yFSin, yFreq);
 
                 f32 gen = generator.Gen(xPos, yPos, zPos, wPos, vSeed);
 

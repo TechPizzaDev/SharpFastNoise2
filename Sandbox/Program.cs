@@ -81,7 +81,7 @@ namespace Sandbox
                 float dx = 8;
                 float dy = 8;
 
-                float pi = MathF.PI;
+                const float pi = MathF.PI;
                 var noise = new CellularValue<uint, float, int, ScalarFunctions,
                     DistanceEuclidean<uint, float, int, ScalarFunctions>>();
 
@@ -92,10 +92,13 @@ namespace Sandbox
                         float s = x / 256f;
                         float t = y / 256f;
 
-                        float nx = Utils<uint, float, int, ScalarFunctions>.Cos_f32(s * 2 * pi) * dx / (2 * pi);
-                        float ny = Utils<uint, float, int, ScalarFunctions>.Cos_f32(t * 2 * pi) * dy / (2 * pi);
-                        float nz = Utils<uint, float, int, ScalarFunctions>.Sin_f32(s * 2 * pi) * dx / (2 * pi);
-                        float nw = Utils<uint, float, int, ScalarFunctions>.Sin_f32(t * 2 * pi) * dy / (2 * pi);
+                        (float sSin, float sCos) = Utils<uint, float, int, ScalarFunctions>.SinCos_f32(s * 2 * pi);
+                        (float tSin, float tCos) = Utils<uint, float, int, ScalarFunctions>.SinCos_f32(t * 2 * pi);
+
+                        float nx = sCos * dx / (2 * pi);
+                        float ny = tCos * dy / (2 * pi);
+                        float nz = sSin * dx / (2 * pi);
+                        float nw = tSin * dy / (2 * pi);
 
                         img[x, y] = new L16((ushort) ((noise.Gen(nx, ny, nz, nw, 1234) + 1f) * 0.5f * ushort.MaxValue));
                     }
