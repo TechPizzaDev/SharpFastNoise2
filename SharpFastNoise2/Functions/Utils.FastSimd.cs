@@ -1,4 +1,6 @@
-﻿using SharpFastNoise2.Functions;
+﻿using System;
+using System.Runtime.CompilerServices;
+using SharpFastNoise2.Functions;
 
 namespace SharpFastNoise2
 {
@@ -10,41 +12,72 @@ namespace SharpFastNoise2
     {
         // Trig
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static (f32 Sign, f32 Y) SignSinCos(f32 value)
+        {
+            f32 y = F.Sub(value, F.Mul(F.Broad_f32(MathF.Tau), F.Round_f32(F.Div(value, F.Broad_f32(MathF.Tau)))));
+
+            f32 signBit = F.Casti32_f32(F.Broad_i32(unchecked((int) 0x80000000)));
+            m32 gHalfPi = F.GreaterThan(y, F.Broad_f32(0.5f * MathF.PI));
+            m32 lHalfPi = F.LessThan(y, F.Xor(F.Broad_f32(0.5f * MathF.PI), signBit));
+
+            f32 sign = F.Mask_f32(signBit, F.Or(gHalfPi, lHalfPi));
+            f32 yRhs = F.Xor(y, sign);
+
+            f32 yG = F.MaskedAdd_f32(yRhs, F.Broad_f32(MathF.PI), gHalfPi);
+            f32 yL = F.MaskedSub_f32(yRhs, F.Broad_f32(MathF.PI), lHalfPi);
+
+            f32 ySum = F.Select_f32(lHalfPi, yL, yG);
+            return (sign, ySum);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static f32 Cos(f32 y2, f32 sign)
+        {
+            // 10-degree minimax approximation
+            f32 cosv = F.FMulAdd_f32(F.Broad_f32(-2.6051615e-07f), y2, F.Broad_f32(2.4760495e-05f));
+            cosv = F.FMulAdd_f32(cosv, y2, F.Broad_f32(-0.0013888378f));
+            cosv = F.FMulAdd_f32(cosv, y2, F.Broad_f32(0.041666638f));
+            cosv = F.FMulAdd_f32(cosv, y2, F.Broad_f32(-0.5f));
+            cosv = F.Xor(F.FMulAdd_f32(cosv, y2, F.Broad_f32(1.0f)), sign);
+            return cosv;
+        }
+
         public static f32 Cos_f32(f32 value)
         {
-            const int xorMask = unchecked((int)0x80000000);
+            (f32 sign, f32 y) = SignSinCos(value);
+            f32 y2 = F.Mul(y, y);
+            f32 cosv = Cos(y2, sign);
+            return cosv;
+        }
 
-            value = F.Abs_f32(value);
-            value = F.Sub(value, F.Mul(F.Floor_f32(F.Mul(value, F.Broad_f32(0.1591549f))), F.Broad_f32(6.283185f)));
-
-            m32 geHalfPi = F.GreaterThanOrEqual(value, F.Broad_f32(1.570796f));
-            m32 geHalfPi2 = F.GreaterThanOrEqual(value, F.Broad_f32(3.141593f));
-            m32 geHalfPi3 = F.GreaterThanOrEqual(value, F.Broad_f32(4.7123889f));
-
-            f32 cosAngle = F.Xor(
-                value, F.Mask_f32(F.Xor(value, F.Sub(F.Broad_f32(3.141593f), value)), geHalfPi));
-
-            cosAngle = F.Xor(
-                cosAngle, F.Mask_f32(F.Casti32_f32(F.Broad_i32(xorMask)), geHalfPi2));
-
-            cosAngle = F.Xor(
-                cosAngle, F.Mask_f32(F.Xor(cosAngle, F.Sub(F.Broad_f32(6.283185f), value)), geHalfPi3));
-
-            cosAngle = F.Mul(cosAngle, cosAngle);
-
-            cosAngle = F.FMulAdd_f32(
-                cosAngle,
-                F.FMulAdd_f32(cosAngle, F.Broad_f32(0.03679168f), F.Broad_f32(-0.49558072f)),
-                F.Broad_f32(0.99940307f));
-
-            return F.Xor(cosAngle, F.Mask_f32(
-                F.Casti32_f32(F.Broad_i32(xorMask)),
-                F.BitwiseAndNot_m32(geHalfPi, geHalfPi3)));
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static f32 Sin(f32 y, f32 y2)
+        {
+            // 11-degree minimax approximation
+            f32 sinv = F.FMulAdd_f32(F.Broad_f32(-2.3889859e-08f), y2, F.Broad_f32(2.7525562e-06f));
+            sinv = F.FMulAdd_f32(sinv, y2, F.Broad_f32(-0.00019840874f));
+            sinv = F.FMulAdd_f32(sinv, y2, F.Broad_f32(0.0083333310f));
+            sinv = F.FMulAdd_f32(sinv, y2, F.Broad_f32(-0.16666667f));
+            sinv = F.Mul(y, F.FMulAdd_f32(sinv, y2, F.Broad_f32(1.0f)));
+            return sinv;
         }
 
         public static f32 Sin_f32(f32 value)
         {
-            return Cos_f32(F.Sub(F.Broad_f32(1.570796f), value));
+            (_, f32 y) = SignSinCos(value);
+            f32 y2 = F.Mul(y, y);
+            f32 sinv = Sin(y, y2);
+            return sinv;
+        }
+
+        public static (f32 Sin, f32 Cos) SinCos_f32(f32 value)
+        {
+            (f32 sign, f32 y) = SignSinCos(value);
+            f32 y2 = F.Mul(y, y);
+            f32 sinv = Sin(y, y2);
+            f32 cosv = Cos(y2, sign);
+            return (sinv, cosv);
         }
 
         public static f32 Exp_f32(f32 x)
