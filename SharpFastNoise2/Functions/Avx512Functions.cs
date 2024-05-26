@@ -123,11 +123,11 @@ namespace SharpFastNoise2.Functions
 
         // Mask
 
-        public static i32 Mask_i32(i32 a, m32 m) =>
+        public static i32 Mask(i32 a, m32 m) =>
             // return _mm512_maskz_mov_epi32(m, a);
             Avx512F.And(a, m.AsInt32());
 
-        public static f32 Mask_f32(f32 a, m32 m) =>
+        public static f32 Mask(f32 a, m32 m) =>
             // return _mm512_maskz_mov_ps(m, a);
             Avx512DQ.And(a, m.AsSingle());
 

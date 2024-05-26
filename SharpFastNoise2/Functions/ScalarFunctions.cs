@@ -159,8 +159,8 @@ namespace SharpFastNoise2.Functions
 
         // Mask
 
-        public static i32 Mask_i32(i32 a, m32 m) => m != 0 ? a : 0;
-        public static f32 Mask_f32(f32 a, m32 m) => m != 0 ? a : 0;
+        public static i32 Mask(i32 a, m32 m) => m != 0 ? a : 0;
+        public static f32 Mask(f32 a, m32 m) => m != 0 ? a : 0;
 
         public static i32 NMask_i32(i32 a, m32 m) => m != 0 ? 0 : a;
         public static f32 NMask_f32(f32 a, m32 m) => m != 0 ? 0 : a;

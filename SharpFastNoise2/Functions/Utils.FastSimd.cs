@@ -21,7 +21,7 @@ namespace SharpFastNoise2
             m32 gHalfPi = F.GreaterThan(y, F.Broad(0.5f * MathF.PI));
             m32 lHalfPi = F.LessThan(y, F.Xor(F.Broad(0.5f * MathF.PI), signBit));
 
-            f32 sign = F.Mask_f32(signBit, F.Or(gHalfPi, lHalfPi));
+            f32 sign = F.Mask(signBit, F.Or(gHalfPi, lHalfPi));
             f32 yRhs = F.Xor(y, sign);
             
             f32 yG = F.MaskedAdd_f32(yRhs, F.Broad(MathF.PI), gHalfPi);
@@ -155,7 +155,7 @@ namespace SharpFastNoise2
             x = F.Add(x, y);
             x = F.FMulAdd_f32(e, F.Broad(0.693359375f), x);
 
-            return F.Mask_f32(x, validMask);
+            return F.Mask(x, validMask);
         }
 
         public static f32 Pow_f32(f32 value, f32 pow)
