@@ -45,9 +45,9 @@ namespace SharpFastNoise2
             f32 x2 = F.Add(x0, F.Broad(G2 * 2 - 1));
             f32 y2 = F.Add(y0, F.Broad(G2 * 2 - 1));
 
-            f32 t0 = F.FNMulAdd_f32(x0, x0, F.FNMulAdd_f32(y0, y0, F.Broad(0.5f)));
-            f32 t1 = F.FNMulAdd_f32(x1, x1, F.FNMulAdd_f32(y1, y1, F.Broad(0.5f)));
-            f32 t2 = F.FNMulAdd_f32(x2, x2, F.FNMulAdd_f32(y2, y2, F.Broad(0.5f)));
+            f32 t0 = F.FNMulAdd(x0, x0, F.FNMulAdd(y0, y0, F.Broad(0.5f)));
+            f32 t1 = F.FNMulAdd(x1, x1, F.FNMulAdd(y1, y1, F.Broad(0.5f)));
+            f32 t2 = F.FNMulAdd(x2, x2, F.FNMulAdd(y2, y2, F.Broad(0.5f)));
 
             t0 = F.Max(t0, F.Broad((float)0));
             t1 = F.Max(t1, F.Broad((float)0));
@@ -131,10 +131,10 @@ namespace SharpFastNoise2
             f32 y3 = F.Add(y0, F.Broad(G3 * 3 - 1));
             f32 z3 = F.Add(z0, F.Broad(G3 * 3 - 1));
 
-            f32 t0 = F.FNMulAdd_f32(x0, x0, F.FNMulAdd_f32(y0, y0, F.FNMulAdd_f32(z0, z0, F.Broad(0.6f))));
-            f32 t1 = F.FNMulAdd_f32(x1, x1, F.FNMulAdd_f32(y1, y1, F.FNMulAdd_f32(z1, z1, F.Broad(0.6f))));
-            f32 t2 = F.FNMulAdd_f32(x2, x2, F.FNMulAdd_f32(y2, y2, F.FNMulAdd_f32(z2, z2, F.Broad(0.6f))));
-            f32 t3 = F.FNMulAdd_f32(x3, x3, F.FNMulAdd_f32(y3, y3, F.FNMulAdd_f32(z3, z3, F.Broad(0.6f))));
+            f32 t0 = F.FNMulAdd(x0, x0, F.FNMulAdd(y0, y0, F.FNMulAdd(z0, z0, F.Broad(0.6f))));
+            f32 t1 = F.FNMulAdd(x1, x1, F.FNMulAdd(y1, y1, F.FNMulAdd(z1, z1, F.Broad(0.6f))));
+            f32 t2 = F.FNMulAdd(x2, x2, F.FNMulAdd(y2, y2, F.FNMulAdd(z2, z2, F.Broad(0.6f))));
+            f32 t3 = F.FNMulAdd(x3, x3, F.FNMulAdd(y3, y3, F.FNMulAdd(z3, z3, F.Broad(0.6f))));
 
             t0 = F.Max(t0, F.Broad((float)0));
             t1 = F.Max(t1, F.Broad((float)0));
@@ -275,20 +275,20 @@ namespace SharpFastNoise2
             f32 z4 = F.Add(z0, F.Broad(G4 * 4 - 1));
             f32 w4 = F.Add(w0, F.Broad(G4 * 4 - 1));
 
-            f32 t0 = F.FNMulAdd_f32(
-                x0, x0, F.FNMulAdd_f32(y0, y0, F.FNMulAdd_f32(z0, z0, F.FNMulAdd_f32(w0, w0, F.Broad(0.6f)))));
+            f32 t0 = F.FNMulAdd(
+                x0, x0, F.FNMulAdd(y0, y0, F.FNMulAdd(z0, z0, F.FNMulAdd(w0, w0, F.Broad(0.6f)))));
 
-            f32 t1 = F.FNMulAdd_f32(
-                x1, x1, F.FNMulAdd_f32(y1, y1, F.FNMulAdd_f32(z1, z1, F.FNMulAdd_f32(w1, w1, F.Broad(0.6f)))));
+            f32 t1 = F.FNMulAdd(
+                x1, x1, F.FNMulAdd(y1, y1, F.FNMulAdd(z1, z1, F.FNMulAdd(w1, w1, F.Broad(0.6f)))));
 
-            f32 t2 = F.FNMulAdd_f32(
-                x2, x2, F.FNMulAdd_f32(y2, y2, F.FNMulAdd_f32(z2, z2, F.FNMulAdd_f32(w2, w2, F.Broad(0.6f)))));
+            f32 t2 = F.FNMulAdd(
+                x2, x2, F.FNMulAdd(y2, y2, F.FNMulAdd(z2, z2, F.FNMulAdd(w2, w2, F.Broad(0.6f)))));
 
-            f32 t3 = F.FNMulAdd_f32(
-                x3, x3, F.FNMulAdd_f32(y3, y3, F.FNMulAdd_f32(z3, z3, F.FNMulAdd_f32(w3, w3, F.Broad(0.6f)))));
+            f32 t3 = F.FNMulAdd(
+                x3, x3, F.FNMulAdd(y3, y3, F.FNMulAdd(z3, z3, F.FNMulAdd(w3, w3, F.Broad(0.6f)))));
 
-            f32 t4 = F.FNMulAdd_f32(
-                x4, x4, F.FNMulAdd_f32(y4, y4, F.FNMulAdd_f32(z4, z4, F.FNMulAdd_f32(w4, w4, F.Broad(0.6f)))));
+            f32 t4 = F.FNMulAdd(
+                x4, x4, F.FNMulAdd(y4, y4, F.FNMulAdd(z4, z4, F.FNMulAdd(w4, w4, F.Broad(0.6f)))));
 
             t0 = F.Max(t0, F.Broad((float)0));
             t1 = F.Max(t1, F.Broad((float)0));

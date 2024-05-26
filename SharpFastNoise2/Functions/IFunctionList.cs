@@ -138,7 +138,7 @@ namespace SharpFastNoise2.Functions
         // FMA
 
         static abstract f32 FMulAdd(f32 a, f32 b, f32 c);
-        static abstract f32 FNMulAdd_f32(f32 a, f32 b, f32 c);
+        static abstract f32 FNMulAdd(f32 a, f32 b, f32 c);
 
         // Float math
 

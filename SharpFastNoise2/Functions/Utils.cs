@@ -88,7 +88,7 @@ namespace SharpFastNoise2
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static f32 InterpHermite(f32 t)
         {
-            return F.Mul(F.Mul(t, t), F.FNMulAdd_f32(t, F.Broad((float)2), F.Broad((float)3)));
+            return F.Mul(F.Mul(t, t), F.FNMulAdd(t, F.Broad((float)2), F.Broad((float)3)));
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

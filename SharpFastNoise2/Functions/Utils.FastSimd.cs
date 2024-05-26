@@ -91,8 +91,8 @@ namespace SharpFastNoise2
             f32 flr = F.Floor(fx);
             fx = F.MaskSub(flr, F.Broad((float)1), F.GreaterThan(flr, fx));
 
-            x = F.FNMulAdd_f32(fx, F.Broad(0.693359375f), x);
-            x = F.FNMulAdd_f32(fx, F.Broad(-2.12194440e-4f), x);
+            x = F.FNMulAdd(fx, F.Broad(0.693359375f), x);
+            x = F.FNMulAdd(fx, F.Broad(-2.12194440e-4f), x);
 
             f32 y = F.Broad(1.9875691500E-4f);
             y = F.FMulAdd(y, x, F.Broad(1.3981999507E-3f));
@@ -150,7 +150,7 @@ namespace SharpFastNoise2
             f32 xx = F.Mul(x, x);
             y = F.Mul(y, xx);
             y = F.Mul(y, F.Mul(e, F.Broad(-2.12194440e-4f)));
-            y = F.FNMulAdd_f32(xx, F.Broad(0.5f), y);
+            y = F.FNMulAdd(xx, F.Broad(0.5f), y);
 
             x = F.Add(x, y);
             x = F.FMulAdd(e, F.Broad(0.693359375f), x);

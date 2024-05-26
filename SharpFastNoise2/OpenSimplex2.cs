@@ -118,8 +118,8 @@ namespace SharpFastNoise2
                 i32 hv1yr = F.Mul(F.Convert_i32(v1yr), F.Broad(Primes.Y));
                 i32 hv1zr = F.Mul(F.Convert_i32(v1zr), F.Broad(Primes.Z));
 
-                f32 t0 = F.FNMulAdd_f32(d0zr, d0zr, F.FNMulAdd_f32(d0yr, d0yr, F.FNMulAdd_f32(d0xr, d0xr, F.Broad(0.6f))));
-                f32 t1 = F.FNMulAdd_f32(d1zr, d1zr, F.FNMulAdd_f32(d1yr, d1yr, F.FNMulAdd_f32(d1xr, d1xr, F.Broad(0.6f))));
+                f32 t0 = F.FNMulAdd(d0zr, d0zr, F.FNMulAdd(d0yr, d0yr, F.FNMulAdd(d0xr, d0xr, F.Broad(0.6f))));
+                f32 t1 = F.FNMulAdd(d1zr, d1zr, F.FNMulAdd(d1yr, d1yr, F.FNMulAdd(d1xr, d1xr, F.Broad(0.6f))));
                 t0 = F.Max(t0, F.Broad((float)0));
                 t1 = F.Max(t1, F.Broad((float)0));
                 t0 = F.Mul(t0, t0);
