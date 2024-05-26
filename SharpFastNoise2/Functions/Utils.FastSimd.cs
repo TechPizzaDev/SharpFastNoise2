@@ -119,7 +119,7 @@ namespace SharpFastNoise2
             x = F.Max(x, F.Cast_f32(F.Broad(0x00800000)));  // cut off denormalized stuff
 
             // can be done with AVX2
-            i32 i = F.BitwiseShiftRightZX_i32(F.Cast_i32(x), 23);
+            i32 i = F.ShiftRightLogical(F.Cast_i32(x), 23);
 
             // keep only the fractional part 
             x = F.And(x, F.Cast_f32(F.Broad(~0x7f800000)));

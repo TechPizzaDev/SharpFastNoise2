@@ -112,8 +112,8 @@ namespace SharpFastNoise2.Functions
         public static i32 AndNot(i32 a, i32 b) => a & ~b;
         public static m32 AndNot(m32 a, m32 b) => a & ~b;
 
-        public static f32 BitwiseShiftRightZX_f32(f32 a, [ConstantExpected] byte b) => Cast_f32(Cast_i32(a) >>> b);
-        public static i32 BitwiseShiftRightZX_i32(i32 a, [ConstantExpected] byte b) => a >>> b;
+        public static f32 ShiftRightLogical(f32 a, [ConstantExpected] byte b) => Cast_f32(Cast_i32(a) >>> b);
+        public static i32 ShiftRightLogical(i32 a, [ConstantExpected] byte b) => a >>> b;
 
         // Abs
 

@@ -1,4 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
+using System.Runtime.Intrinsics;
 
 namespace SharpFastNoise2.Functions
 {
@@ -74,8 +75,8 @@ namespace SharpFastNoise2.Functions
         static abstract i32 AndNot(i32 a, i32 b);
         static abstract m32 AndNot(m32 a, m32 b);
 
-        static abstract f32 BitwiseShiftRightZX_f32(f32 a, [ConstantExpected] byte b);
-        static abstract i32 BitwiseShiftRightZX_i32(i32 a, [ConstantExpected] byte b);
+        static abstract f32 ShiftRightLogical(f32 a, [ConstantExpected] byte b);
+        static abstract i32 ShiftRightLogical(i32 a, [ConstantExpected] byte b);
 
         // Abs
 
