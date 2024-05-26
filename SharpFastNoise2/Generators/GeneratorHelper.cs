@@ -26,7 +26,7 @@ namespace SharpFastNoise2.Generators
 
             for (int i = 0; i < remaining; i++)
             {
-                float f = F.Extract_f32(finalGen, i);
+                float f = F.Extract(finalGen, i);
                 Unsafe.Add(ref noiseOut, i) = f;
                 minMax.Apply(f);
             }

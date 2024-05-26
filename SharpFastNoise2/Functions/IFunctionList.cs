@@ -37,11 +37,11 @@ namespace SharpFastNoise2.Functions
 
         // Extract
 
-        static abstract float Extract0_f32(f32 a);
-        static abstract int Extract0_i32(i32 a);
+        static abstract float Extract0(f32 a);
+        static abstract int Extract0(i32 a);
 
-        static abstract float Extract_f32(f32 a, int idx);
-        static abstract int Extract_i32(i32 a, int idx);
+        static abstract float Extract(f32 a, int idx);
+        static abstract int Extract(i32 a, int idx);
 
         // Cast
 

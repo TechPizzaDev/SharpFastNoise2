@@ -165,7 +165,7 @@ namespace SharpFastNoise2.Generators
             where F : IFunctionList<m32, f32, i32, F>
             where G : INoiseGenerator4D<f32, i32>
         {
-            return F.Extract0_f32(generator.Gen(
+            return F.Extract0(generator.Gen(
                 F.Broad(x),
                 F.Broad(y),
                 F.Broad(z),
