@@ -90,9 +90,9 @@ namespace SharpFastNoise2
             f32 val = F.Broad((float)0);
             for (int i = 0; ; i++)
             {
-                f32 v0xr = F.Round_f32(xr);
-                f32 v0yr = F.Round_f32(yr);
-                f32 v0zr = F.Round_f32(zr);
+                f32 v0xr = F.Round(xr);
+                f32 v0yr = F.Round(yr);
+                f32 v0zr = F.Round(zr);
                 f32 d0xr = F.Sub(xr, v0xr);
                 f32 d0yr = F.Sub(yr, v0yr);
                 f32 d0zr = F.Sub(zr, v0zr);

@@ -95,7 +95,7 @@ namespace SharpFastNoise2.Functions
 
         static abstract f32 Floor(f32 a);
         static abstract f32 Ceiling(f32 a);
-        static abstract f32 Round_f32(f32 a);
+        static abstract f32 Round(f32 a);
 
         // Mask
 

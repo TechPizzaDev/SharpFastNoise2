@@ -119,7 +119,7 @@ namespace SharpFastNoise2.Functions
 
         public static f32 Floor(f32 a) => Avx512F.RoundScale(a, _MM_FROUND_TO_NEG_INT | _MM_FROUND_NO_EXC);
         public static f32 Ceiling(f32 a) => Avx512F.RoundScale(a, _MM_FROUND_TO_POS_INT | _MM_FROUND_NO_EXC);
-        public static f32 Round_f32(f32 a) => Avx512F.RoundScale(a, _MM_FROUND_TO_NEAREST_INT | _MM_FROUND_NO_EXC);
+        public static f32 Round(f32 a) => Avx512F.RoundScale(a, _MM_FROUND_TO_NEAREST_INT | _MM_FROUND_NO_EXC);
 
         // Mask
 

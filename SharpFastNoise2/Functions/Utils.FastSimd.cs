@@ -15,7 +15,7 @@ namespace SharpFastNoise2
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static (f32 Sign, f32 Y) SignSinCos(f32 value)
         {
-            f32 y = F.Sub(value, F.Mul(F.Broad(MathF.Tau), F.Round_f32(F.Div(value, F.Broad(MathF.Tau)))));
+            f32 y = F.Sub(value, F.Mul(F.Broad(MathF.Tau), F.Round(F.Div(value, F.Broad(MathF.Tau)))));
 
             f32 signBit = F.Cast_f32(F.Broad(unchecked((int) 0x80000000)));
             m32 gHalfPi = F.GreaterThan(y, F.Broad(0.5f * MathF.PI));

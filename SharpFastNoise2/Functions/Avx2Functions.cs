@@ -114,7 +114,7 @@ namespace SharpFastNoise2.Functions
 
         public static f32 Floor(f32 a) => Avx.RoundToNegativeInfinity(a);
         public static f32 Ceiling(f32 a) => Avx.RoundToPositiveInfinity(a);
-        public static f32 Round_f32(f32 a) => Avx.RoundToNearestInteger(a);
+        public static f32 Round(f32 a) => Avx.RoundToNearestInteger(a);
 
         // Mask
 
