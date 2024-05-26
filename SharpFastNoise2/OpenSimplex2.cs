@@ -97,9 +97,9 @@ namespace SharpFastNoise2
                 f32 d0yr = F.Sub(yr, v0yr);
                 f32 d0zr = F.Sub(zr, v0zr);
 
-                f32 score0xr = F.Abs_f32(d0xr);
-                f32 score0yr = F.Abs_f32(d0yr);
-                f32 score0zr = F.Abs_f32(d0zr);
+                f32 score0xr = F.Abs(d0xr);
+                f32 score0yr = F.Abs(d0yr);
+                f32 score0zr = F.Abs(d0zr);
                 m32 dir0xr = F.LessThanOrEqual(F.Max(score0yr, score0zr), score0xr);
                 m32 dir0yr = F.AndNot(F.LessThanOrEqual(F.Max(score0zr, score0xr), score0yr), dir0xr);
                 m32 dir0zr = F.Complement(F.Or(dir0xr, dir0yr));

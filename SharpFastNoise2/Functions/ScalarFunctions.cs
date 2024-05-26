@@ -117,8 +117,8 @@ namespace SharpFastNoise2.Functions
 
         // Abs
 
-        public static f32 Abs_f32(f32 a) => MathF.Abs(a);
-        public static i32 Abs_i32(i32 a) => a < 0 ? -a : a;
+        public static f32 Abs(f32 a) => MathF.Abs(a);
+        public static i32 Abs(i32 a) => a < 0 ? -a : a;
 
         // Float math
 

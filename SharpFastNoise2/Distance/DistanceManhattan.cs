@@ -12,27 +12,27 @@ namespace SharpFastNoise2.Distance
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static f32 CalcDistance(f32 dX, f32 dY)
         {
-            f32 dist = F.Abs_f32(dX);
-            dist = F.Add(dist, F.Abs_f32(dY));
+            f32 dist = F.Abs(dX);
+            dist = F.Add(dist, F.Abs(dY));
             return dist;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static f32 CalcDistance(f32 dX, f32 dY, f32 dZ)
         {
-            f32 dist = F.Abs_f32(dX);
-            dist = F.Add(dist, F.Abs_f32(dY));
-            dist = F.Add(dist, F.Abs_f32(dZ));
+            f32 dist = F.Abs(dX);
+            dist = F.Add(dist, F.Abs(dY));
+            dist = F.Add(dist, F.Abs(dZ));
             return dist;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static f32 CalcDistance(f32 dX, f32 dY, f32 dZ, f32 dW)
         {
-            f32 dist = F.Abs_f32(dX);
-            dist = F.Add(dist, F.Abs_f32(dY));
-            dist = F.Add(dist, F.Abs_f32(dZ));
-            dist = F.Add(dist, F.Abs_f32(dW));
+            f32 dist = F.Abs(dX);
+            dist = F.Add(dist, F.Abs(dY));
+            dist = F.Add(dist, F.Abs(dZ));
+            dist = F.Add(dist, F.Abs(dW));
             return dist;
         }
     }

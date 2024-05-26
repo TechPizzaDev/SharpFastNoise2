@@ -80,8 +80,8 @@ namespace SharpFastNoise2.Functions
 
         // Abs
 
-        static abstract f32 Abs_f32(f32 a);
-        static abstract i32 Abs_i32(i32 a);
+        static abstract f32 Abs(f32 a);
+        static abstract i32 Abs(i32 a);
 
         // Float math
 
