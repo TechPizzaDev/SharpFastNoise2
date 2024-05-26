@@ -105,8 +105,8 @@ namespace SharpFastNoise2.Functions
         static abstract i32 NMask(i32 a, m32 m);
         static abstract f32 NMask(f32 a, m32 m);
 
-        static abstract bool AnyMask_bool(m32 m);
-        static abstract bool AllMask_bool(m32 m);
+        static abstract bool AnyMask(m32 m);
+        static abstract bool AllMask(m32 m);
 
         // Masked float
 

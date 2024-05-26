@@ -139,8 +139,8 @@ namespace SharpFastNoise2.Functions
             // return _mm512_maskz_mov_ps( ~m, a );
             Avx512DQ.AndNot(m.AsSingle(), a);
         
-        public static bool AnyMask_bool(m32 m) => m.ExtractMostSignificantBits() != 0;
-        public static bool AllMask_bool(m32 m) => m.ExtractMostSignificantBits() == 0xFFFF;
+        public static bool AnyMask(m32 m) => m.ExtractMostSignificantBits() != 0;
+        public static bool AllMask(m32 m) => m.ExtractMostSignificantBits() == 0xFFFF;
 
         // Masked float
 

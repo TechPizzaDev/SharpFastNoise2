@@ -260,7 +260,7 @@ namespace SharpFastNoise2.Functions
         public static f32 NMask(f32 a, m32 m) => Vector128.AndNot(a, m.AsSingle());
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool AnyMask_bool(m32 m)
+        public static bool AnyMask(m32 m)
         {
             if (Sse41.IsSupported)
             {
@@ -272,7 +272,7 @@ namespace SharpFastNoise2.Functions
             }
         }
 
-        public static bool AllMask_bool(m32 m) => m.ExtractMostSignificantBits() == 0xF;
+        public static bool AllMask(m32 m) => m.ExtractMostSignificantBits() == 0xF;
 
         public static i32 MaskedIncrement_i32(i32 a, m32 m) => a - m.AsInt32();
         public static i32 MaskedDecrement_i32(i32 a, m32 m) => a + m.AsInt32();

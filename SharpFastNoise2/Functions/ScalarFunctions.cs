@@ -165,8 +165,8 @@ namespace SharpFastNoise2.Functions
         public static i32 NMask(i32 a, m32 m) => m != 0 ? 0 : a;
         public static f32 NMask(f32 a, m32 m) => m != 0 ? 0 : a;
         
-        public static bool AnyMask_bool(m32 m) => m != 0;
-        public static bool AllMask_bool(m32 m) => m == m32.MaxValue;
+        public static bool AnyMask(m32 m) => m != 0;
+        public static bool AllMask(m32 m) => m == m32.MaxValue;
 
         public static i32 MaskedIncrement_i32(i32 a, m32 m) => a - (int) m;
         public static i32 MaskedDecrement_i32(i32 a, m32 m) => a + (int) m;
