@@ -80,8 +80,8 @@ namespace SharpFastNoise2.Functions
 
         // Max
 
-        public static f32 Max_f32(f32 a, f32 b) => Avx512F.Max(a, b);
-        public static i32 Max_i32(i32 a, i32 b) => Avx512F.Max(a, b);
+        public static f32 Max(f32 a, f32 b) => Avx512F.Max(a, b);
+        public static i32 Max(i32 a, i32 b) => Avx512F.Max(a, b);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float MaxAcross(f32 a) => Avx2Functions.MaxAcross(Vector256.Max(a.GetLower(), a.GetUpper()));

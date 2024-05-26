@@ -58,7 +58,7 @@ namespace SharpFastNoise2.Generators
                 F.Store(ref noiseOut, index, gen);
 
                 min = F.Min(min, gen);
-                max = F.Max_f32(max, gen);
+                max = F.Max(max, gen);
 
                 index += (nuint)F.Count;
                 xIdx = F.Add(xIdx, F.Broad(F.Count));
@@ -119,7 +119,7 @@ namespace SharpFastNoise2.Generators
                 F.Store(ref noiseOut, index, gen);
 
                 min = F.Min(min, gen);
-                max = F.Max_f32(max, gen);
+                max = F.Max(max, gen);
 
                 index += (nuint)F.Count;
             }

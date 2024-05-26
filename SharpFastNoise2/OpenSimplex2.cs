@@ -47,9 +47,9 @@ namespace SharpFastNoise2
             f32 t1 = F.Sub(F.Sub(F.Broad(0.5f), F.Mul(x1, x1)), F.Mul(y1, y1));
             f32 t2 = F.Sub(F.Sub(F.Broad(0.5f), F.Mul(x2, x2)), F.Mul(y2, y2));
 
-            t0 = F.Max_f32(t0, F.Broad((float)0));
-            t1 = F.Max_f32(t1, F.Broad((float)0));
-            t2 = F.Max_f32(t2, F.Broad((float)0));
+            t0 = F.Max(t0, F.Broad((float)0));
+            t1 = F.Max(t1, F.Broad((float)0));
+            t2 = F.Max(t2, F.Broad((float)0));
 
             t0 = F.Mul(t0, t0);
             t0 = F.Mul(t0, t0);
@@ -100,8 +100,8 @@ namespace SharpFastNoise2
                 f32 score0xr = F.Abs_f32(d0xr);
                 f32 score0yr = F.Abs_f32(d0yr);
                 f32 score0zr = F.Abs_f32(d0zr);
-                m32 dir0xr = F.LessThanOrEqual(F.Max_f32(score0yr, score0zr), score0xr);
-                m32 dir0yr = F.BitwiseAndNot_m32(F.LessThanOrEqual(F.Max_f32(score0zr, score0xr), score0yr), dir0xr);
+                m32 dir0xr = F.LessThanOrEqual(F.Max(score0yr, score0zr), score0xr);
+                m32 dir0yr = F.BitwiseAndNot_m32(F.LessThanOrEqual(F.Max(score0zr, score0xr), score0yr), dir0xr);
                 m32 dir0zr = F.Complement(F.Or(dir0xr, dir0yr));
                 f32 v1xr = F.MaskedAdd_f32(v0xr, F.Or(F.Broad(1.0f), F.And(F.Broad(-1.0f), d0xr)), dir0xr);
                 f32 v1yr = F.MaskedAdd_f32(v0yr, F.Or(F.Broad(1.0f), F.And(F.Broad(-1.0f), d0yr)), dir0yr);
@@ -120,8 +120,8 @@ namespace SharpFastNoise2
 
                 f32 t0 = F.FNMulAdd_f32(d0zr, d0zr, F.FNMulAdd_f32(d0yr, d0yr, F.FNMulAdd_f32(d0xr, d0xr, F.Broad(0.6f))));
                 f32 t1 = F.FNMulAdd_f32(d1zr, d1zr, F.FNMulAdd_f32(d1yr, d1yr, F.FNMulAdd_f32(d1xr, d1xr, F.Broad(0.6f))));
-                t0 = F.Max_f32(t0, F.Broad((float)0));
-                t1 = F.Max_f32(t1, F.Broad((float)0));
+                t0 = F.Max(t0, F.Broad((float)0));
+                t1 = F.Max(t1, F.Broad((float)0));
                 t0 = F.Mul(t0, t0);
                 t0 = F.Mul(t0, t0);
                 t1 = F.Mul(t1, t1);

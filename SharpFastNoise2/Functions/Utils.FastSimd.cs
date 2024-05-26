@@ -83,7 +83,7 @@ namespace SharpFastNoise2
         public static f32 Exp_f32(f32 x)
         {
             x = F.Min(x, F.Broad(88.3762626647949f));
-            x = F.Max_f32(x, F.Broad(-88.3762626647949f));
+            x = F.Max(x, F.Broad(-88.3762626647949f));
 
             // express exp(x) as exp(g + n*log(2))
             f32 fx = F.FMulAdd_f32(x, F.Broad(1.44269504088896341f), F.Broad(0.5f));
@@ -116,7 +116,7 @@ namespace SharpFastNoise2
         {
             m32 validMask = F.GreaterThan(x, F.Broad((float)0));
 
-            x = F.Max_f32(x, F.Cast_f32(F.Broad(0x00800000)));  // cut off denormalized stuff
+            x = F.Max(x, F.Cast_f32(F.Broad(0x00800000)));  // cut off denormalized stuff
 
             // can be done with AVX2
             i32 i = F.BitwiseShiftRightZX_i32(F.Cast_i32(x), 23);

@@ -95,7 +95,7 @@ namespace SharpFastNoise2.Functions
         // Max
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static f32 Max_f32(f32 a, f32 b)
+        public static f32 Max(f32 a, f32 b)
         {
             if (Sse.IsSupported)
             {
@@ -104,7 +104,7 @@ namespace SharpFastNoise2.Functions
             return MathF.Max(a, b);
         }
 
-        public static i32 Max_i32(i32 a, i32 b) => Math.Max(a, b);
+        public static i32 Max(i32 a, i32 b) => Math.Max(a, b);
         
         // Bitwise       
 

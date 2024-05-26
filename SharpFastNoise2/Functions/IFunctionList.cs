@@ -65,8 +65,8 @@ namespace SharpFastNoise2.Functions
 
         // Max
 
-        static abstract f32 Max_f32(f32 a, f32 b);
-        static abstract i32 Max_i32(i32 a, i32 b);
+        static abstract f32 Max(f32 a, f32 b);
+        static abstract i32 Max(i32 a, i32 b);
 
         // Bitwise
 

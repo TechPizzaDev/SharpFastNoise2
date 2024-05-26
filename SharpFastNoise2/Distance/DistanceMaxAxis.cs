@@ -13,7 +13,7 @@ namespace SharpFastNoise2.Distance
         public static f32 CalcDistance(f32 dX, f32 dY)
         {
             f32 max = F.Abs_f32(dX);
-            max = F.Max_f32(F.Abs_f32(dY), max);
+            max = F.Max(F.Abs_f32(dY), max);
             return max;
         }
 
@@ -21,8 +21,8 @@ namespace SharpFastNoise2.Distance
         public static f32 CalcDistance(f32 dX, f32 dY, f32 dZ)
         {
             f32 max = F.Abs_f32(dX);
-            max = F.Max_f32(F.Abs_f32(dY), max);
-            max = F.Max_f32(F.Abs_f32(dZ), max);
+            max = F.Max(F.Abs_f32(dY), max);
+            max = F.Max(F.Abs_f32(dZ), max);
             return max;
         }
 
@@ -30,9 +30,9 @@ namespace SharpFastNoise2.Distance
         public static f32 CalcDistance(f32 dX, f32 dY, f32 dZ, f32 dW)
         {
             f32 max = F.Abs_f32(dX);
-            max = F.Max_f32(F.Abs_f32(dY), max);
-            max = F.Max_f32(F.Abs_f32(dZ), max);
-            max = F.Max_f32(F.Abs_f32(dW), max);
+            max = F.Max(F.Abs_f32(dY), max);
+            max = F.Max(F.Abs_f32(dZ), max);
+            max = F.Max(F.Abs_f32(dW), max);
             return max;
         }
     }
