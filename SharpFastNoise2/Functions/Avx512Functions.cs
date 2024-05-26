@@ -150,9 +150,9 @@ namespace SharpFastNoise2.Functions
 
         // NMasked float
 
-        public static f32 NMaskedAdd_f32(f32 a, f32 b, m32 m) => Avx512F.BlendVariable(a + b, a, (~m).AsSingle());
-        public static f32 NMaskedSub_f32(f32 a, f32 b, m32 m) => Avx512F.BlendVariable(a - b, a, (~m).AsSingle());
-        public static f32 NMaskedMul_f32(f32 a, f32 b, m32 m) => Avx512F.BlendVariable(a * b, a, (~m).AsSingle());
+        public static f32 NMaskAdd(f32 a, f32 b, m32 m) => Avx512F.BlendVariable(a + b, a, (~m).AsSingle());
+        public static f32 NMaskSub(f32 a, f32 b, m32 m) => Avx512F.BlendVariable(a - b, a, (~m).AsSingle());
+        public static f32 NMaskMul(f32 a, f32 b, m32 m) => Avx512F.BlendVariable(a * b, a, (~m).AsSingle());
 
         // Masked int32
 
@@ -162,9 +162,9 @@ namespace SharpFastNoise2.Functions
 
         // NMasked int32
 
-        public static i32 NMaskedAdd_i32(i32 a, i32 b, m32 m) => Avx512F.BlendVariable(a + b, a, (~m).AsInt32());
-        public static i32 NMaskedSub_i32(i32 a, i32 b, m32 m) => Avx512F.BlendVariable(a - b, a, (~m).AsInt32());
-        public static i32 NMaskedMul_i32(i32 a, i32 b, m32 m) => Avx512F.BlendVariable(a * b, a, (~m).AsInt32());
+        public static i32 NMaskAdd(i32 a, i32 b, m32 m) => Avx512F.BlendVariable(a + b, a, (~m).AsInt32());
+        public static i32 NMaskSub(i32 a, i32 b, m32 m) => Avx512F.BlendVariable(a - b, a, (~m).AsInt32());
+        public static i32 NMaskMul(i32 a, i32 b, m32 m) => Avx512F.BlendVariable(a * b, a, (~m).AsInt32());
 
         // FMA
 

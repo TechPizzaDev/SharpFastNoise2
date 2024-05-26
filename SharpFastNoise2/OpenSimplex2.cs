@@ -39,7 +39,7 @@ namespace SharpFastNoise2
             //m32 j1 = ~i1; //NMasked funcs
 
             f32 x1 = F.Add(F.MaskSub(x0, F.Broad(1f), i1), F.Broad(G2));
-            f32 y1 = F.Add(F.NMaskedSub_f32(y0, F.Broad(1f), i1), F.Broad(G2));
+            f32 y1 = F.Add(F.NMaskSub(y0, F.Broad(1f), i1), F.Broad(G2));
             f32 x2 = F.Add(x0, F.Broad((G2 * 2) - 1));
             f32 y2 = F.Add(y0, F.Broad((G2 * 2) - 1));
 
@@ -65,7 +65,7 @@ namespace SharpFastNoise2
                 Utils<m32, f32, i32, F>.HashPrimes(
                     seed,
                     F.MaskAdd(i, F.Broad(Primes.X), i1),
-                    F.NMaskedAdd_i32(j, F.Broad(Primes.Y), i1)),
+                    F.NMaskAdd(j, F.Broad(Primes.Y), i1)),
                 x1, y1);
 
             f32 n2 = F.GetGradientDotFancy(

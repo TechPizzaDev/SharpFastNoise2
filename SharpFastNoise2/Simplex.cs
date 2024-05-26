@@ -40,7 +40,7 @@ namespace SharpFastNoise2
             //m32 j1 = ~i1; //NMasked funcs
 
             f32 x1 = F.Add(F.MaskSub(x0, F.Broad(1f), i1), F.Broad(G2));
-            f32 y1 = F.Add(F.NMaskedSub_f32(y0, F.Broad(1f), i1), F.Broad(G2));
+            f32 y1 = F.Add(F.NMaskSub(y0, F.Broad(1f), i1), F.Broad(G2));
 
             f32 x2 = F.Add(x0, F.Broad(G2 * 2 - 1));
             f32 y2 = F.Add(y0, F.Broad(G2 * 2 - 1));
@@ -68,7 +68,7 @@ namespace SharpFastNoise2
                 Utils<m32, f32, i32, F>.HashPrimes(
                     seed,
                     F.MaskAdd(i, F.Broad(Primes.X), i1),
-                    F.NMaskedAdd_i32(j, F.Broad(Primes.Y), i1)),
+                    F.NMaskAdd(j, F.Broad(Primes.Y), i1)),
                 x1, y1);
 
             f32 n2 = F.GetGradientDot(
@@ -126,7 +126,7 @@ namespace SharpFastNoise2
             f32 z1 = F.Add(F.MaskSub(z0, F.Broad((float)1), k1), F.Broad(G3));
             f32 x2 = F.Add(F.MaskSub(x0, F.Broad((float)1), i2), F.Broad(G3 * 2));
             f32 y2 = F.Add(F.MaskSub(y0, F.Broad((float)1), j2), F.Broad(G3 * 2));
-            f32 z2 = F.Add(F.NMaskedSub_f32(z0, F.Broad((float)1), k2), F.Broad(G3 * 2));
+            f32 z2 = F.Add(F.NMaskSub(z0, F.Broad((float)1), k2), F.Broad(G3 * 2));
             f32 x3 = F.Add(x0, F.Broad(G3 * 3 - 1));
             f32 y3 = F.Add(y0, F.Broad(G3 * 3 - 1));
             f32 z3 = F.Add(z0, F.Broad(G3 * 3 - 1));
@@ -166,7 +166,7 @@ namespace SharpFastNoise2
                     seed,
                     F.MaskAdd(i, F.Broad(Primes.X), i2),
                     F.MaskAdd(j, F.Broad(Primes.Y), j2),
-                    F.NMaskedAdd_i32(k, F.Broad(Primes.Z), k2)),
+                    F.NMaskAdd(k, F.Broad(Primes.Z), k2)),
                 x2, y2, z2);
 
             f32 n3 = F.GetGradientDot(
