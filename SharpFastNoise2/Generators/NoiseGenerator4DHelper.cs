@@ -63,7 +63,7 @@ namespace SharpFastNoise2.Generators
                 f32 wPos = F.Mul(F.Converti32_f32(wIdx), freqV);
 
                 f32 gen = generator.Gen(xPos, yPos, zPos, wPos, seedV);
-                F.Store_f32(ref noiseOut, index, gen);
+                F.Store(ref noiseOut, index, gen);
 
                 min = F.Min_f32(min, gen);
                 max = F.Max_f32(max, gen);
@@ -131,7 +131,7 @@ namespace SharpFastNoise2.Generators
                 f32 wPos = F.Add(wOffsetV, F.Load(ref wPosRef, index));
 
                 f32 gen = generator.Gen(xPos, yPos, zPos, wPos, seedV);
-                F.Store_f32(ref noiseOut, index, gen);
+                F.Store(ref noiseOut, index, gen);
 
                 min = F.Min_f32(min, gen);
                 max = F.Max_f32(max, gen);
@@ -226,7 +226,7 @@ namespace SharpFastNoise2.Generators
                 f32 wPos = F.Mul(yFSin, yFreq);
 
                 f32 gen = generator.Gen(xPos, yPos, zPos, wPos, vSeed);
-                F.Store_f32(ref noiseOut, index, gen);
+                F.Store(ref noiseOut, index, gen);
 
                 min = F.Min_f32(min, gen);
                 max = F.Max_f32(max, gen);

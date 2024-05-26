@@ -29,11 +29,11 @@ namespace SharpFastNoise2.Functions
 
         // Store
 
-        static abstract void Store_f32(ref float p, f32 a);
-        static abstract void Store_i32(ref int p, i32 a);
+        static abstract void Store(ref float p, f32 a);
+        static abstract void Store(ref int p, i32 a);
 
-        static abstract void Store_f32(ref float p, nuint elementOffset, f32 a);
-        static abstract void Store_i32(ref int p, nuint elementOffset, i32 a);
+        static abstract void Store(ref float p, nuint elementOffset, f32 a);
+        static abstract void Store(ref int p, nuint elementOffset, i32 a);
 
         // Extract
 
