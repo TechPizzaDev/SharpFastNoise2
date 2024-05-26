@@ -85,7 +85,7 @@ namespace SharpFastNoise2.Functions
 
         // Float math
 
-        static abstract f32 Sqrt_f32(f32 a);
+        static abstract f32 Sqrt(f32 a);
         static abstract f32 InvSqrt_f32(f32 a);
 
         static abstract f32 Reciprocal_f32(f32 a);

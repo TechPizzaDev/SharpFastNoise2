@@ -178,7 +178,7 @@ namespace SharpFastNoise2.Functions
 
         // Float math
 
-        public static f32 Sqrt_f32(f32 a) => Vector128.Sqrt(a);
+        public static f32 Sqrt(f32 a) => Vector128.Sqrt(a);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static f32 InvSqrt_f32(f32 a)

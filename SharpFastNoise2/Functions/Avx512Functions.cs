@@ -105,7 +105,7 @@ namespace SharpFastNoise2.Functions
 
         // Float math
 
-        public static f32 Sqrt_f32(f32 a) => Avx512F.Sqrt(a);
+        public static f32 Sqrt(f32 a) => Avx512F.Sqrt(a);
         public static f32 InvSqrt_f32(f32 a) => Avx512F.ReciprocalSqrt14(a);
 
         public static f32 Reciprocal_f32(f32 a) => Avx512F.Reciprocal14(a);
