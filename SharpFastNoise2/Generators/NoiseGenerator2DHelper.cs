@@ -21,16 +21,16 @@ namespace SharpFastNoise2.Generators
             where F : IFunctionList<m32, f32, i32, F>
             where G : INoiseGenerator2D<f32, i32>
         {
-            f32 min = F.Broad_f32(float.PositiveInfinity);
-            f32 max = F.Broad_f32(float.NegativeInfinity);
-            f32 freqV = F.Broad_f32(frequency);
-            i32 seedV = F.Broad_i32(seed);
+            f32 min = F.Broad(float.PositiveInfinity);
+            f32 max = F.Broad(float.NegativeInfinity);
+            f32 freqV = F.Broad(frequency);
+            i32 seedV = F.Broad(seed);
 
-            i32 xIdx = F.Broad_i32(xStart);
-            i32 yIdx = F.Broad_i32(yStart);
+            i32 xIdx = F.Broad(xStart);
+            i32 yIdx = F.Broad(yStart);
 
-            i32 xSizeV = F.Broad_i32(xSize);
-            i32 xMax = F.Add(xSizeV, F.Add(xIdx, F.Broad_i32(-1)));
+            i32 xSizeV = F.Broad(xSize);
+            i32 xMax = F.Add(xSizeV, F.Add(xIdx, F.Broad(-1)));
 
             ref float noiseOut = ref MemoryMarshal.GetReference(destination);
             nuint xStep = (nuint)xSize;
@@ -53,7 +53,7 @@ namespace SharpFastNoise2.Generators
                 max = F.Max_f32(max, gen);
 
                 index += (nuint)F.Count;
-                xIdx = F.Add(xIdx, F.Broad_i32(F.Count));
+                xIdx = F.Add(xIdx, F.Broad(F.Count));
 
                 GeneratorHelper.AxisReset<m32, f32, i32, F>(false, ref xIdx, ref yIdx, xMax, xSizeV, xStep);
             }
@@ -83,11 +83,11 @@ namespace SharpFastNoise2.Generators
             where F : IFunctionList<m32, f32, i32, F>
             where G : INoiseGenerator2D<f32, i32>
         {
-            f32 min = F.Broad_f32(float.PositiveInfinity);
-            f32 max = F.Broad_f32(float.NegativeInfinity);
-            i32 seedV = F.Broad_i32(seed);
-            f32 xOffsetV = F.Broad_f32(xOffset);
-            f32 yOffsetV = F.Broad_f32(yOffset);
+            f32 min = F.Broad(float.PositiveInfinity);
+            f32 max = F.Broad(float.NegativeInfinity);
+            i32 seedV = F.Broad(seed);
+            f32 xOffsetV = F.Broad(xOffset);
+            f32 yOffsetV = F.Broad(yOffset);
 
             ref float noiseOut = ref MemoryMarshal.GetReference(destination);
             ref float xPosRef = ref MemoryMarshal.GetReference(xPosArray);
@@ -132,9 +132,9 @@ namespace SharpFastNoise2.Generators
             where G : INoiseGenerator2D<f32, i32>
         {
             return F.Extract0_f32(generator.Gen(
-                F.Broad_f32(x),
-                F.Broad_f32(y),
-                F.Broad_i32(seed)));
+                F.Broad(x),
+                F.Broad(y),
+                F.Broad(seed)));
         }
     }
 }

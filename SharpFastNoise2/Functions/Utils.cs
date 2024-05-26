@@ -16,7 +16,7 @@ namespace SharpFastNoise2
             i32 hash = seed;
             hash = F.Xor(hash, F.Xor(x, y));
 
-            hash = F.Mul(hash, F.Broad_i32(0x27d4eb2d));
+            hash = F.Mul(hash, F.Broad(0x27d4eb2d));
             return F.Xor(F.RightShift(hash, 15), hash);
         }
 
@@ -26,7 +26,7 @@ namespace SharpFastNoise2
             i32 hash = seed;
             hash = F.Xor(hash, F.Xor(x, F.Xor(y, z)));
 
-            hash = F.Mul(hash, F.Broad_i32(0x27d4eb2d));
+            hash = F.Mul(hash, F.Broad(0x27d4eb2d));
             return F.Xor(F.RightShift(hash, 15), hash);
         }
 
@@ -36,7 +36,7 @@ namespace SharpFastNoise2
             i32 hash = seed;
             hash = F.Xor(hash, F.Xor(x, F.Xor(y, F.Xor(z, w))));
 
-            hash = F.Mul(hash, F.Broad_i32(0x27d4eb2d));
+            hash = F.Mul(hash, F.Broad(0x27d4eb2d));
             return F.Xor(F.RightShift(hash, 15), hash);
         }
 
@@ -46,7 +46,7 @@ namespace SharpFastNoise2
             i32 hash = seed;
             hash = F.Xor(hash, F.Xor(x, y));
 
-            hash = F.Mul(hash, F.Broad_i32(0x27d4eb2d));
+            hash = F.Mul(hash, F.Broad(0x27d4eb2d));
             return hash;
         }
 
@@ -56,7 +56,7 @@ namespace SharpFastNoise2
             i32 hash = seed;
             hash = F.Xor(hash, F.Xor(x, F.Xor(y, z)));
 
-            hash = F.Mul(hash, F.Broad_i32(0x27d4eb2d));
+            hash = F.Mul(hash, F.Broad(0x27d4eb2d));
             return hash;
         }
 
@@ -66,7 +66,7 @@ namespace SharpFastNoise2
             i32 hash = seed;
             hash = F.Xor(hash, F.Xor(x, F.Xor(y, F.Xor(z, w))));
 
-            hash = F.Mul(hash, F.Broad_i32(0x27d4eb2d));
+            hash = F.Mul(hash, F.Broad(0x27d4eb2d));
             return hash;
         }
 
@@ -88,7 +88,7 @@ namespace SharpFastNoise2
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static f32 InterpHermite(f32 t)
         {
-            return F.Mul(F.Mul(t, t), F.FNMulAdd_f32(t, F.Broad_f32(2), F.Broad_f32(3)));
+            return F.Mul(F.Mul(t, t), F.FNMulAdd_f32(t, F.Broad((float)2), F.Broad((float)3)));
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -98,8 +98,8 @@ namespace SharpFastNoise2
                 F.Mul(F.Mul(t, t), t),
                 F.FMulAdd_f32(
                     t,
-                    F.FMulAdd_f32(t, F.Broad_f32(6), F.Broad_f32(-15)),
-                    F.Broad_f32(10)));
+                    F.FMulAdd_f32(t, F.Broad((float)6), F.Broad((float)-15)),
+                    F.Broad((float)10)));
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

@@ -18,8 +18,8 @@ namespace SharpFastNoise2.Functions
 
         // Broadcast
 
-        public static f32 Broad_f32(float value) => value;
-        public static i32 Broad_i32(int value) => value;
+        public static f32 Broad(float value) => value;
+        public static i32 Broad(int value) => value;
 
         // Load
 

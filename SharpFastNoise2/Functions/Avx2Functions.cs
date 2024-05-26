@@ -20,8 +20,8 @@ namespace SharpFastNoise2.Functions
 
         // Broadcast
 
-        public static f32 Broad_f32(float value) => Vector256.Create(value);
-        public static i32 Broad_i32(int value) => Vector256.Create(value);
+        public static f32 Broad(float value) => Vector256.Create(value);
+        public static i32 Broad(int value) => Vector256.Create(value);
 
         // Load
 

@@ -11,8 +11,8 @@ namespace SharpFastNoise2.Functions
 
         // Broadcast
 
-        static abstract f32 Broad_f32(float value);
-        static abstract i32 Broad_i32(int value);
+        static abstract f32 Broad(float value);
+        static abstract i32 Broad(int value);
 
         // Load
 
@@ -124,8 +124,8 @@ namespace SharpFastNoise2.Functions
         static virtual i32 MaskedSub_i32(i32 a, i32 b, m32 m) => F.Sub(a, F.Mask_i32(b, m));
         static virtual i32 MaskedMul_i32(i32 a, i32 b, m32 m) => F.Mul(a, F.Mask_i32(b, m));
 
-        static virtual i32 MaskedIncrement_i32(i32 a, m32 m) => F.MaskedSub_i32(a, F.Broad_i32(-1), m);
-        static virtual i32 MaskedDecrement_i32(i32 a, m32 m) => F.MaskedAdd_i32(a, F.Broad_i32(-1), m);
+        static virtual i32 MaskedIncrement_i32(i32 a, m32 m) => F.MaskedSub_i32(a, F.Broad(-1), m);
+        static virtual i32 MaskedDecrement_i32(i32 a, m32 m) => F.MaskedAdd_i32(a, F.Broad(-1), m);
 
         // NMasked int32
 
