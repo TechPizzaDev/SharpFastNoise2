@@ -75,7 +75,7 @@ namespace SharpFastNoise2.Functions
                 // val_2p23_f32 = (a + val_2p23_f32) - val_2p23_f32;
                 // return val_2p23_f32 | sign;
 
-                f32 aSign = a & Vector128.Create(unchecked((int) 0x80000000)).AsSingle();
+                f32 aSign = a & Vector128.Create(unchecked((int)0x80000000)).AsSingle();
                 f32 v = a & (aSign | Vector128.Create(0.5f));
                 return Vector128.ConvertToInt32(v);
             }
@@ -228,6 +228,8 @@ namespace SharpFastNoise2.Functions
                 return m.ExtractMostSignificantBits() != 0;
             }
         }
+
+        public static bool AllMask_bool(m32 m) => m.ExtractMostSignificantBits() == 0xF;
 
         public static i32 MaskedIncrement_i32(i32 a, m32 m) => a - m.AsInt32();
         public static i32 MaskedDecrement_i32(i32 a, m32 m) => a + m.AsInt32();

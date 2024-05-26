@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using System.Runtime.Intrinsics;
@@ -91,7 +91,7 @@ namespace SharpFastNoise2.Functions
         }
 
         public static i32 Min_i32(i32 a, i32 b) => Math.Min(a, b);
-
+        
         // Max
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -105,7 +105,7 @@ namespace SharpFastNoise2.Functions
         }
 
         public static i32 Max_i32(i32 a, i32 b) => Math.Max(a, b);
-
+        
         // Bitwise       
 
         public static f32 BitwiseAndNot_f32(f32 a, f32 b) => Casti32_f32(Castf32_i32(a) & ~Castf32_i32(b));
@@ -164,8 +164,9 @@ namespace SharpFastNoise2.Functions
 
         public static i32 NMask_i32(i32 a, m32 m) => m != 0 ? 0 : a;
         public static f32 NMask_f32(f32 a, m32 m) => m != 0 ? 0 : a;
-
+        
         public static bool AnyMask_bool(m32 m) => m != 0;
+        public static bool AllMask_bool(m32 m) => m == m32.MaxValue;
 
         public static i32 MaskedIncrement_i32(i32 a, m32 m) => a - (int) m;
         public static i32 MaskedDecrement_i32(i32 a, m32 m) => a + (int) m;

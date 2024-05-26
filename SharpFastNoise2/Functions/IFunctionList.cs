@@ -1,4 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics.CodeAnalysis;
 
 namespace SharpFastNoise2.Functions
 {
@@ -68,7 +68,7 @@ namespace SharpFastNoise2.Functions
         static abstract f32 Max_f32(f32 a, f32 b);
         static abstract i32 Max_i32(i32 a, i32 b);
 
-        // Bitwise       
+        // Bitwise
 
         static abstract f32 BitwiseAndNot_f32(f32 a, f32 b);
         static abstract i32 BitwiseAndNot_i32(i32 a, i32 b);
@@ -104,6 +104,7 @@ namespace SharpFastNoise2.Functions
         static abstract f32 NMask_f32(f32 a, m32 m);
 
         static abstract bool AnyMask_bool(m32 m);
+        static abstract bool AllMask_bool(m32 m);
 
         // Masked float
 
