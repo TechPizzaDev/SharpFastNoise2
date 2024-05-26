@@ -88,7 +88,7 @@ namespace SharpFastNoise2
             // express exp(x) as exp(g + n*log(2))
             f32 fx = F.FMulAdd_f32(x, F.Broad(1.44269504088896341f), F.Broad(0.5f));
 
-            f32 flr = F.Floor_f32(fx);
+            f32 flr = F.Floor(fx);
             fx = F.MaskedSub_f32(flr, F.Broad((float)1), F.GreaterThan(flr, fx));
 
             x = F.FNMulAdd_f32(fx, F.Broad(0.693359375f), x);

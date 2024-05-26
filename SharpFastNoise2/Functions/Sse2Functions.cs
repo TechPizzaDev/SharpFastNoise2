@@ -209,7 +209,7 @@ namespace SharpFastNoise2.Functions
         // Rounding: http://dss.stephanierct.com/DevBlog/?p=8
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static f32 Floor_f32(f32 a)
+        public static f32 Floor(f32 a)
         {
             if (Sse41.IsSupported)
             {

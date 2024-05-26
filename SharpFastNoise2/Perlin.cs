@@ -21,8 +21,8 @@ namespace SharpFastNoise2
         [MethodImpl(MethodImplOptions.AggressiveOptimization)]
         public f32 Gen(f32 x, f32 y, i32 seed)
         {
-            f32 xs = F.Floor_f32(x);
-            f32 ys = F.Floor_f32(y);
+            f32 xs = F.Floor(x);
+            f32 ys = F.Floor(y);
 
             i32 x0 = F.Mul(F.Convert_i32(xs), F.Broad(Primes.X));
             i32 y0 = F.Mul(F.Convert_i32(ys), F.Broad(Primes.Y));
@@ -52,9 +52,9 @@ namespace SharpFastNoise2
         [MethodImpl(MethodImplOptions.AggressiveOptimization)]
         public f32 Gen(f32 x, f32 y, f32 z, i32 seed)
         {
-            f32 xs = F.Floor_f32(x);
-            f32 ys = F.Floor_f32(y);
-            f32 zs = F.Floor_f32(z);
+            f32 xs = F.Floor(x);
+            f32 ys = F.Floor(y);
+            f32 zs = F.Floor(z);
 
             i32 x0 = F.Mul(F.Convert_i32(xs), F.Broad(Primes.X));
             i32 y0 = F.Mul(F.Convert_i32(ys), F.Broad(Primes.Y));
@@ -101,10 +101,10 @@ namespace SharpFastNoise2
         [MethodImpl(MethodImplOptions.AggressiveOptimization)]
         public f32 Gen(f32 x, f32 y, f32 z, f32 w, i32 seed)
         {
-            f32 xs = F.Floor_f32(x);
-            f32 ys = F.Floor_f32(y);
-            f32 zs = F.Floor_f32(z);
-            f32 ws = F.Floor_f32(w);
+            f32 xs = F.Floor(x);
+            f32 ys = F.Floor(y);
+            f32 zs = F.Floor(z);
+            f32 ws = F.Floor(w);
 
             i32 x0 = F.Mul(F.Convert_i32(xs), F.Broad(Primes.X));
             i32 y0 = F.Mul(F.Convert_i32(ys), F.Broad(Primes.Y));

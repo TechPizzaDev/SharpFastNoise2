@@ -26,8 +26,8 @@ namespace SharpFastNoise2
             const float G2 = (3.0f - SQRT3) / 6.0f;
 
             f32 f = F.Mul(F.Broad(F2), F.Add(x, y));
-            f32 x0 = F.Floor_f32(F.Add(x, f));
-            f32 y0 = F.Floor_f32(F.Add(y, f));
+            f32 x0 = F.Floor(F.Add(x, f));
+            f32 y0 = F.Floor(F.Add(y, f));
 
             i32 i = F.Mul(F.Convert_i32(x0), F.Broad(Primes.X));
             i32 j = F.Mul(F.Convert_i32(y0), F.Broad(Primes.Y));
@@ -93,9 +93,9 @@ namespace SharpFastNoise2
             y = F.Add(y, s);
             z = F.Add(z, s);
 
-            f32 x0 = F.Floor_f32(x);
-            f32 y0 = F.Floor_f32(y);
-            f32 z0 = F.Floor_f32(z);
+            f32 x0 = F.Floor(x);
+            f32 y0 = F.Floor(y);
+            f32 z0 = F.Floor(z);
             f32 xi = F.Sub(x, x0);
             f32 yi = F.Sub(y, y0);
             f32 zi = F.Sub(z, z0);
@@ -194,10 +194,10 @@ namespace SharpFastNoise2
             z = F.Add(z, s);
             w = F.Add(w, s);
 
-            f32 x0 = F.Floor_f32(x);
-            f32 y0 = F.Floor_f32(y);
-            f32 z0 = F.Floor_f32(z);
-            f32 w0 = F.Floor_f32(w);
+            f32 x0 = F.Floor(x);
+            f32 y0 = F.Floor(y);
+            f32 z0 = F.Floor(z);
+            f32 w0 = F.Floor(w);
             f32 xi = F.Sub(x, x0);
             f32 yi = F.Sub(y, y0);
             f32 zi = F.Sub(z, z0);

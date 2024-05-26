@@ -25,8 +25,8 @@ namespace SharpFastNoise2
             const float G2 = (3.0f - SQRT3) / 6.0f;
 
             f32 f = F.Mul(F.Broad(F2), F.Add(x, y));
-            f32 x0 = F.Floor_f32(F.Add(x, f));
-            f32 y0 = F.Floor_f32(F.Add(y, f));
+            f32 x0 = F.Floor(F.Add(x, f));
+            f32 y0 = F.Floor(F.Add(y, f));
 
             i32 i = F.Mul(F.Convert_i32(x0), F.Broad(Primes.X));
             i32 j = F.Mul(F.Convert_i32(y0), F.Broad(Primes.Y));

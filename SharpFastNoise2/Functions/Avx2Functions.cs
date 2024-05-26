@@ -112,7 +112,7 @@ namespace SharpFastNoise2.Functions
 
         // Rounding: http://dss.stephanierct.com/DevBlog/?p=8
 
-        public static f32 Floor_f32(f32 a) => Avx.RoundToNegativeInfinity(a);
+        public static f32 Floor(f32 a) => Avx.RoundToNegativeInfinity(a);
         public static f32 Ceil_f32(f32 a) => Avx.RoundToPositiveInfinity(a);
         public static f32 Round_f32(f32 a) => Avx.RoundToNearestInteger(a);
 

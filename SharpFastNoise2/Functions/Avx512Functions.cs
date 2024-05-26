@@ -117,7 +117,7 @@ namespace SharpFastNoise2.Functions
         private const byte _MM_FROUND_TO_POS_INT = 0x02;
         private const byte _MM_FROUND_NO_EXC = 0x08;
 
-        public static f32 Floor_f32(f32 a) => Avx512F.RoundScale(a, _MM_FROUND_TO_NEG_INT | _MM_FROUND_NO_EXC);
+        public static f32 Floor(f32 a) => Avx512F.RoundScale(a, _MM_FROUND_TO_NEG_INT | _MM_FROUND_NO_EXC);
         public static f32 Ceil_f32(f32 a) => Avx512F.RoundScale(a, _MM_FROUND_TO_POS_INT | _MM_FROUND_NO_EXC);
         public static f32 Round_f32(f32 a) => Avx512F.RoundScale(a, _MM_FROUND_TO_NEAREST_INT | _MM_FROUND_NO_EXC);
 
