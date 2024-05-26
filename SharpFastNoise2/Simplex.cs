@@ -29,8 +29,8 @@ namespace SharpFastNoise2
             f32 x0 = F.Floor_f32(F.Add(x, f));
             f32 y0 = F.Floor_f32(F.Add(y, f));
 
-            i32 i = F.Mul(F.Convertf32_i32(x0), F.Broad(Primes.X));
-            i32 j = F.Mul(F.Convertf32_i32(y0), F.Broad(Primes.Y));
+            i32 i = F.Mul(F.Convert_i32(x0), F.Broad(Primes.X));
+            i32 j = F.Mul(F.Convert_i32(y0), F.Broad(Primes.Y));
 
             f32 g = F.Mul(F.Broad(G2), F.Add(x0, y0));
             x0 = F.Sub(x, F.Sub(x0, g));
@@ -100,9 +100,9 @@ namespace SharpFastNoise2
             f32 yi = F.Sub(y, y0);
             f32 zi = F.Sub(z, z0);
 
-            i32 i = F.Mul(F.Convertf32_i32(x0), F.Broad(Primes.X));
-            i32 j = F.Mul(F.Convertf32_i32(y0), F.Broad(Primes.Y));
-            i32 k = F.Mul(F.Convertf32_i32(z0), F.Broad(Primes.Z));
+            i32 i = F.Mul(F.Convert_i32(x0), F.Broad(Primes.X));
+            i32 j = F.Mul(F.Convert_i32(y0), F.Broad(Primes.Y));
+            i32 k = F.Mul(F.Convert_i32(z0), F.Broad(Primes.Z));
 
             m32 x_ge_y = F.GreaterThanOrEqual(xi, yi);
             m32 y_ge_z = F.GreaterThanOrEqual(yi, zi);
@@ -203,10 +203,10 @@ namespace SharpFastNoise2
             f32 zi = F.Sub(z, z0);
             f32 wi = F.Sub(w, w0);
 
-            i32 i = F.Mul(F.Convertf32_i32(x0), F.Broad(Primes.X));
-            i32 j = F.Mul(F.Convertf32_i32(y0), F.Broad(Primes.Y));
-            i32 k = F.Mul(F.Convertf32_i32(z0), F.Broad(Primes.Z));
-            i32 l = F.Mul(F.Convertf32_i32(w0), F.Broad(Primes.W));
+            i32 i = F.Mul(F.Convert_i32(x0), F.Broad(Primes.X));
+            i32 j = F.Mul(F.Convert_i32(y0), F.Broad(Primes.Y));
+            i32 k = F.Mul(F.Convert_i32(z0), F.Broad(Primes.Z));
+            i32 l = F.Mul(F.Convert_i32(w0), F.Broad(Primes.W));
 
             f32 g = F.Mul(F.Broad(G4), F.Add(F.Add(F.Add(xi, yi), zi), wi));
             x0 = F.Sub(xi, g);

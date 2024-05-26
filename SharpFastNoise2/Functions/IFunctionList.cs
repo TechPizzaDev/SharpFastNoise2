@@ -50,8 +50,8 @@ namespace SharpFastNoise2.Functions
 
         // Convert
 
-        static abstract f32 Converti32_f32(i32 a);
-        static abstract i32 Convertf32_i32(f32 a);
+        static abstract f32 Convert_f32(i32 a);
+        static abstract i32 Convert_i32(f32 a);
 
         // Select
 

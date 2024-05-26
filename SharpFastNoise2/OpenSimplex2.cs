@@ -28,8 +28,8 @@ namespace SharpFastNoise2
             f32 x0 = F.Floor_f32(F.Add(x, f));
             f32 y0 = F.Floor_f32(F.Add(y, f));
 
-            i32 i = F.Mul(F.Convertf32_i32(x0), F.Broad(Primes.X));
-            i32 j = F.Mul(F.Convertf32_i32(y0), F.Broad(Primes.Y));
+            i32 i = F.Mul(F.Convert_i32(x0), F.Broad(Primes.X));
+            i32 j = F.Mul(F.Convert_i32(y0), F.Broad(Primes.Y));
 
             f32 g = F.Mul(F.Broad(G2), F.Add(x0, y0));
             x0 = F.Sub(x, F.Sub(x0, g));
@@ -110,13 +110,13 @@ namespace SharpFastNoise2
                 f32 d1yr = F.Sub(yr, v1yr);
                 f32 d1zr = F.Sub(zr, v1zr);
 
-                i32 hv0xr = F.Mul(F.Convertf32_i32(v0xr), F.Broad(Primes.X));
-                i32 hv0yr = F.Mul(F.Convertf32_i32(v0yr), F.Broad(Primes.Y));
-                i32 hv0zr = F.Mul(F.Convertf32_i32(v0zr), F.Broad(Primes.Z));
+                i32 hv0xr = F.Mul(F.Convert_i32(v0xr), F.Broad(Primes.X));
+                i32 hv0yr = F.Mul(F.Convert_i32(v0yr), F.Broad(Primes.Y));
+                i32 hv0zr = F.Mul(F.Convert_i32(v0zr), F.Broad(Primes.Z));
 
-                i32 hv1xr = F.Mul(F.Convertf32_i32(v1xr), F.Broad(Primes.X));
-                i32 hv1yr = F.Mul(F.Convertf32_i32(v1yr), F.Broad(Primes.Y));
-                i32 hv1zr = F.Mul(F.Convertf32_i32(v1zr), F.Broad(Primes.Z));
+                i32 hv1xr = F.Mul(F.Convert_i32(v1xr), F.Broad(Primes.X));
+                i32 hv1yr = F.Mul(F.Convert_i32(v1yr), F.Broad(Primes.Y));
+                i32 hv1zr = F.Mul(F.Convert_i32(v1zr), F.Broad(Primes.Z));
 
                 f32 t0 = F.FNMulAdd_f32(d0zr, d0zr, F.FNMulAdd_f32(d0yr, d0yr, F.FNMulAdd_f32(d0xr, d0xr, F.Broad(0.6f))));
                 f32 t1 = F.FNMulAdd_f32(d1zr, d1zr, F.FNMulAdd_f32(d1yr, d1yr, F.FNMulAdd_f32(d1xr, d1xr, F.Broad(0.6f))));

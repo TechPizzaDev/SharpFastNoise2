@@ -43,8 +43,8 @@ namespace SharpFastNoise2.Generators
 
             while (index <= totalValues - (nuint)F.Count)
             {
-                f32 xPos = F.Mul(F.Converti32_f32(xIdx), freqV);
-                f32 yPos = F.Mul(F.Converti32_f32(yIdx), freqV);
+                f32 xPos = F.Mul(F.Convert_f32(xIdx), freqV);
+                f32 yPos = F.Mul(F.Convert_f32(yIdx), freqV);
 
                 f32 gen = generator.Gen(xPos, yPos, seedV);
                 F.Store(ref noiseOut, index, gen);
@@ -59,8 +59,8 @@ namespace SharpFastNoise2.Generators
             }
 
             {
-                f32 xPos = F.Add(F.Converti32_f32(xIdx), freqV);
-                f32 yPos = F.Add(F.Converti32_f32(yIdx), freqV);
+                f32 xPos = F.Add(F.Convert_f32(xIdx), freqV);
+                f32 yPos = F.Add(F.Convert_f32(yIdx), freqV);
 
                 f32 gen = generator.Gen(xPos, yPos, seedV);
 

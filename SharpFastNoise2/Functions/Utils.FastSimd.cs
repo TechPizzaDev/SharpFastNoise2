@@ -103,7 +103,7 @@ namespace SharpFastNoise2
             y = F.FMulAdd_f32(y, F.Mul(x, x), F.Add(x, F.Broad((float)1)));
 
             // build 2^n
-            i32 i = F.Convertf32_i32(fx);
+            i32 i = F.Convert_i32(fx);
             // another two AVX2 instructions
             i = F.Add(i, F.Broad(0x7f));
             i = F.LeftShift(i, 23);
@@ -127,7 +127,7 @@ namespace SharpFastNoise2
 
             // this is again another AVX2 instruction
             i = F.Sub(i, F.Broad(0x7f));
-            f32 e = F.Converti32_f32(i);
+            f32 e = F.Convert_f32(i);
 
             e = F.Add(e, F.Broad((float)1));
 

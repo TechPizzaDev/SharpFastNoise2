@@ -10,8 +10,8 @@ namespace SharpFastNoise2.Functions
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         static virtual f32 GetGradientDotFancy(i32 hash, f32 fX, f32 fY)
         {
-            i32 index = F.Convertf32_i32(F.Mul(
-                F.Converti32_f32(F.And(hash, F.Broad(0x3FFFFF))),
+            i32 index = F.Convert_i32(F.Mul(
+                F.Convert_f32(F.And(hash, F.Broad(0x3FFFFF))),
                 F.Broad(1.3333333333333333f)));
 
             // Bit-4 = Choose X Y ordering

@@ -58,10 +58,10 @@ namespace SharpFastNoise2.Functions
 
         // Convert
 
-        public static f32 Converti32_f32(i32 a) => Vector128.ConvertToSingle(a);
+        public static f32 Convert_f32(i32 a) => Vector128.ConvertToSingle(a);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static i32 Convertf32_i32(f32 a)
+        public static i32 Convert_i32(f32 a)
         {
             if (Sse2.IsSupported)
             {
@@ -247,7 +247,7 @@ namespace SharpFastNoise2.Functions
             }
             else
             {
-                return Vector128.ConvertToSingle(Convertf32_i32(a));
+                return Vector128.ConvertToSingle(Convert_i32(a));
             }
         }
 
