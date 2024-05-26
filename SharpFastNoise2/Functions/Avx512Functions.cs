@@ -64,8 +64,8 @@ namespace SharpFastNoise2.Functions
 
         // Select
 
-        public static f32 Select_f32(m32 m, f32 a, f32 b) => Avx512F.BlendVariable(b, a, m.AsSingle());
-        public static i32 Select_i32(m32 m, i32 a, i32 b) => Avx512F.BlendVariable(b, a, m.AsInt32());
+        public static f32 Select(m32 m, f32 a, f32 b) => Avx512F.BlendVariable(b, a, m.AsSingle());
+        public static i32 Select(m32 m, i32 a, i32 b) => Avx512F.BlendVariable(b, a, m.AsInt32());
 
         // Min
 

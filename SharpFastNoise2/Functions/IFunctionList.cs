@@ -55,8 +55,8 @@ namespace SharpFastNoise2.Functions
 
         // Select
 
-        static abstract f32 Select_f32(m32 m, f32 a, f32 b);
-        static abstract i32 Select_i32(m32 m, i32 a, i32 b);
+        static abstract f32 Select(m32 m, f32 a, f32 b);
+        static abstract i32 Select(m32 m, i32 a, i32 b);
 
         // Min
 

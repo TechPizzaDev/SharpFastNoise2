@@ -84,7 +84,7 @@ namespace SharpFastNoise2.Functions
         // Select
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static f32 Select_f32(m32 m, f32 a, f32 b)
+        public static f32 Select(m32 m, f32 a, f32 b)
         {
             if (Sse41.IsSupported)
             {
@@ -97,7 +97,7 @@ namespace SharpFastNoise2.Functions
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static i32 Select_i32(m32 m, i32 a, i32 b)
+        public static i32 Select(m32 m, i32 a, i32 b)
         {
             if (Sse41.IsSupported)
             {

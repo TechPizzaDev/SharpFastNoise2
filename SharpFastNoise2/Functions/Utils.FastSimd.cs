@@ -27,7 +27,7 @@ namespace SharpFastNoise2
             f32 yG = F.MaskedAdd_f32(yRhs, F.Broad(MathF.PI), gHalfPi);
             f32 yL = F.MaskedSub_f32(yRhs, F.Broad(MathF.PI), lHalfPi);
 
-            f32 ySum = F.Select_f32(lHalfPi, yL, yG);
+            f32 ySum = F.Select(lHalfPi, yL, yG);
             return (sign, ySum);
         }
         

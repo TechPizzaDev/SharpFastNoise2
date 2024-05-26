@@ -75,8 +75,8 @@ namespace SharpFastNoise2.Functions
 
         // Select
 
-        public static f32 Select_f32(m32 m, f32 a, f32 b) => m != 0 ? a : b;
-        public static i32 Select_i32(m32 m, i32 a, i32 b) => m != 0 ? a : b;
+        public static f32 Select(m32 m, f32 a, f32 b) => m != 0 ? a : b;
+        public static i32 Select(m32 m, i32 a, i32 b) => m != 0 ? a : b;
 
         // Min
 

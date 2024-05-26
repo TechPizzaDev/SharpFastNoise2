@@ -86,16 +86,16 @@ namespace SharpFastNoise2
                         f32 localDistance = distance[i];
                         f32 localCellValue = value[i];
 
-                        distance[i] = F.Select_f32(closer, newDistance, distance[i]);
-                        value[i] = F.Select_f32(closer, newCellValue, value[i]);
+                        distance[i] = F.Select(closer, newDistance, distance[i]);
+                        value[i] = F.Select(closer, newCellValue, value[i]);
 
                         if (i > _valueIndex)
                         {
                             break;
                         }
 
-                        newDistance = F.Select_f32(closer, localDistance, newDistance);
-                        newCellValue = F.Select_f32(closer, localCellValue, newCellValue);
+                        newDistance = F.Select(closer, localDistance, newDistance);
+                        newCellValue = F.Select(closer, localCellValue, newCellValue);
                     }
 
                     ycf = F.Add(ycf, F.Broad((float)1));
@@ -164,16 +164,16 @@ namespace SharpFastNoise2
                             f32 localDistance = distance[i];
                             f32 localCellValue = value[i];
 
-                            distance[i] = F.Select_f32(closer, newDistance, distance[i]);
-                            value[i] = F.Select_f32(closer, newCellValue, value[i]);
+                            distance[i] = F.Select(closer, newDistance, distance[i]);
+                            value[i] = F.Select(closer, newCellValue, value[i]);
 
                             if (i > _valueIndex)
                             {
                                 break;
                             }
 
-                            newDistance = F.Select_f32(closer, localDistance, newDistance);
-                            newCellValue = F.Select_f32(closer, localCellValue, newCellValue);
+                            newDistance = F.Select(closer, localDistance, newDistance);
+                            newCellValue = F.Select(closer, localCellValue, newCellValue);
                         }
 
                         zcf = F.Add(zcf, F.Broad((float)1));
@@ -256,16 +256,16 @@ namespace SharpFastNoise2
                                 f32 localDistance = distance[i];
                                 f32 localCellValue = value[i];
 
-                                distance[i] = F.Select_f32(closer, newDistance, distance[i]);
-                                value[i] = F.Select_f32(closer, newCellValue, value[i]);
+                                distance[i] = F.Select(closer, newDistance, distance[i]);
+                                value[i] = F.Select(closer, newCellValue, value[i]);
 
                                 if (i > _valueIndex)
                                 {
                                     break;
                                 }
 
-                                newDistance = F.Select_f32(closer, localDistance, newDistance);
-                                newCellValue = F.Select_f32(closer, localCellValue, newCellValue);
+                                newDistance = F.Select(closer, localDistance, newDistance);
+                                newCellValue = F.Select(closer, localCellValue, newCellValue);
                             }
 
                             wcf = F.Add(wcf, F.Broad((float)1));
