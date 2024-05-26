@@ -24,8 +24,8 @@ namespace SharpFastNoise2
             f32 sign = F.Mask(signBit, F.Or(gHalfPi, lHalfPi));
             f32 yRhs = F.Xor(y, sign);
             
-            f32 yG = F.MaskedAdd_f32(yRhs, F.Broad(MathF.PI), gHalfPi);
-            f32 yL = F.MaskedSub_f32(yRhs, F.Broad(MathF.PI), lHalfPi);
+            f32 yG = F.MaskAdd(yRhs, F.Broad(MathF.PI), gHalfPi);
+            f32 yL = F.MaskSub(yRhs, F.Broad(MathF.PI), lHalfPi);
 
             f32 ySum = F.Select(lHalfPi, yL, yG);
             return (sign, ySum);
@@ -89,7 +89,7 @@ namespace SharpFastNoise2
             f32 fx = F.FMulAdd_f32(x, F.Broad(1.44269504088896341f), F.Broad(0.5f));
 
             f32 flr = F.Floor(fx);
-            fx = F.MaskedSub_f32(flr, F.Broad((float)1), F.GreaterThan(flr, fx));
+            fx = F.MaskSub(flr, F.Broad((float)1), F.GreaterThan(flr, fx));
 
             x = F.FNMulAdd_f32(fx, F.Broad(0.693359375f), x);
             x = F.FNMulAdd_f32(fx, F.Broad(-2.12194440e-4f), x);
@@ -132,9 +132,9 @@ namespace SharpFastNoise2
             e = F.Add(e, F.Broad((float)1));
 
             m32 mask = F.LessThan(x, F.Broad(0.707106781186547524f));
-            x = F.MaskedAdd_f32(x, x, mask);
+            x = F.MaskAdd(x, x, mask);
             x = F.Sub(x, F.Broad((float)1));
-            e = F.MaskedSub_f32(e, F.Broad((float)1), mask);
+            e = F.MaskSub(e, F.Broad((float)1), mask);
 
             f32 y = F.Broad(7.0376836292E-2f);
             y = F.FMulAdd_f32(y, x, F.Broad(-1.1514610310E-1f));

@@ -38,7 +38,7 @@ namespace SharpFastNoise2
             m32 i1 = F.GreaterThan(x0, y0);
             //m32 j1 = ~i1; //NMasked funcs
 
-            f32 x1 = F.Add(F.MaskedSub_f32(x0, F.Broad(1f), i1), F.Broad(G2));
+            f32 x1 = F.Add(F.MaskSub(x0, F.Broad(1f), i1), F.Broad(G2));
             f32 y1 = F.Add(F.NMaskedSub_f32(y0, F.Broad(1f), i1), F.Broad(G2));
             f32 x2 = F.Add(x0, F.Broad((G2 * 2) - 1));
             f32 y2 = F.Add(y0, F.Broad((G2 * 2) - 1));
@@ -64,7 +64,7 @@ namespace SharpFastNoise2
             f32 n1 = F.GetGradientDotFancy(
                 Utils<m32, f32, i32, F>.HashPrimes(
                     seed,
-                    F.MaskedAdd_i32(i, F.Broad(Primes.X), i1),
+                    F.MaskAdd(i, F.Broad(Primes.X), i1),
                     F.NMaskedAdd_i32(j, F.Broad(Primes.Y), i1)),
                 x1, y1);
 
@@ -103,9 +103,9 @@ namespace SharpFastNoise2
                 m32 dir0xr = F.LessThanOrEqual(F.Max(score0yr, score0zr), score0xr);
                 m32 dir0yr = F.AndNot(F.LessThanOrEqual(F.Max(score0zr, score0xr), score0yr), dir0xr);
                 m32 dir0zr = F.Complement(F.Or(dir0xr, dir0yr));
-                f32 v1xr = F.MaskedAdd_f32(v0xr, F.Or(F.Broad(1.0f), F.And(F.Broad(-1.0f), d0xr)), dir0xr);
-                f32 v1yr = F.MaskedAdd_f32(v0yr, F.Or(F.Broad(1.0f), F.And(F.Broad(-1.0f), d0yr)), dir0yr);
-                f32 v1zr = F.MaskedAdd_f32(v0zr, F.Or(F.Broad(1.0f), F.And(F.Broad(-1.0f), d0zr)), dir0zr);
+                f32 v1xr = F.MaskAdd(v0xr, F.Or(F.Broad(1.0f), F.And(F.Broad(-1.0f), d0xr)), dir0xr);
+                f32 v1yr = F.MaskAdd(v0yr, F.Or(F.Broad(1.0f), F.And(F.Broad(-1.0f), d0yr)), dir0yr);
+                f32 v1zr = F.MaskAdd(v0zr, F.Or(F.Broad(1.0f), F.And(F.Broad(-1.0f), d0zr)), dir0zr);
                 f32 d1xr = F.Sub(xr, v1xr);
                 f32 d1yr = F.Sub(yr, v1yr);
                 f32 d1zr = F.Sub(zr, v1zr);

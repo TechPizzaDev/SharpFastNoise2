@@ -274,8 +274,8 @@ namespace SharpFastNoise2.Functions
 
         public static bool AllMask(m32 m) => m.ExtractMostSignificantBits() == 0xF;
 
-        public static i32 MaskedIncrement_i32(i32 a, m32 m) => a - m.AsInt32();
-        public static i32 MaskedDecrement_i32(i32 a, m32 m) => a + m.AsInt32();
+        public static i32 MaskIncrement(i32 a, m32 m) => a - m.AsInt32();
+        public static i32 MaskDecrement(i32 a, m32 m) => a + m.AsInt32();
 
         // FMA
 
