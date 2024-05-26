@@ -69,8 +69,8 @@ namespace SharpFastNoise2.Functions
 
         // Min
 
-        public static f32 Min_f32(f32 a, f32 b) => Avx512F.Min(a, b);
-        public static i32 Min_i32(i32 a, i32 b) => Avx512F.Min(a, b);
+        public static f32 Min(f32 a, f32 b) => Avx512F.Min(a, b);
+        public static i32 Min(i32 a, i32 b) => Avx512F.Min(a, b);
         
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float MinAcross(f32 a) => Avx2Functions.MinAcross(Vector256.Min(a.GetLower(), a.GetUpper()));

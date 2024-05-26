@@ -111,8 +111,8 @@ namespace SharpFastNoise2.Functions
 
         // Min
 
-        public static f32 Min_f32(f32 a, f32 b) => Vector128.Min(a, b);
-        public static i32 Min_i32(i32 a, i32 b) => Vector128.Min(a, b);
+        public static f32 Min(f32 a, f32 b) => Vector128.Min(a, b);
+        public static i32 Min(i32 a, i32 b) => Vector128.Min(a, b);
 
         // Min/Max-Across based on
         //  https://stackoverflow.com/questions/6996764/fastest-way-to-do-horizontal-sse-vector-sum-or-other-reduction/35270026#35270026

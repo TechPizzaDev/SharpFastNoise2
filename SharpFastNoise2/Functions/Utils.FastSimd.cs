@@ -82,7 +82,7 @@ namespace SharpFastNoise2
 
         public static f32 Exp_f32(f32 x)
         {
-            x = F.Min_f32(x, F.Broad(88.3762626647949f));
+            x = F.Min(x, F.Broad(88.3762626647949f));
             x = F.Max_f32(x, F.Broad(-88.3762626647949f));
 
             // express exp(x) as exp(g + n*log(2))

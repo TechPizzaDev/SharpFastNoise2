@@ -81,7 +81,7 @@ namespace SharpFastNoise2.Functions
         // Min
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static f32 Min_f32(f32 a, f32 b)
+        public static f32 Min(f32 a, f32 b)
         {
             if (Sse.IsSupported)
             {
@@ -90,7 +90,7 @@ namespace SharpFastNoise2.Functions
             return MathF.Min(a, b);
         }
 
-        public static i32 Min_i32(i32 a, i32 b) => Math.Min(a, b);
+        public static i32 Min(i32 a, i32 b) => Math.Min(a, b);
         
         // Max
 

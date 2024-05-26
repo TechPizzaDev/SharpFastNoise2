@@ -60,8 +60,8 @@ namespace SharpFastNoise2.Functions
 
         // Min
 
-        static abstract f32 Min_f32(f32 a, f32 b);
-        static abstract i32 Min_i32(i32 a, i32 b);
+        static abstract f32 Min(f32 a, f32 b);
+        static abstract i32 Min(i32 a, i32 b);
 
         // Max
 
