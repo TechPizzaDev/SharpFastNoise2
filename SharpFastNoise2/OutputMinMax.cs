@@ -19,8 +19,8 @@ namespace SharpFastNoise2
 
         public void Apply(float min, float max)
         {
-            Min = MathF.Min(min, min);
-            Max = MathF.Max(max, max);
+            Min = MathF.Min(Min, min);
+            Max = MathF.Max(Max, max);
         }
 
         public void Apply(float v)
