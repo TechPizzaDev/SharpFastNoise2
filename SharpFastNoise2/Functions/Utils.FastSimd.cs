@@ -35,11 +35,11 @@ namespace SharpFastNoise2
         private static f32 Cos(f32 y2, f32 sign)
         {
             // 10-degree minimax approximation
-            f32 cosv = F.FMulAdd_f32(F.Broad(-2.6051615e-07f), y2, F.Broad(2.4760495e-05f));
-            cosv = F.FMulAdd_f32(cosv, y2, F.Broad(-0.0013888378f));
-            cosv = F.FMulAdd_f32(cosv, y2, F.Broad(0.041666638f));
-            cosv = F.FMulAdd_f32(cosv, y2, F.Broad(-0.5f));
-            cosv = F.Xor(F.FMulAdd_f32(cosv, y2, F.Broad(1.0f)), sign);
+            f32 cosv = F.FMulAdd(F.Broad(-2.6051615e-07f), y2, F.Broad(2.4760495e-05f));
+            cosv = F.FMulAdd(cosv, y2, F.Broad(-0.0013888378f));
+            cosv = F.FMulAdd(cosv, y2, F.Broad(0.041666638f));
+            cosv = F.FMulAdd(cosv, y2, F.Broad(-0.5f));
+            cosv = F.Xor(F.FMulAdd(cosv, y2, F.Broad(1.0f)), sign);
             return cosv;
         }
 
@@ -55,11 +55,11 @@ namespace SharpFastNoise2
         private static f32 Sin(f32 y, f32 y2)
         {
             // 11-degree minimax approximation
-            f32 sinv = F.FMulAdd_f32(F.Broad(-2.3889859e-08f), y2, F.Broad(2.7525562e-06f));
-            sinv = F.FMulAdd_f32(sinv, y2, F.Broad(-0.00019840874f));
-            sinv = F.FMulAdd_f32(sinv, y2, F.Broad(0.0083333310f));
-            sinv = F.FMulAdd_f32(sinv, y2, F.Broad(-0.16666667f));
-            sinv = F.Mul(y, F.FMulAdd_f32(sinv, y2, F.Broad(1.0f)));
+            f32 sinv = F.FMulAdd(F.Broad(-2.3889859e-08f), y2, F.Broad(2.7525562e-06f));
+            sinv = F.FMulAdd(sinv, y2, F.Broad(-0.00019840874f));
+            sinv = F.FMulAdd(sinv, y2, F.Broad(0.0083333310f));
+            sinv = F.FMulAdd(sinv, y2, F.Broad(-0.16666667f));
+            sinv = F.Mul(y, F.FMulAdd(sinv, y2, F.Broad(1.0f)));
             return sinv;
         }
 
@@ -86,7 +86,7 @@ namespace SharpFastNoise2
             x = F.Max(x, F.Broad(-88.3762626647949f));
 
             // express exp(x) as exp(g + n*log(2))
-            f32 fx = F.FMulAdd_f32(x, F.Broad(1.44269504088896341f), F.Broad(0.5f));
+            f32 fx = F.FMulAdd(x, F.Broad(1.44269504088896341f), F.Broad(0.5f));
 
             f32 flr = F.Floor(fx);
             fx = F.MaskSub(flr, F.Broad((float)1), F.GreaterThan(flr, fx));
@@ -95,12 +95,12 @@ namespace SharpFastNoise2
             x = F.FNMulAdd_f32(fx, F.Broad(-2.12194440e-4f), x);
 
             f32 y = F.Broad(1.9875691500E-4f);
-            y = F.FMulAdd_f32(y, x, F.Broad(1.3981999507E-3f));
-            y = F.FMulAdd_f32(y, x, F.Broad(8.3334519073E-3f));
-            y = F.FMulAdd_f32(y, x, F.Broad(4.1665795894E-2f));
-            y = F.FMulAdd_f32(y, x, F.Broad(1.6666665459E-1f));
-            y = F.FMulAdd_f32(y, x, F.Broad(5.0000001201E-1f));
-            y = F.FMulAdd_f32(y, F.Mul(x, x), F.Add(x, F.Broad((float)1)));
+            y = F.FMulAdd(y, x, F.Broad(1.3981999507E-3f));
+            y = F.FMulAdd(y, x, F.Broad(8.3334519073E-3f));
+            y = F.FMulAdd(y, x, F.Broad(4.1665795894E-2f));
+            y = F.FMulAdd(y, x, F.Broad(1.6666665459E-1f));
+            y = F.FMulAdd(y, x, F.Broad(5.0000001201E-1f));
+            y = F.FMulAdd(y, F.Mul(x, x), F.Add(x, F.Broad((float)1)));
 
             // build 2^n
             i32 i = F.Convert_i32(fx);
@@ -137,14 +137,14 @@ namespace SharpFastNoise2
             e = F.MaskSub(e, F.Broad((float)1), mask);
 
             f32 y = F.Broad(7.0376836292E-2f);
-            y = F.FMulAdd_f32(y, x, F.Broad(-1.1514610310E-1f));
-            y = F.FMulAdd_f32(y, x, F.Broad(1.1676998740E-1f));
-            y = F.FMulAdd_f32(y, x, F.Broad(-1.2420140846E-1f));
-            y = F.FMulAdd_f32(y, x, F.Broad(1.4249322787E-1f));
-            y = F.FMulAdd_f32(y, x, F.Broad(-1.6668057665E-1f));
-            y = F.FMulAdd_f32(y, x, F.Broad(2.0000714765E-1f));
-            y = F.FMulAdd_f32(y, x, F.Broad(-2.4999993993E-1f));
-            y = F.FMulAdd_f32(y, x, F.Broad(3.3333331174E-1f));
+            y = F.FMulAdd(y, x, F.Broad(-1.1514610310E-1f));
+            y = F.FMulAdd(y, x, F.Broad(1.1676998740E-1f));
+            y = F.FMulAdd(y, x, F.Broad(-1.2420140846E-1f));
+            y = F.FMulAdd(y, x, F.Broad(1.4249322787E-1f));
+            y = F.FMulAdd(y, x, F.Broad(-1.6668057665E-1f));
+            y = F.FMulAdd(y, x, F.Broad(2.0000714765E-1f));
+            y = F.FMulAdd(y, x, F.Broad(-2.4999993993E-1f));
+            y = F.FMulAdd(y, x, F.Broad(3.3333331174E-1f));
             y = F.Mul(y, x);
 
             f32 xx = F.Mul(x, x);
@@ -153,7 +153,7 @@ namespace SharpFastNoise2
             y = F.FNMulAdd_f32(xx, F.Broad(0.5f), y);
 
             x = F.Add(x, y);
-            x = F.FMulAdd_f32(e, F.Broad(0.693359375f), x);
+            x = F.FMulAdd(e, F.Broad(0.693359375f), x);
 
             return F.Mask(x, validMask);
         }

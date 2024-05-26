@@ -78,7 +78,7 @@ namespace SharpFastNoise2
                     F.Add(j, F.Broad(Primes.Y))),
                 x2, y2);
 
-            f32 last = F.FMulAdd_f32(n0, t0, F.FMulAdd_f32(n1, t1, F.Mul(n2, t2)));
+            f32 last = F.FMulAdd(n0, t0, F.FMulAdd(n1, t1, F.Mul(n2, t2)));
             return F.Mul(F.Broad(38.283687591552734375f), last);
         }
 
@@ -177,7 +177,7 @@ namespace SharpFastNoise2
                     F.Add(k, F.Broad(Primes.Z))),
                 x3, y3, z3);
 
-            f32 last = F.FMulAdd_f32(n0, t0, F.FMulAdd_f32(n1, t1, F.FMulAdd_f32(n2, t2, F.Mul(n3, t3))));
+            f32 last = F.FMulAdd(n0, t0, F.FMulAdd(n1, t1, F.FMulAdd(n2, t2, F.Mul(n3, t3))));
             return F.Mul(F.Broad(32.69428253173828125f), last);
         }
 
@@ -345,10 +345,10 @@ namespace SharpFastNoise2
                     F.Add(l, F.Broad(Primes.W))),
                 x4, y4, z4, w4);
 
-            f32 last = F.FMulAdd_f32(
+            f32 last = F.FMulAdd(
                 n0,
                 t0,
-                F.FMulAdd_f32(n1, t1, F.FMulAdd_f32(n2, t2, F.FMulAdd_f32(n3, t3, F.Mul(n4, t4)))));
+                F.FMulAdd(n1, t1, F.FMulAdd(n2, t2, F.FMulAdd(n3, t3, F.Mul(n4, t4)))));
 
             return F.Mul(F.Broad(27f), last);
         }

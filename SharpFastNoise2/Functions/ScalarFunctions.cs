@@ -173,7 +173,7 @@ namespace SharpFastNoise2.Functions
 
         // FMA
 
-        public static f32 FMulAdd_f32(f32 a, f32 b, f32 c) => MathF.FusedMultiplyAdd(a, b, c);
+        public static f32 FMulAdd(f32 a, f32 b, f32 c) => MathF.FusedMultiplyAdd(a, b, c);
         public static f32 FNMulAdd_f32(f32 a, f32 b, f32 c) => -(a * b) + c;
 
         // Float math

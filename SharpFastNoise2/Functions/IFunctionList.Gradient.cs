@@ -51,7 +51,7 @@ namespace SharpFastNoise2.Functions
             f32 a = F.Select(mbit4, fY, fX);
             f32 b = F.Select(mbit4, fX, fY);
 
-            return F.FMulAdd_f32(F.Broad(1.0f + Gradient.ROOT2), a, b);
+            return F.FMulAdd(F.Broad(1.0f + Gradient.ROOT2), a, b);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

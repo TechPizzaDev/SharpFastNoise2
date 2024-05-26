@@ -75,7 +75,7 @@ namespace SharpFastNoise2
                     F.Add(j, F.Broad(Primes.Y))),
                 x2, y2);
 
-            f32 last = F.FMulAdd_f32(n0, t0, F.FMulAdd_f32(n1, t1, F.Mul(n2, t2)));
+            f32 last = F.FMulAdd(n0, t0, F.FMulAdd(n1, t1, F.Mul(n2, t2)));
             return F.Mul(F.Broad(49.918426513671875f), last);
         }
 
@@ -130,7 +130,7 @@ namespace SharpFastNoise2
                 f32 v0 = F.GetGradientDot(Utils<m32, f32, i32, F>.HashPrimes(seed, hv0xr, hv0yr, hv0zr), d0xr, d0yr, d0zr);
                 f32 v1 = F.GetGradientDot(Utils<m32, f32, i32, F>.HashPrimes(seed, hv1xr, hv1yr, hv1zr), d1xr, d1yr, d1zr);
 
-                val = F.FMulAdd_f32(v0, t0, F.FMulAdd_f32(v1, t1, val));
+                val = F.FMulAdd(v0, t0, F.FMulAdd(v1, t1, val));
 
                 if (i == 1)
                 {

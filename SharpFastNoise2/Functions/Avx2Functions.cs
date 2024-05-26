@@ -133,7 +133,7 @@ namespace SharpFastNoise2.Functions
         // FMA
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static f32 FMulAdd_f32(f32 a, f32 b, f32 c)
+        public static f32 FMulAdd(f32 a, f32 b, f32 c)
         {
             if (Fma.IsSupported)
             {
@@ -216,7 +216,7 @@ namespace SharpFastNoise2.Functions
             f32 gY = Avx2.PermuteVar8x32(Vector256.Create(1, -1, 0, 0, ROOT3, ROOT3, 2, 2), index);
 
             // Bit-8 = Flip sign of a + b
-            return FMulAdd_f32(gX, fX, fY * gY) ^ ((index >> 3) << 31).AsSingle();
+            return FMulAdd(gX, fX, fY * gY) ^ ((index >> 3) << 31).AsSingle();
         }
 
         // Gradient dot
@@ -227,7 +227,7 @@ namespace SharpFastNoise2.Functions
             f32 gX = Avx2.PermuteVar8x32(Vector256.Create(1 + ROOT2, -1 - ROOT2, 1 + ROOT2, -1 - ROOT2, 1, -1, 1, -1), hash);
             f32 gY = Avx2.PermuteVar8x32(Vector256.Create(1, 1, -1, -1, 1 + ROOT2, 1 + ROOT2, -1 - ROOT2, -1 - ROOT2), hash);
 
-            return FMulAdd_f32(gX, fX, fY * gY);
+            return FMulAdd(gX, fX, fY * gY);
         }
     }
 }

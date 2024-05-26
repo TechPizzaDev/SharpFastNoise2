@@ -82,7 +82,7 @@ namespace SharpFastNoise2
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static f32 Lerp(f32 a, f32 b, f32 t)
         {
-            return F.FMulAdd_f32(t, F.Sub(b, a), a);
+            return F.FMulAdd(t, F.Sub(b, a), a);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -96,9 +96,9 @@ namespace SharpFastNoise2
         {
             return F.Mul(
                 F.Mul(F.Mul(t, t), t),
-                F.FMulAdd_f32(
+                F.FMulAdd(
                     t,
-                    F.FMulAdd_f32(t, F.Broad((float)6), F.Broad((float)-15)),
+                    F.FMulAdd(t, F.Broad((float)6), F.Broad((float)-15)),
                     F.Broad((float)10)));
         }
 

@@ -280,7 +280,7 @@ namespace SharpFastNoise2.Functions
         // FMA
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static f32 FMulAdd_f32(f32 a, f32 b, f32 c)
+        public static f32 FMulAdd(f32 a, f32 b, f32 c)
         {
             if (Fma.IsSupported)
             {

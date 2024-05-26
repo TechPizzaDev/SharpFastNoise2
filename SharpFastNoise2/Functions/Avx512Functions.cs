@@ -168,7 +168,7 @@ namespace SharpFastNoise2.Functions
 
         // FMA
 
-        public static f32 FMulAdd_f32(f32 a, f32 b, f32 c) => Avx512F.FusedMultiplyAdd(a, b, c);
+        public static f32 FMulAdd(f32 a, f32 b, f32 c) => Avx512F.FusedMultiplyAdd(a, b, c);
         public static f32 FNMulAdd_f32(f32 a, f32 b, f32 c) => Avx512F.FusedMultiplyAddNegated(a, b, c);
 
         // Float math
@@ -228,7 +228,7 @@ namespace SharpFastNoise2.Functions
             f32 gX = Avx512F.PermuteVar16x32(Vector512.Create(ROOT3, ROOT3, 2, 2, 1, -1, 0, 0, -ROOT3, -ROOT3, -2, -2, -1, 1, 0, 0), index);
             f32 gY = Avx512F.PermuteVar16x32(Vector512.Create(1, -1, 0, 0, ROOT3, ROOT3, 2, 2, -1, 1, 0, 0, -ROOT3, -ROOT3, -2, -2), index);
 
-            return FMulAdd_f32(gX, fX, fY * gY);
+            return FMulAdd(gX, fX, fY * gY);
         }
 
         // Gradient dot
@@ -244,7 +244,7 @@ namespace SharpFastNoise2.Functions
                 1, 1, -1, -1, 1 + ROOT2, 1 + ROOT2, -1 - ROOT2, -1 - ROOT2,
                 1, 1, -1, -1, 1 + ROOT2, 1 + ROOT2, -1 - ROOT2, -1 - ROOT2), hash);
 
-            return FMulAdd_f32(gX, fX, fY * gY);
+            return FMulAdd(gX, fX, fY * gY);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -254,7 +254,7 @@ namespace SharpFastNoise2.Functions
             f32 gY = Avx512F.PermuteVar16x32(Vector512.Create(1f, 1, -1, -1, 0, 0, 0, 0, 1, -1, 1, -1, 1, -1, 1, -1), hash);
             f32 gZ = Avx512F.PermuteVar16x32(Vector512.Create(0f, 0, 0, 0, 1, 1, -1, -1, 1, 1, -1, -1, 0, 1, 0, -1), hash);
 
-            return FMulAdd_f32(gX, fX, FMulAdd_f32(fY, gY, fZ * gZ));
+            return FMulAdd(gX, fX, FMulAdd(fY, gY, fZ * gZ));
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -280,7 +280,7 @@ namespace SharpFastNoise2.Functions
                 hash,
                 Vector512.Create(1f, 1, 1, 1, -1, -1, -1, -1, 0, 0, 0, 0, 0, 0, 0, 0));
 
-            return FMulAdd_f32(gX, fX, FMulAdd_f32(fY, gY, FMulAdd_f32(fZ, gZ, fW * gW)));
+            return FMulAdd(gX, fX, FMulAdd(fY, gY, FMulAdd(fZ, gZ, fW * gW)));
         }
     }
 }
