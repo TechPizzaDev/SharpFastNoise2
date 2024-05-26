@@ -131,11 +131,11 @@ namespace SharpFastNoise2.Functions
             // return _mm512_maskz_mov_ps(m, a);
             Avx512DQ.And(a, m.AsSingle());
 
-        public static i32 NMask_i32(i32 a, m32 m) =>
+        public static i32 NMask(i32 a, m32 m) =>
             // return _mm512_maskz_mov_epi32( ~m, a );
             Avx512F.AndNot(m.AsInt32(), a);
 
-        public static f32 NMask_f32(f32 a, m32 m) =>
+        public static f32 NMask(f32 a, m32 m) =>
             // return _mm512_maskz_mov_ps( ~m, a );
             Avx512DQ.AndNot(m.AsSingle(), a);
         

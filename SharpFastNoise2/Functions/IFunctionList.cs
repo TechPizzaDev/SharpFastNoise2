@@ -102,8 +102,8 @@ namespace SharpFastNoise2.Functions
         static abstract i32 Mask(i32 a, m32 m);
         static abstract f32 Mask(f32 a, m32 m);
 
-        static abstract i32 NMask_i32(i32 a, m32 m);
-        static abstract f32 NMask_f32(f32 a, m32 m);
+        static abstract i32 NMask(i32 a, m32 m);
+        static abstract f32 NMask(f32 a, m32 m);
 
         static abstract bool AnyMask_bool(m32 m);
         static abstract bool AllMask_bool(m32 m);
@@ -116,9 +116,9 @@ namespace SharpFastNoise2.Functions
 
         // NMasked float
 
-        static virtual f32 NMaskedAdd_f32(f32 a, f32 b, m32 m) => F.Add(a, F.NMask_f32(b, m));
-        static virtual f32 NMaskedSub_f32(f32 a, f32 b, m32 m) => F.Sub(a, F.NMask_f32(b, m));
-        static virtual f32 NMaskedMul_f32(f32 a, f32 b, m32 m) => F.Mul(a, F.NMask_f32(b, m));
+        static virtual f32 NMaskedAdd_f32(f32 a, f32 b, m32 m) => F.Add(a, F.NMask(b, m));
+        static virtual f32 NMaskedSub_f32(f32 a, f32 b, m32 m) => F.Sub(a, F.NMask(b, m));
+        static virtual f32 NMaskedMul_f32(f32 a, f32 b, m32 m) => F.Mul(a, F.NMask(b, m));
 
         // Masked int32
 
@@ -131,9 +131,9 @@ namespace SharpFastNoise2.Functions
 
         // NMasked int32
 
-        static virtual i32 NMaskedAdd_i32(i32 a, i32 b, m32 m) => F.Add(a, F.NMask_i32(b, m));
-        static virtual i32 NMaskedSub_i32(i32 a, i32 b, m32 m) => F.Sub(a, F.NMask_i32(b, m));
-        static virtual i32 NMaskedMul_i32(i32 a, i32 b, m32 m) => F.Mul(a, F.NMask_i32(b, m));
+        static virtual i32 NMaskedAdd_i32(i32 a, i32 b, m32 m) => F.Add(a, F.NMask(b, m));
+        static virtual i32 NMaskedSub_i32(i32 a, i32 b, m32 m) => F.Sub(a, F.NMask(b, m));
+        static virtual i32 NMaskedMul_i32(i32 a, i32 b, m32 m) => F.Mul(a, F.NMask(b, m));
 
         // FMA
 

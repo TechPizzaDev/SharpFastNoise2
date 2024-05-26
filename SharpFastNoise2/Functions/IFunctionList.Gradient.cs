@@ -27,7 +27,7 @@ namespace SharpFastNoise2.Functions
 
             a = F.Mul(a, F.Select(aMul2, F.Broad((float)2), F.Broad(Gradient.ROOT3)));
             // b zero value if a mul 2
-            b = F.NMask_f32(b, aMul2);
+            b = F.NMask(b, aMul2);
 
             // Bit-8 = Flip sign of a + b
             return F.Xor(F.Add(a, b), F.Cast_f32(F.LeftShift(F.RightShift(index, 3), 31)));
