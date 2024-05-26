@@ -72,7 +72,7 @@ namespace SharpFastNoise2
                     f32 xd = F.Sub(F.Convert_f32(F.And(hash, F.Broad(0xffff))), F.Broad(0xffff / 2.0f));
                     f32 yd = F.Sub(F.Convert_f32(F.And(F.RightShift(hash, 16), F.Broad(0xffff))), F.Broad(0xffff / 2.0f));
 
-                    f32 invMag = F.Mul(jitter, F.InvSqrt_f32(F.FMulAdd_f32(xd, xd, F.Mul(yd, yd))));
+                    f32 invMag = F.Mul(jitter, F.ReciprocalSqrt(F.FMulAdd_f32(xd, xd, F.Mul(yd, yd))));
                     xd = F.FMulAdd_f32(xd, invMag, xcf);
                     yd = F.FMulAdd_f32(yd, invMag, ycf);
 
@@ -149,7 +149,7 @@ namespace SharpFastNoise2
                         f32 yd = F.Sub(F.Convert_f32(F.And(F.RightShift(hash, 10), F.Broad(0x3ff))), F.Broad(0x3ff / 2.0f));
                         f32 zd = F.Sub(F.Convert_f32(F.And(F.RightShift(hash, 20), F.Broad(0x3ff))), F.Broad(0x3ff / 2.0f));
 
-                        f32 invMag = F.Mul(jitter, F.InvSqrt_f32(F.FMulAdd_f32(xd, xd, F.FMulAdd_f32(yd, yd, F.Mul(zd, zd)))));
+                        f32 invMag = F.Mul(jitter, F.ReciprocalSqrt(F.FMulAdd_f32(xd, xd, F.FMulAdd_f32(yd, yd, F.Mul(zd, zd)))));
                         xd = F.FMulAdd_f32(xd, invMag, xcf);
                         yd = F.FMulAdd_f32(yd, invMag, ycf);
                         zd = F.FMulAdd_f32(zd, invMag, zcf);
@@ -238,7 +238,7 @@ namespace SharpFastNoise2
                             f32 zd = F.Sub(F.Convert_f32(F.And(F.RightShift(hash, 16), F.Broad(0xff))), F.Broad(0xff / 2.0f));
                             f32 wd = F.Sub(F.Convert_f32(F.And(F.RightShift(hash, 24), F.Broad(0xff))), F.Broad(0xff / 2.0f));
 
-                            f32 invMag = F.Mul(jitter, F.InvSqrt_f32(
+                            f32 invMag = F.Mul(jitter, F.ReciprocalSqrt(
                                 F.FMulAdd_f32(xd, xd, F.FMulAdd_f32(yd, yd, F.FMulAdd_f32(zd, zd, F.Mul(wd, wd))))));
 
                             xd = F.FMulAdd_f32(xd, invMag, xcf);

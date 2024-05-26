@@ -125,7 +125,7 @@ namespace SharpFastNoise2.Functions
         public static f32 Sqrt(f32 a) => MathF.Sqrt(a);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static f32 InvSqrt_f32(f32 a)
+        public static f32 ReciprocalSqrt(f32 a)
         {
             if (Sse.IsSupported)
             {

@@ -1,3 +1,4 @@
+using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.Intrinsics;
 
@@ -86,7 +87,7 @@ namespace SharpFastNoise2.Functions
         // Float math
 
         static abstract f32 Sqrt(f32 a);
-        static abstract f32 InvSqrt_f32(f32 a);
+        static abstract f32 ReciprocalSqrt(f32 a);
 
         static abstract f32 Reciprocal_f32(f32 a);
 
