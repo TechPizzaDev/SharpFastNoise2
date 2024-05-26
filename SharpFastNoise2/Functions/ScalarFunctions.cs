@@ -154,7 +154,7 @@ namespace SharpFastNoise2.Functions
         // Rounding
 
         public static f32 Floor(f32 a) => MathF.Floor(a);
-        public static f32 Ceil_f32(f32 a) => MathF.Ceiling(a);
+        public static f32 Ceiling(f32 a) => MathF.Ceiling(a);
         public static f32 Round_f32(f32 a) => MathF.Round(a);
 
         // Mask
