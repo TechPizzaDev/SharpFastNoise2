@@ -114,8 +114,8 @@ namespace SharpFastNoise2
             z0 = F.Sub(zi, g);
 
             m32 i1 = F.And(x_ge_y, x_ge_z);
-            m32 j1 = F.BitwiseAndNot_m32(y_ge_z, x_ge_y);
-            m32 k1 = F.BitwiseAndNot_m32(F.Complement(x_ge_z), y_ge_z);
+            m32 j1 = F.AndNot(y_ge_z, x_ge_y);
+            m32 k1 = F.AndNot(F.Complement(x_ge_z), y_ge_z);
 
             m32 i2 = F.Or(x_ge_y, x_ge_z);
             m32 j2 = F.Or(F.Complement(x_ge_y), y_ge_z);

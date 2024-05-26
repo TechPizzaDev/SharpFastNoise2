@@ -91,9 +91,9 @@ namespace SharpFastNoise2.Functions
 
         // Bitwise       
 
-        public static f32 BitwiseAndNot_f32(f32 a, f32 b) => Avx.AndNot(b, a);
-        public static i32 BitwiseAndNot_i32(i32 a, i32 b) => Avx2.AndNot(b, a);
-        public static m32 BitwiseAndNot_m32(m32 a, m32 b) => Avx2.AndNot(b, a);
+        public static f32 AndNot(f32 a, f32 b) => Avx.AndNot(b, a);
+        public static i32 AndNot(i32 a, i32 b) => Avx2.AndNot(b, a);
+        public static m32 AndNot(m32 a, m32 b) => Avx2.AndNot(b, a);
 
         public static f32 BitwiseShiftRightZX_f32(f32 a, [ConstantExpected] byte b) => a >>> b;
         public static i32 BitwiseShiftRightZX_i32(i32 a, [ConstantExpected] byte b) => a >>> b;
