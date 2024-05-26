@@ -108,7 +108,7 @@ namespace SharpFastNoise2.Functions
         public static f32 Sqrt(f32 a) => Avx.Sqrt(a);
         public static f32 ReciprocalSqrt(f32 a) => Avx.ReciprocalSqrt(a);
 
-        public static f32 Reciprocal_f32(f32 a) => Avx.Reciprocal(a);
+        public static f32 Reciprocal(f32 a) => Avx.Reciprocal(a);
 
         // Rounding: http://dss.stephanierct.com/DevBlog/?p=8
 

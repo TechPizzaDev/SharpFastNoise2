@@ -89,7 +89,7 @@ namespace SharpFastNoise2.Functions
         static abstract f32 Sqrt(f32 a);
         static abstract f32 ReciprocalSqrt(f32 a);
 
-        static abstract f32 Reciprocal_f32(f32 a);
+        static abstract f32 Reciprocal(f32 a);
 
         // Rounding
 

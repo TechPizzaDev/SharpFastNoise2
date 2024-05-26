@@ -194,7 +194,7 @@ namespace SharpFastNoise2.Functions
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static f32 Reciprocal_f32(f32 a)
+        public static f32 Reciprocal(f32 a)
         {
             if (Sse.IsSupported)
             {
