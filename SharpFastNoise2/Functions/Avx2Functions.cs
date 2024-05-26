@@ -54,8 +54,8 @@ namespace SharpFastNoise2.Functions
 
         // Cast
 
-        public static f32 Casti32_f32(i32 a) => a.AsSingle();
-        public static i32 Castf32_i32(f32 a) => a.AsInt32();
+        public static f32 Cast_f32(i32 a) => a.AsSingle();
+        public static i32 Cast_i32(f32 a) => a.AsInt32();
 
         // Convert
 

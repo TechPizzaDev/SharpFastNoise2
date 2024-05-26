@@ -65,8 +65,8 @@ namespace SharpFastNoise2.Functions
 
         // Cast
 
-        public static f32 Casti32_f32(i32 a) => Unsafe.BitCast<i32, f32>(a);
-        public static i32 Castf32_i32(f32 a) => Unsafe.BitCast<f32, i32>(a);
+        public static f32 Cast_f32(i32 a) => Unsafe.BitCast<i32, f32>(a);
+        public static i32 Cast_i32(f32 a) => Unsafe.BitCast<f32, i32>(a);
 
         // Convert
 
@@ -108,11 +108,11 @@ namespace SharpFastNoise2.Functions
         
         // Bitwise       
 
-        public static f32 BitwiseAndNot_f32(f32 a, f32 b) => Casti32_f32(Castf32_i32(a) & ~Castf32_i32(b));
+        public static f32 BitwiseAndNot_f32(f32 a, f32 b) => Cast_f32(Cast_i32(a) & ~Cast_i32(b));
         public static i32 BitwiseAndNot_i32(i32 a, i32 b) => a & ~b;
         public static m32 BitwiseAndNot_m32(m32 a, m32 b) => a & ~b;
 
-        public static f32 BitwiseShiftRightZX_f32(f32 a, [ConstantExpected] byte b) => Casti32_f32(Castf32_i32(a) >>> b);
+        public static f32 BitwiseShiftRightZX_f32(f32 a, [ConstantExpected] byte b) => Cast_f32(Cast_i32(a) >>> b);
         public static i32 BitwiseShiftRightZX_i32(i32 a, [ConstantExpected] byte b) => a >>> b;
 
         // Abs
@@ -133,7 +133,7 @@ namespace SharpFastNoise2.Functions
             }
 
             float xhalf = 0.5f * (float) a;
-            a = Casti32_f32(0x5f3759df - (Castf32_i32(a) >> 1));
+            a = Cast_f32(0x5f3759df - (Cast_i32(a) >> 1));
             a *= 1.5f - xhalf * (float) a * (float) a;
             return a;
         }
@@ -147,7 +147,7 @@ namespace SharpFastNoise2.Functions
             }
 
             // pow( pow(x,-0.5), 2 ) = pow( x, -1 ) = 1.0 / x
-            a = Casti32_f32((int) (0xbe6eb3beU - (uint) Castf32_i32(a)) >> 1);
+            a = Cast_f32((int) (0xbe6eb3beU - (uint) Cast_i32(a)) >> 1);
             return a * a;
         }
 
@@ -179,22 +179,22 @@ namespace SharpFastNoise2.Functions
         // Float math
 
         public static f32 Add(f32 lhs, f32 rhs) => lhs + rhs;
-        public static f32 And(f32 lhs, f32 rhs) => Casti32_f32(And(Castf32_i32(lhs), Castf32_i32(rhs)));
-        public static f32 Complement(f32 lhs) => Casti32_f32(Complement(Castf32_i32(lhs)));
+        public static f32 And(f32 lhs, f32 rhs) => Cast_f32(And(Cast_i32(lhs), Cast_i32(rhs)));
+        public static f32 Complement(f32 lhs) => Cast_f32(Complement(Cast_i32(lhs)));
         public static f32 Div(f32 lhs, f32 rhs) => lhs / rhs;
         public static m32 Equal(f32 lhs, f32 rhs) => (lhs == rhs).AsUInt32();
         public static m32 GreaterThan(f32 lhs, f32 rhs) => (lhs > rhs).AsUInt32();
         public static m32 GreaterThanOrEqual(f32 lhs, f32 rhs) => (lhs >= rhs).AsUInt32();
-        public static f32 LeftShift(f32 lhs, [ConstantExpected] byte rhs) => Casti32_f32(LeftShift(Castf32_i32(lhs), rhs));
+        public static f32 LeftShift(f32 lhs, [ConstantExpected] byte rhs) => Cast_f32(LeftShift(Cast_i32(lhs), rhs));
         public static m32 LessThan(f32 lhs, f32 rhs) => (lhs < rhs).AsUInt32();
         public static m32 LessThanOrEqual(f32 lhs, f32 rhs) => (lhs <= rhs).AsUInt32();
         public static f32 Mul(f32 lhs, f32 rhs) => lhs * rhs;
         public static f32 Negate(f32 lhs) => -lhs;
         public static m32 NotEqual(f32 lhs, f32 rhs) => (lhs != rhs).AsUInt32();
-        public static f32 Or(f32 lhs, f32 rhs) => Casti32_f32(Or(Castf32_i32(lhs), Castf32_i32(rhs)));
-        public static f32 RightShift(f32 lhs, [ConstantExpected] byte rhs) => Casti32_f32(RightShift(Castf32_i32(lhs), rhs));
+        public static f32 Or(f32 lhs, f32 rhs) => Cast_f32(Or(Cast_i32(lhs), Cast_i32(rhs)));
+        public static f32 RightShift(f32 lhs, [ConstantExpected] byte rhs) => Cast_f32(RightShift(Cast_i32(lhs), rhs));
         public static f32 Sub(f32 lhs, f32 rhs) => lhs - rhs;
-        public static f32 Xor(f32 lhs, f32 rhs) => Casti32_f32(Xor(Castf32_i32(lhs), Castf32_i32(rhs)));
+        public static f32 Xor(f32 lhs, f32 rhs) => Cast_f32(Xor(Cast_i32(lhs), Cast_i32(rhs)));
 
         // Int math
 

@@ -17,7 +17,7 @@ namespace SharpFastNoise2
         {
             f32 y = F.Sub(value, F.Mul(F.Broad(MathF.Tau), F.Round_f32(F.Div(value, F.Broad(MathF.Tau)))));
 
-            f32 signBit = F.Casti32_f32(F.Broad(unchecked((int) 0x80000000)));
+            f32 signBit = F.Cast_f32(F.Broad(unchecked((int) 0x80000000)));
             m32 gHalfPi = F.GreaterThan(y, F.Broad(0.5f * MathF.PI));
             m32 lHalfPi = F.LessThan(y, F.Xor(F.Broad(0.5f * MathF.PI), signBit));
 
@@ -107,7 +107,7 @@ namespace SharpFastNoise2
             // another two AVX2 instructions
             i = F.Add(i, F.Broad(0x7f));
             i = F.LeftShift(i, 23);
-            f32 pow2n = F.Casti32_f32(i);
+            f32 pow2n = F.Cast_f32(i);
 
             return F.Mul(y, pow2n);
         }
@@ -116,13 +116,13 @@ namespace SharpFastNoise2
         {
             m32 validMask = F.GreaterThan(x, F.Broad((float)0));
 
-            x = F.Max_f32(x, F.Casti32_f32(F.Broad(0x00800000)));  // cut off denormalized stuff
+            x = F.Max_f32(x, F.Cast_f32(F.Broad(0x00800000)));  // cut off denormalized stuff
 
             // can be done with AVX2
-            i32 i = F.BitwiseShiftRightZX_i32(F.Castf32_i32(x), 23);
+            i32 i = F.BitwiseShiftRightZX_i32(F.Cast_i32(x), 23);
 
             // keep only the fractional part 
-            x = F.And(x, F.Casti32_f32(F.Broad(~0x7f800000)));
+            x = F.And(x, F.Cast_f32(F.Broad(~0x7f800000)));
             x = F.Or(x, F.Broad(0.5f));
 
             // this is again another AVX2 instruction

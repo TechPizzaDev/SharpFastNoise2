@@ -45,8 +45,8 @@ namespace SharpFastNoise2.Functions
 
         // Cast
 
-        static abstract f32 Casti32_f32(i32 a);
-        static abstract i32 Castf32_i32(f32 a);
+        static abstract f32 Cast_f32(i32 a);
+        static abstract i32 Cast_i32(f32 a);
 
         // Convert
 
