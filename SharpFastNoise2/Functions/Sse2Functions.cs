@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using System.Runtime.Intrinsics;
@@ -114,12 +114,55 @@ namespace SharpFastNoise2.Functions
         public static f32 Min_f32(f32 a, f32 b) => Vector128.Min(a, b);
         public static i32 Min_i32(i32 a, i32 b) => Vector128.Min(a, b);
 
+        // Min/Max-Across based on
+        //  https://stackoverflow.com/questions/6996764/fastest-way-to-do-horizontal-sse-vector-sum-or-other-reduction/35270026#35270026
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float MinAcross(f32 a)
+        {
+            f32 v1 = Vector128.Shuffle(a, Vector128.Create(2, 3, 0, 1));
+            f32 v2 = Vector128.Min(a, v1);
+            f32 v3 = Vector128.Shuffle(v2, Vector128.Create(1, 0, 0, 0));
+            f32 v4 = Sse.IsSupported ? Sse.MinScalar(v2, v3) : Vector128.Min(v2, v3);
+            return v4.ToScalar();
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static int MinAcross(i32 a)
+        {
+            i32 v1 = Vector128.Shuffle(a, Vector128.Create(2, 3, 0, 1));
+            i32 v2 = Vector128.Min(a, v1);
+            i32 v3 = Vector128.Shuffle(v2, Vector128.Create(1, 0, 0, 0));
+            i32 v4 = Vector128.Min(v2, v3);
+            return v4.ToScalar();
+        }
+
         // Max
 
         public static f32 Max_f32(f32 a, f32 b) => Vector128.Max(a, b);
         public static i32 Max_i32(i32 a, i32 b) => Vector128.Max(a, b);
 
-        // Bitwise       
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float MaxAcross(f32 a)
+        {
+            f32 v1 = Vector128.Shuffle(a, Vector128.Create(2, 3, 0, 1));
+            f32 v2 = Vector128.Max(a, v1);
+            f32 v3 = Vector128.Shuffle(v2, Vector128.Create(1, 0, 0, 0));
+            f32 v4 = Sse.IsSupported ? Sse.MaxScalar(v2, v3) : Vector128.Max(v2, v3);
+            return v4.ToScalar();
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static int MaxAcross(i32 a)
+        {
+            i32 v1 = Vector128.Shuffle(a, Vector128.Create(2, 3, 0, 1));
+            i32 v2 = Vector128.Max(a, v1);
+            i32 v3 = Vector128.Shuffle(v2, Vector128.Create(1, 0, 0, 0));
+            i32 v4 = Vector128.Max(v2, v3);
+            return v4.ToScalar();
+        }
+
+        // Bitwise
 
         public static f32 BitwiseAndNot_f32(f32 a, f32 b) => Vector128.AndNot(a, b);
         public static i32 BitwiseAndNot_i32(i32 a, i32 b) => Vector128.AndNot(a, b);

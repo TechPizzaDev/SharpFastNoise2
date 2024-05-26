@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using System.Runtime.Intrinsics;
@@ -71,11 +71,23 @@ namespace SharpFastNoise2.Functions
 
         public static f32 Min_f32(f32 a, f32 b) => Avx512F.Min(a, b);
         public static i32 Min_i32(i32 a, i32 b) => Avx512F.Min(a, b);
+        
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float MinAcross(f32 a) => Avx2Functions.MinAcross(Vector256.Min(a.GetLower(), a.GetUpper()));
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static int MinAcross(i32 a) => Avx2Functions.MinAcross(Vector256.Min(a.GetLower(), a.GetUpper()));
 
         // Max
 
         public static f32 Max_f32(f32 a, f32 b) => Avx512F.Max(a, b);
         public static i32 Max_i32(i32 a, i32 b) => Avx512F.Max(a, b);
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float MaxAcross(f32 a) => Avx2Functions.MaxAcross(Vector256.Max(a.GetLower(), a.GetUpper()));
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static int MaxAcross(i32 a) => Avx2Functions.MaxAcross(Vector256.Max(a.GetLower(), a.GetUpper()));
 
         // Bitwise
 
@@ -126,7 +138,7 @@ namespace SharpFastNoise2.Functions
         public static f32 NMask_f32(f32 a, m32 m) =>
             // return _mm512_maskz_mov_ps( ~m, a );
             Avx512DQ.AndNot(m.AsSingle(), a);
-
+        
         public static bool AnyMask_bool(m32 m) => m.ExtractMostSignificantBits() != 0;
         public static bool AllMask_bool(m32 m) => m.ExtractMostSignificantBits() == 0xFFFF;
 

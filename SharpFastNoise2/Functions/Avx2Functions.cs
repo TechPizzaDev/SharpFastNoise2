@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using System.Runtime.Intrinsics;
@@ -72,10 +72,22 @@ namespace SharpFastNoise2.Functions
         public static f32 Min_f32(f32 a, f32 b) => Avx.Min(a, b);
         public static i32 Min_i32(i32 a, i32 b) => Avx2.Min(a, b);
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float MinAcross(f32 a) => Sse2Functions.MinAcross(Vector128.Min(a.GetLower(), a.GetUpper()));
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static int MinAcross(i32 a) => Sse2Functions.MinAcross(Vector128.Min(a.GetLower(), a.GetUpper()));
+
         // Max
 
         public static f32 Max_f32(f32 a, f32 b) => Avx.Max(a, b);
         public static i32 Max_i32(i32 a, i32 b) => Avx2.Max(a, b);
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float MaxAcross(f32 a) => Sse2Functions.MaxAcross(Vector128.Max(a.GetLower(), a.GetUpper()));
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static int MaxAcross(i32 a) => Sse2Functions.MaxAcross(Vector128.Max(a.GetLower(), a.GetUpper()));
 
         // Bitwise       
 
