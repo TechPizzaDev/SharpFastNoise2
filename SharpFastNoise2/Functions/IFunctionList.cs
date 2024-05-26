@@ -16,11 +16,11 @@ namespace SharpFastNoise2.Functions
 
         // Load
 
-        static abstract f32 Load_f32(ref readonly float p);
-        static abstract i32 Load_i32(ref readonly int p);
+        static abstract f32 Load(ref readonly float p);
+        static abstract i32 Load(ref readonly int p);
 
-        static abstract f32 Load_f32(ref readonly float p, nuint elementOffset);
-        static abstract i32 Load_i32(ref readonly int p, nuint elementOffset);
+        static abstract f32 Load(ref readonly float p, nuint elementOffset);
+        static abstract i32 Load(ref readonly int p, nuint elementOffset);
 
         // Incremented
 

@@ -125,10 +125,10 @@ namespace SharpFastNoise2.Generators
             nuint index = 0;
             while (index <= count - (nuint)F.Count)
             {
-                f32 xPos = F.Add(xOffsetV, F.Load_f32(ref xPosRef, index));
-                f32 yPos = F.Add(yOffsetV, F.Load_f32(ref yPosRef, index));
-                f32 zPos = F.Add(zOffsetV, F.Load_f32(ref zPosRef, index));
-                f32 wPos = F.Add(wOffsetV, F.Load_f32(ref wPosRef, index));
+                f32 xPos = F.Add(xOffsetV, F.Load(ref xPosRef, index));
+                f32 yPos = F.Add(yOffsetV, F.Load(ref yPosRef, index));
+                f32 zPos = F.Add(zOffsetV, F.Load(ref zPosRef, index));
+                f32 wPos = F.Add(wOffsetV, F.Load(ref wPosRef, index));
 
                 f32 gen = generator.Gen(xPos, yPos, zPos, wPos, seedV);
                 F.Store_f32(ref noiseOut, index, gen);
@@ -140,10 +140,10 @@ namespace SharpFastNoise2.Generators
             }
 
             {
-                f32 xPos = F.Add(xOffsetV, F.Load_f32(ref xPosRef, index));
-                f32 yPos = F.Add(yOffsetV, F.Load_f32(ref yPosRef, index));
-                f32 zPos = F.Add(zOffsetV, F.Load_f32(ref zPosRef, index));
-                f32 wPos = F.Add(wOffsetV, F.Load_f32(ref wPosRef, index));
+                f32 xPos = F.Add(xOffsetV, F.Load(ref xPosRef, index));
+                f32 yPos = F.Add(yOffsetV, F.Load(ref yPosRef, index));
+                f32 zPos = F.Add(zOffsetV, F.Load(ref zPosRef, index));
+                f32 wPos = F.Add(wOffsetV, F.Load(ref wPosRef, index));
 
                 f32 gen = generator.Gen(xPos, yPos, zPos, wPos, seedV);
 

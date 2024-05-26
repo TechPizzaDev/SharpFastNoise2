@@ -25,11 +25,11 @@ namespace SharpFastNoise2.Functions
 
         // Load
 
-        public static f32 Load_f32(ref readonly float p) => Vector512.LoadUnsafe(in p);
-        public static i32 Load_i32(ref readonly int p) => Vector512.LoadUnsafe(in p);
+        public static f32 Load(ref readonly float p) => Vector512.LoadUnsafe(in p);
+        public static i32 Load(ref readonly int p) => Vector512.LoadUnsafe(in p);
 
-        public static f32 Load_f32(ref readonly float p, nuint elementOffset) => Vector512.LoadUnsafe(in p, elementOffset);
-        public static i32 Load_i32(ref readonly int p, nuint elementOffset) => Vector512.LoadUnsafe(in p, elementOffset);
+        public static f32 Load(ref readonly float p, nuint elementOffset) => Vector512.LoadUnsafe(in p, elementOffset);
+        public static i32 Load(ref readonly int p, nuint elementOffset) => Vector512.LoadUnsafe(in p, elementOffset);
 
         // Incremented
 
