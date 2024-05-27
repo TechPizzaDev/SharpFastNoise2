@@ -34,6 +34,10 @@ namespace SharpFastNoise2.Functions
 
         public static i32 Load(ref readonly int p, nuint elementOffset) =>
             Unsafe.ReadUnaligned<i32>(in Unsafe.Add(ref Unsafe.As<i32, byte>(ref Unsafe.AsRef(in p)), elementOffset));
+        
+        public static f32 Load(ReadOnlySpan<float> p) => p[0];
+        
+        public static i32 Load(ReadOnlySpan<int> p) => p[0];
 
         // Incremented
 
@@ -54,6 +58,10 @@ namespace SharpFastNoise2.Functions
 
         public static void Store(ref int p, nuint elementOffset, i32 a) =>
             Unsafe.WriteUnaligned(ref Unsafe.Add(ref Unsafe.As<i32, byte>(ref p), elementOffset), a);
+        
+        public static void Store(Span<float> p, f32 a) => p[0] = a;
+        
+        public static void Store(Span<int> p, i32 a) => p[0] = a;
 
         // Extract
 

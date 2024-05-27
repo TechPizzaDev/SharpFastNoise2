@@ -30,6 +30,9 @@ namespace SharpFastNoise2.Functions
         public static f32 Load(ref readonly float p, nuint elementOffset) => Vector128.LoadUnsafe(in p, elementOffset);
         public static i32 Load(ref readonly int p, nuint elementOffset) => Vector128.LoadUnsafe(in p, elementOffset);
 
+        public static f32 Load(ReadOnlySpan<float> p) => Vector128.Create(p);
+        public static i32 Load(ReadOnlySpan<int> p) => Vector128.Create(p);
+
         // Incremented
 
         public static f32 Incremented_f32() => Vector128.Create(0f, 1, 2, 3);
@@ -42,6 +45,9 @@ namespace SharpFastNoise2.Functions
 
         public static void Store(ref float p, nuint elementOffset, f32 a) => a.StoreUnsafe(ref p, elementOffset);
         public static void Store(ref int p, nuint elementOffset, i32 a) => a.StoreUnsafe(ref p, elementOffset);
+
+        public static void Store(Span<float> p, f32 a) => a.CopyTo(p);
+        public static void Store(Span<int> p, i32 a) => a.CopyTo(p);
 
         // Extract
 

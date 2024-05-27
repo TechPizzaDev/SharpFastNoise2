@@ -24,6 +24,9 @@ namespace SharpFastNoise2.Functions
         static abstract f32 Load(ref readonly float p, nuint elementOffset);
         static abstract i32 Load(ref readonly int p, nuint elementOffset);
 
+        static abstract f32 Load(ReadOnlySpan<float> p);
+        static abstract i32 Load(ReadOnlySpan<int> p);
+
         // Incremented
 
         static abstract f32 Incremented_f32();
@@ -36,6 +39,9 @@ namespace SharpFastNoise2.Functions
 
         static abstract void Store(ref float p, nuint elementOffset, f32 a);
         static abstract void Store(ref int p, nuint elementOffset, i32 a);
+
+        static abstract void Store(Span<float> p, f32 a);
+        static abstract void Store(Span<int> p, i32 a);
 
         // Extract
 

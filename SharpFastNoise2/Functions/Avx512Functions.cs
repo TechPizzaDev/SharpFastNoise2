@@ -31,6 +31,9 @@ namespace SharpFastNoise2.Functions
         public static f32 Load(ref readonly float p, nuint elementOffset) => Vector512.LoadUnsafe(in p, elementOffset);
         public static i32 Load(ref readonly int p, nuint elementOffset) => Vector512.LoadUnsafe(in p, elementOffset);
 
+        public static f32 Load(ReadOnlySpan<float> p) => Vector512.Create(p);
+        public static i32 Load(ReadOnlySpan<int> p) => Vector512.Create(p);
+
         // Incremented
 
         public static f32 Incremented_f32() => Vector512.Create(0f, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15);
@@ -43,6 +46,9 @@ namespace SharpFastNoise2.Functions
 
         public static void Store(ref float p, nuint elementOffset, f32 a) => a.StoreUnsafe(ref p, elementOffset);
         public static void Store(ref int p, nuint elementOffset, i32 a) => a.StoreUnsafe(ref p, elementOffset);
+
+        public static void Store(Span<float> p, f32 a) => a.CopyTo(p);
+        public static void Store(Span<int> p, i32 a) => a.CopyTo(p);
 
         // Extract
 
@@ -71,7 +77,7 @@ namespace SharpFastNoise2.Functions
 
         public static f32 Min(f32 a, f32 b) => Avx512F.Min(a, b);
         public static i32 Min(i32 a, i32 b) => Avx512F.Min(a, b);
-        
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float MinAcross(f32 a) => Avx2Functions.MinAcross(Vector256.Min(a.GetLower(), a.GetUpper()));
 
@@ -138,7 +144,7 @@ namespace SharpFastNoise2.Functions
         public static f32 NMask(f32 a, m32 m) =>
             // return _mm512_maskz_mov_ps( ~m, a );
             Avx512DQ.AndNot(m.AsSingle(), a);
-        
+
         public static bool AnyMask(m32 m) => m.ExtractMostSignificantBits() != 0;
         public static bool AllMask(m32 m) => m.ExtractMostSignificantBits() == 0xFFFF;
 
@@ -224,7 +230,7 @@ namespace SharpFastNoise2.Functions
         {
             i32 index = Avx512F.ConvertToVector512Int32(
                 Avx512F.ConvertToVector512Single(hash & Vector512.Create(0x3FFFFF)) * Vector512.Create(1.3333333333333333f));
-            
+
             f32 gX = Avx512F.PermuteVar16x32(Vector512.Create(ROOT3, ROOT3, 2, 2, 1, -1, 0, 0, -ROOT3, -ROOT3, -2, -2, -1, 1, 0, 0), index);
             f32 gY = Avx512F.PermuteVar16x32(Vector512.Create(1, -1, 0, 0, ROOT3, ROOT3, 2, 2, -1, 1, 0, 0, -ROOT3, -ROOT3, -2, -2), index);
 
