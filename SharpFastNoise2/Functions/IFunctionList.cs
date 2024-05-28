@@ -1,6 +1,5 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
-using System.Runtime.Intrinsics;
 
 namespace SharpFastNoise2.Functions
 {
