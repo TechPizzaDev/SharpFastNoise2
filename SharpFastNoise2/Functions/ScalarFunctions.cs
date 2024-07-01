@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Numerics;
 using System.Runtime.CompilerServices;
 using System.Runtime.Intrinsics;
 using System.Runtime.Intrinsics.X86;
@@ -34,9 +35,9 @@ namespace SharpFastNoise2.Functions
 
         public static i32 Load(ref readonly int p, nuint elementOffset) =>
             Unsafe.ReadUnaligned<i32>(in Unsafe.Add(ref Unsafe.As<i32, byte>(ref Unsafe.AsRef(in p)), elementOffset));
-        
+
         public static f32 Load(ReadOnlySpan<float> p) => p[0];
-        
+
         public static i32 Load(ReadOnlySpan<int> p) => p[0];
 
         // Incremented
@@ -58,9 +59,9 @@ namespace SharpFastNoise2.Functions
 
         public static void Store(ref int p, nuint elementOffset, i32 a) =>
             Unsafe.WriteUnaligned(ref Unsafe.Add(ref Unsafe.As<i32, byte>(ref p), elementOffset), a);
-        
+
         public static void Store(Span<float> p, f32 a) => p[0] = a;
-        
+
         public static void Store(Span<int> p, i32 a) => p[0] = a;
 
         // Extract
@@ -79,7 +80,7 @@ namespace SharpFastNoise2.Functions
         // Convert
 
         public static f32 Convert_f32(i32 a) => a;
-        public static i32 Convert_i32(f32 a) => (int) MathF.Round(a);
+        public static i32 Convert_i32(f32 a) => (int)MathF.Round(a);
 
         // Select
 
@@ -99,7 +100,7 @@ namespace SharpFastNoise2.Functions
         }
 
         public static i32 Min(i32 a, i32 b) => Math.Min(a, b);
-        
+
         // Max
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -113,7 +114,7 @@ namespace SharpFastNoise2.Functions
         }
 
         public static i32 Max(i32 a, i32 b) => Math.Max(a, b);
-        
+
         // Bitwise       
 
         public static f32 AndNot(f32 a, f32 b) => Cast_f32(Cast_i32(a) & ~Cast_i32(b));
@@ -140,9 +141,9 @@ namespace SharpFastNoise2.Functions
                 return Sse.ReciprocalSqrtScalar(Vector128.CreateScalarUnsafe(a)).ToScalar();
             }
 
-            float xhalf = 0.5f * (float) a;
+            f32 xhalf = 0.5f * a;
             a = Cast_f32(0x5f3759df - (Cast_i32(a) >> 1));
-            a *= 1.5f - xhalf * (float) a * (float) a;
+            a *= 1.5f - xhalf * a * a;
             return a;
         }
 
@@ -155,7 +156,7 @@ namespace SharpFastNoise2.Functions
             }
 
             // pow( pow(x,-0.5), 2 ) = pow( x, -1 ) = 1.0 / x
-            a = Cast_f32((int) (0xbe6eb3beU - (uint) Cast_i32(a)) >> 1);
+            a = Cast_f32((int)(0xbe6eb3beU - (uint)Cast_i32(a)) >> 1);
             return a * a;
         }
 
@@ -172,9 +173,19 @@ namespace SharpFastNoise2.Functions
 
         public static i32 NMask(i32 a, m32 m) => m != 0 ? 0 : a;
         public static f32 NMask(f32 a, m32 m) => m != 0 ? 0 : a;
-        
+
         public static bool AnyMask(m32 m) => m != 0;
         public static bool AllMask(m32 m) => m == m32.MaxValue;
+
+        // Bit Ops
+
+        public static int Log2(m32 a) => BitOperations.Log2(a);
+        public static int PopCount(m32 a) => BitOperations.PopCount(a);
+
+        public static int LeadingZeroCount(m32 a) => BitOperations.LeadingZeroCount(a);
+        public static int TrailingZeroCount(m32 a) => BitOperations.TrailingZeroCount(a);
+
+        // Masked int32
 
         public static i32 MaskIncrement(i32 a, m32 m) => a - (int) m;
         public static i32 MaskDecrement(i32 a, m32 m) => a + (int) m;

@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Numerics;
 using System.Runtime.CompilerServices;
 using System.Runtime.Intrinsics;
 using System.Runtime.Intrinsics.X86;
@@ -147,6 +148,14 @@ namespace SharpFastNoise2.Functions
 
         public static bool AnyMask(m32 m) => m.ExtractMostSignificantBits() != 0;
         public static bool AllMask(m32 m) => m.ExtractMostSignificantBits() == 0xFFFF;
+
+        // Bit Ops
+
+        public static int Log2(m32 a) => BitOperations.Log2(a.ExtractMostSignificantBits());
+        public static int PopCount(m32 a) => BitOperations.PopCount(a.ExtractMostSignificantBits());
+
+        public static int LeadingZeroCount(m32 a) => BitOperations.LeadingZeroCount(a.ExtractMostSignificantBits());
+        public static int TrailingZeroCount(m32 a) => BitOperations.TrailingZeroCount(a.ExtractMostSignificantBits());
 
         // Masked float
 
