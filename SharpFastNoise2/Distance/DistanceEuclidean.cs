@@ -13,27 +13,27 @@ namespace SharpFastNoise2.Distance
         public static f32 CalcDistance(f32 dX, f32 dY)
         {
             f32 distSqr = F.Mul(dX, dX);
-            distSqr = F.FMulAdd_f32(dY, dY, distSqr);
-            return F.Mul(F.InvSqrt_f32(distSqr), distSqr);
+            distSqr = F.FMulAdd(dY, dY, distSqr);
+            return F.Mul(F.ReciprocalSqrt(distSqr), distSqr);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static f32 CalcDistance(f32 dX, f32 dY, f32 dZ)
         {
             f32 distSqr = F.Mul(dX, dX);
-            distSqr = F.FMulAdd_f32(dY, dY, distSqr);
-            distSqr = F.FMulAdd_f32(dZ, dZ, distSqr);
-            return F.Mul(F.InvSqrt_f32(distSqr), distSqr);
+            distSqr = F.FMulAdd(dY, dY, distSqr);
+            distSqr = F.FMulAdd(dZ, dZ, distSqr);
+            return F.Mul(F.ReciprocalSqrt(distSqr), distSqr);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static f32 CalcDistance(f32 dX, f32 dY, f32 dZ, f32 dW)
         {
             f32 distSqr = F.Mul(dX, dX);
-            distSqr = F.FMulAdd_f32(dY, dY, distSqr);
-            distSqr = F.FMulAdd_f32(dZ, dZ, distSqr);
-            distSqr = F.FMulAdd_f32(dW, dW, distSqr);
-            return F.Mul(F.InvSqrt_f32(distSqr), distSqr);
+            distSqr = F.FMulAdd(dY, dY, distSqr);
+            distSqr = F.FMulAdd(dZ, dZ, distSqr);
+            distSqr = F.FMulAdd(dW, dW, distSqr);
+            return F.Mul(F.ReciprocalSqrt(distSqr), distSqr);
         }
     }
 }

@@ -12,27 +12,27 @@ namespace SharpFastNoise2.Distance
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static f32 CalcDistance(f32 dX, f32 dY)
         {
-            f32 max = F.Abs_f32(dX);
-            max = F.Max_f32(F.Abs_f32(dY), max);
+            f32 max = F.Abs(dX);
+            max = F.Max(F.Abs(dY), max);
             return max;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static f32 CalcDistance(f32 dX, f32 dY, f32 dZ)
         {
-            f32 max = F.Abs_f32(dX);
-            max = F.Max_f32(F.Abs_f32(dY), max);
-            max = F.Max_f32(F.Abs_f32(dZ), max);
+            f32 max = F.Abs(dX);
+            max = F.Max(F.Abs(dY), max);
+            max = F.Max(F.Abs(dZ), max);
             return max;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static f32 CalcDistance(f32 dX, f32 dY, f32 dZ, f32 dW)
         {
-            f32 max = F.Abs_f32(dX);
-            max = F.Max_f32(F.Abs_f32(dY), max);
-            max = F.Max_f32(F.Abs_f32(dZ), max);
-            max = F.Max_f32(F.Abs_f32(dW), max);
+            f32 max = F.Abs(dX);
+            max = F.Max(F.Abs(dY), max);
+            max = F.Max(F.Abs(dZ), max);
+            max = F.Max(F.Abs(dW), max);
             return max;
         }
     }

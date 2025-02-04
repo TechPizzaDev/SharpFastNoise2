@@ -1,4 +1,5 @@
-﻿using System.Runtime.CompilerServices;
+using System.Runtime.CompilerServices;
+using System.Runtime.Intrinsics;
 using SharpFastNoise2.Functions;
 
 namespace SharpFastNoise2.Generators
@@ -18,19 +19,16 @@ namespace SharpFastNoise2.Generators
             where F : IFunctionList<m32, f32, i32, F>
         {
             OutputMinMax minMax = new();
+            minMax.Apply<m32, f32, i32, F>(min, max);
+
             int remaining = (int)(totalValues - index);
             ref float noiseOut = ref Unsafe.Add(ref destination, index);
 
             for (int i = 0; i < remaining; i++)
             {
-                float f = F.Extract_f32(finalGen, i);
+                float f = F.Extract(finalGen, i);
                 Unsafe.Add(ref noiseOut, i) = f;
                 minMax.Apply(f);
-            }
-
-            for (int i = 0; i < F.Count; i++)
-            {
-                minMax.Apply(F.Extract_f32(min, i), F.Extract_f32(max, i));
             }
 
             return minMax;
@@ -46,8 +44,8 @@ namespace SharpFastNoise2.Generators
             for (nuint resetLoop = initial ? aStep : 0; resetLoop < (nuint)F.Count; resetLoop += aStep)
             {
                 m32 aReset = F.GreaterThan(aIdx, aMax);
-                bIdx = F.MaskedIncrement_i32(bIdx, aReset);
-                aIdx = F.MaskedSub_i32(aIdx, aSize, aReset);
+                bIdx = F.MaskIncrement(bIdx, aReset);
+                aIdx = F.MaskSub(aIdx, aSize, aReset);
             }
         }
     }

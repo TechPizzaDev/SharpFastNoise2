@@ -1,5 +1,6 @@
-﻿using System;
+using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Numerics;
 using System.Runtime.CompilerServices;
 using System.Runtime.Intrinsics;
 using System.Runtime.Intrinsics.X86;
@@ -20,16 +21,19 @@ namespace SharpFastNoise2.Functions
 
         // Broadcast
 
-        public static f32 Broad_f32(float value) => Vector512.Create(value);
-        public static i32 Broad_i32(int value) => Vector512.Create(value);
+        public static f32 Broad(float value) => Vector512.Create(value);
+        public static i32 Broad(int value) => Vector512.Create(value);
 
         // Load
 
-        public static f32 Load_f32(ref readonly float p) => Vector512.LoadUnsafe(in p);
-        public static i32 Load_i32(ref readonly int p) => Vector512.LoadUnsafe(in p);
+        public static f32 Load(ref readonly float p) => Vector512.LoadUnsafe(in p);
+        public static i32 Load(ref readonly int p) => Vector512.LoadUnsafe(in p);
 
-        public static f32 Load_f32(ref readonly float p, nuint elementOffset) => Vector512.LoadUnsafe(in p, elementOffset);
-        public static i32 Load_i32(ref readonly int p, nuint elementOffset) => Vector512.LoadUnsafe(in p, elementOffset);
+        public static f32 Load(ref readonly float p, nuint elementOffset) => Vector512.LoadUnsafe(in p, elementOffset);
+        public static i32 Load(ref readonly int p, nuint elementOffset) => Vector512.LoadUnsafe(in p, elementOffset);
+
+        public static f32 Load(ReadOnlySpan<float> p) => Vector512.Create(p);
+        public static i32 Load(ReadOnlySpan<int> p) => Vector512.Create(p);
 
         // Incremented
 
@@ -38,65 +42,80 @@ namespace SharpFastNoise2.Functions
 
         // Store
 
-        public static void Store_f32(ref float p, f32 a) => a.StoreUnsafe(ref p);
-        public static void Store_i32(ref int p, i32 a) => a.StoreUnsafe(ref p);
+        public static void Store(ref float p, f32 a) => a.StoreUnsafe(ref p);
+        public static void Store(ref int p, i32 a) => a.StoreUnsafe(ref p);
 
-        public static void Store_f32(ref float p, nuint elementOffset, f32 a) => a.StoreUnsafe(ref p, elementOffset);
-        public static void Store_i32(ref int p, nuint elementOffset, i32 a) => a.StoreUnsafe(ref p, elementOffset);
+        public static void Store(ref float p, nuint elementOffset, f32 a) => a.StoreUnsafe(ref p, elementOffset);
+        public static void Store(ref int p, nuint elementOffset, i32 a) => a.StoreUnsafe(ref p, elementOffset);
+
+        public static void Store(Span<float> p, f32 a) => a.CopyTo(p);
+        public static void Store(Span<int> p, i32 a) => a.CopyTo(p);
 
         // Extract
 
-        public static float Extract0_f32(f32 a) => a.ToScalar();
-        public static int Extract0_i32(i32 a) => a.ToScalar();
+        public static float Extract0(f32 a) => a.ToScalar();
+        public static int Extract0(i32 a) => a.ToScalar();
 
-        public static float Extract_f32(f32 a, int idx) => a.GetElement(idx);
-        public static int Extract_i32(i32 a, int idx) => a.GetElement(idx);
+        public static float Extract(f32 a, int idx) => a.GetElement(idx);
+        public static int Extract(i32 a, int idx) => a.GetElement(idx);
 
         // Cast
 
-        public static f32 Casti32_f32(i32 a) => a.AsSingle();
-        public static i32 Castf32_i32(f32 a) => a.AsInt32();
+        public static f32 Cast_f32(i32 a) => a.AsSingle();
+        public static i32 Cast_i32(f32 a) => a.AsInt32();
 
         // Convert
 
-        public static f32 Converti32_f32(i32 a) => Avx512F.ConvertToVector512Single(a);
-        public static i32 Convertf32_i32(f32 a) => Avx512F.ConvertToVector512Int32(a);
+        public static f32 Convert_f32(i32 a) => Avx512F.ConvertToVector512Single(a);
+        public static i32 Convert_i32(f32 a) => Avx512F.ConvertToVector512Int32(a);
 
         // Select
 
-        public static f32 Select_f32(m32 m, f32 a, f32 b) => Avx512F.BlendVariable(b, a, m.AsSingle());
-        public static i32 Select_i32(m32 m, i32 a, i32 b) => Avx512F.BlendVariable(b, a, m.AsInt32());
+        public static f32 Select(m32 m, f32 a, f32 b) => Avx512F.BlendVariable(b, a, m.AsSingle());
+        public static i32 Select(m32 m, i32 a, i32 b) => Avx512F.BlendVariable(b, a, m.AsInt32());
 
         // Min
 
-        public static f32 Min_f32(f32 a, f32 b) => Avx512F.Min(a, b);
-        public static i32 Min_i32(i32 a, i32 b) => Avx512F.Min(a, b);
+        public static f32 Min(f32 a, f32 b) => Avx512F.Min(a, b);
+        public static i32 Min(i32 a, i32 b) => Avx512F.Min(a, b);
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float MinAcross(f32 a) => Avx2Functions.MinAcross(Vector256.Min(a.GetLower(), a.GetUpper()));
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static int MinAcross(i32 a) => Avx2Functions.MinAcross(Vector256.Min(a.GetLower(), a.GetUpper()));
 
         // Max
 
-        public static f32 Max_f32(f32 a, f32 b) => Avx512F.Max(a, b);
-        public static i32 Max_i32(i32 a, i32 b) => Avx512F.Max(a, b);
+        public static f32 Max(f32 a, f32 b) => Avx512F.Max(a, b);
+        public static i32 Max(i32 a, i32 b) => Avx512F.Max(a, b);
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float MaxAcross(f32 a) => Avx2Functions.MaxAcross(Vector256.Max(a.GetLower(), a.GetUpper()));
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static int MaxAcross(i32 a) => Avx2Functions.MaxAcross(Vector256.Max(a.GetLower(), a.GetUpper()));
 
         // Bitwise
 
-        public static f32 BitwiseAndNot_f32(f32 a, f32 b) => Avx512DQ.AndNot(b, a);
-        public static i32 BitwiseAndNot_i32(i32 a, i32 b) => Avx512F.AndNot(b, a);
-        public static m32 BitwiseAndNot_m32(m32 a, m32 b) => Avx512F.AndNot(b, a);
+        public static f32 AndNot(f32 a, f32 b) => Avx512DQ.AndNot(b, a);
+        public static i32 AndNot(i32 a, i32 b) => Avx512F.AndNot(b, a);
+        public static m32 AndNot(m32 a, m32 b) => Avx512F.AndNot(b, a);
 
-        public static f32 BitwiseShiftRightZX_f32(f32 a, [ConstantExpected] byte b) => a >>> b;
-        public static i32 BitwiseShiftRightZX_i32(i32 a, [ConstantExpected] byte b) => a >>> b;
+        public static f32 ShiftRightLogical(f32 a, [ConstantExpected] byte b) => a >>> b;
+        public static i32 ShiftRightLogical(i32 a, [ConstantExpected] byte b) => a >>> b;
 
         // Abs
 
-        public static f32 Abs_f32(f32 a) => Vector512.Abs(a);
-        public static i32 Abs_i32(i32 a) => Vector512.Abs(a);
+        public static f32 Abs(f32 a) => Vector512.Abs(a);
+        public static i32 Abs(i32 a) => Vector512.Abs(a);
 
         // Float math
 
-        public static f32 Sqrt_f32(f32 a) => Avx512F.Sqrt(a);
-        public static f32 InvSqrt_f32(f32 a) => Avx512F.ReciprocalSqrt14(a);
+        public static f32 Sqrt(f32 a) => Avx512F.Sqrt(a);
+        public static f32 ReciprocalSqrt(f32 a) => Avx512F.ReciprocalSqrt14(a);
 
-        public static f32 Reciprocal_f32(f32 a) => Avx512F.Reciprocal14(a);
+        public static f32 Reciprocal(f32 a) => Avx512F.Reciprocal14(a);
 
         // Rounding: http://dss.stephanierct.com/DevBlog/?p=8
 
@@ -105,58 +124,67 @@ namespace SharpFastNoise2.Functions
         private const byte _MM_FROUND_TO_POS_INT = 0x02;
         private const byte _MM_FROUND_NO_EXC = 0x08;
 
-        public static f32 Floor_f32(f32 a) => Avx512F.RoundScale(a, _MM_FROUND_TO_NEG_INT | _MM_FROUND_NO_EXC);
-        public static f32 Ceil_f32(f32 a) => Avx512F.RoundScale(a, _MM_FROUND_TO_POS_INT | _MM_FROUND_NO_EXC);
-        public static f32 Round_f32(f32 a) => Avx512F.RoundScale(a, _MM_FROUND_TO_NEAREST_INT | _MM_FROUND_NO_EXC);
+        public static f32 Floor(f32 a) => Avx512F.RoundScale(a, _MM_FROUND_TO_NEG_INT | _MM_FROUND_NO_EXC);
+        public static f32 Ceiling(f32 a) => Avx512F.RoundScale(a, _MM_FROUND_TO_POS_INT | _MM_FROUND_NO_EXC);
+        public static f32 Round(f32 a) => Avx512F.RoundScale(a, _MM_FROUND_TO_NEAREST_INT | _MM_FROUND_NO_EXC);
 
         // Mask
 
-        public static i32 Mask_i32(i32 a, m32 m) =>
+        public static i32 Mask(i32 a, m32 m) =>
             // return _mm512_maskz_mov_epi32(m, a);
             Avx512F.And(a, m.AsInt32());
 
-        public static f32 Mask_f32(f32 a, m32 m) =>
+        public static f32 Mask(f32 a, m32 m) =>
             // return _mm512_maskz_mov_ps(m, a);
             Avx512DQ.And(a, m.AsSingle());
 
-        public static i32 NMask_i32(i32 a, m32 m) =>
+        public static i32 NMask(i32 a, m32 m) =>
             // return _mm512_maskz_mov_epi32( ~m, a );
             Avx512F.AndNot(m.AsInt32(), a);
 
-        public static f32 NMask_f32(f32 a, m32 m) =>
+        public static f32 NMask(f32 a, m32 m) =>
             // return _mm512_maskz_mov_ps( ~m, a );
             Avx512DQ.AndNot(m.AsSingle(), a);
 
-        public static bool AnyMask_bool(m32 m) => m.ExtractMostSignificantBits() != 0;
+        public static bool AnyMask(m32 m) => m.ExtractMostSignificantBits() != 0;
+        public static bool AllMask(m32 m) => m.ExtractMostSignificantBits() == 0xFFFF;
+
+        // Bit Ops
+
+        public static int Log2(m32 a) => BitOperations.Log2(a.ExtractMostSignificantBits());
+        public static int PopCount(m32 a) => BitOperations.PopCount(a.ExtractMostSignificantBits());
+
+        public static int LeadingZeroCount(m32 a) => BitOperations.LeadingZeroCount(a.ExtractMostSignificantBits());
+        public static int TrailingZeroCount(m32 a) => BitOperations.TrailingZeroCount(a.ExtractMostSignificantBits());
 
         // Masked float
 
-        public static f32 MaskedAdd_f32(f32 a, f32 b, m32 m) => Avx512F.BlendVariable(a + b, a, m.AsSingle());
-        public static f32 MaskedSub_f32(f32 a, f32 b, m32 m) => Avx512F.BlendVariable(a - b, a, m.AsSingle());
-        public static f32 MaskedMul_f32(f32 a, f32 b, m32 m) => Avx512F.BlendVariable(a * b, a, m.AsSingle());
+        public static f32 MaskAdd(f32 a, f32 b, m32 m) => Avx512F.BlendVariable(a, a + b, m.AsSingle());
+        public static f32 MaskSub(f32 a, f32 b, m32 m) => Avx512F.BlendVariable(a, a - b, m.AsSingle());
+        public static f32 MaskMul(f32 a, f32 b, m32 m) => Avx512F.BlendVariable(a, a * b, m.AsSingle());
 
         // NMasked float
 
-        public static f32 NMaskedAdd_f32(f32 a, f32 b, m32 m) => Avx512F.BlendVariable(a + b, a, (~m).AsSingle());
-        public static f32 NMaskedSub_f32(f32 a, f32 b, m32 m) => Avx512F.BlendVariable(a - b, a, (~m).AsSingle());
-        public static f32 NMaskedMul_f32(f32 a, f32 b, m32 m) => Avx512F.BlendVariable(a * b, a, (~m).AsSingle());
+        public static f32 NMaskAdd(f32 a, f32 b, m32 m) => Avx512F.BlendVariable(a, a + b, (~m).AsSingle());
+        public static f32 NMaskSub(f32 a, f32 b, m32 m) => Avx512F.BlendVariable(a, a - b, (~m).AsSingle());
+        public static f32 NMaskMul(f32 a, f32 b, m32 m) => Avx512F.BlendVariable(a, a * b, (~m).AsSingle());
 
         // Masked int32
 
-        public static i32 MaskedAdd_i32(i32 a, i32 b, m32 m) => Avx512F.BlendVariable(a + b, a, m.AsInt32());
-        public static i32 MaskedSub_i32(i32 a, i32 b, m32 m) => Avx512F.BlendVariable(a - b, a, m.AsInt32());
-        public static i32 MaskedMul_i32(i32 a, i32 b, m32 m) => Avx512F.BlendVariable(a * b, a, m.AsInt32());
+        public static i32 MaskAdd(i32 a, i32 b, m32 m) => Avx512F.BlendVariable(a, a + b, m.AsInt32());
+        public static i32 MaskSub(i32 a, i32 b, m32 m) => Avx512F.BlendVariable(a, a - b, m.AsInt32());
+        public static i32 MaskMul(i32 a, i32 b, m32 m) => Avx512F.BlendVariable(a, a * b, m.AsInt32());
 
         // NMasked int32
 
-        public static i32 NMaskedAdd_i32(i32 a, i32 b, m32 m) => Avx512F.BlendVariable(a + b, a, (~m).AsInt32());
-        public static i32 NMaskedSub_i32(i32 a, i32 b, m32 m) => Avx512F.BlendVariable(a - b, a, (~m).AsInt32());
-        public static i32 NMaskedMul_i32(i32 a, i32 b, m32 m) => Avx512F.BlendVariable(a * b, a, (~m).AsInt32());
+        public static i32 NMaskAdd(i32 a, i32 b, m32 m) => Avx512F.BlendVariable(a, a + b, (~m).AsInt32());
+        public static i32 NMaskSub(i32 a, i32 b, m32 m) => Avx512F.BlendVariable(a, a - b, (~m).AsInt32());
+        public static i32 NMaskMul(i32 a, i32 b, m32 m) => Avx512F.BlendVariable(a, a * b, (~m).AsInt32());
 
         // FMA
 
-        public static f32 FMulAdd_f32(f32 a, f32 b, f32 c) => Avx512F.FusedMultiplyAdd(a, b, c);
-        public static f32 FNMulAdd_f32(f32 a, f32 b, f32 c) => Avx512F.FusedMultiplyAddNegated(a, b, c);
+        public static f32 FMulAdd(f32 a, f32 b, f32 c) => Avx512F.FusedMultiplyAdd(a, b, c);
+        public static f32 FNMulAdd(f32 a, f32 b, f32 c) => Avx512F.FusedMultiplyAddNegated(a, b, c);
 
         // Float math
 
@@ -211,11 +239,11 @@ namespace SharpFastNoise2.Functions
         {
             i32 index = Avx512F.ConvertToVector512Int32(
                 Avx512F.ConvertToVector512Single(hash & Vector512.Create(0x3FFFFF)) * Vector512.Create(1.3333333333333333f));
-            
+
             f32 gX = Avx512F.PermuteVar16x32(Vector512.Create(ROOT3, ROOT3, 2, 2, 1, -1, 0, 0, -ROOT3, -ROOT3, -2, -2, -1, 1, 0, 0), index);
             f32 gY = Avx512F.PermuteVar16x32(Vector512.Create(1, -1, 0, 0, ROOT3, ROOT3, 2, 2, -1, 1, 0, 0, -ROOT3, -ROOT3, -2, -2), index);
 
-            return FMulAdd_f32(gX, fX, fY * gY);
+            return FMulAdd(gX, fX, fY * gY);
         }
 
         // Gradient dot
@@ -231,7 +259,7 @@ namespace SharpFastNoise2.Functions
                 1, 1, -1, -1, 1 + ROOT2, 1 + ROOT2, -1 - ROOT2, -1 - ROOT2,
                 1, 1, -1, -1, 1 + ROOT2, 1 + ROOT2, -1 - ROOT2, -1 - ROOT2), hash);
 
-            return FMulAdd_f32(gX, fX, fY * gY);
+            return FMulAdd(gX, fX, fY * gY);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -241,7 +269,7 @@ namespace SharpFastNoise2.Functions
             f32 gY = Avx512F.PermuteVar16x32(Vector512.Create(1f, 1, -1, -1, 0, 0, 0, 0, 1, -1, 1, -1, 1, -1, 1, -1), hash);
             f32 gZ = Avx512F.PermuteVar16x32(Vector512.Create(0f, 0, 0, 0, 1, 1, -1, -1, 1, 1, -1, -1, 0, 1, 0, -1), hash);
 
-            return FMulAdd_f32(gX, fX, FMulAdd_f32(fY, gY, fZ * gZ));
+            return FMulAdd(gX, fX, FMulAdd(fY, gY, fZ * gZ));
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -267,7 +295,7 @@ namespace SharpFastNoise2.Functions
                 hash,
                 Vector512.Create(1f, 1, 1, 1, -1, -1, -1, -1, 0, 0, 0, 0, 0, 0, 0, 0));
 
-            return FMulAdd_f32(gX, fX, FMulAdd_f32(fY, gY, FMulAdd_f32(fZ, gZ, fW * gW)));
+            return FMulAdd(gX, fX, FMulAdd(fY, gY, FMulAdd(fZ, gZ, fW * gW)));
         }
     }
 }

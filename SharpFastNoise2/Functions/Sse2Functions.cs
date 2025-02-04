@@ -1,5 +1,6 @@
-﻿using System;
+using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Numerics;
 using System.Runtime.CompilerServices;
 using System.Runtime.Intrinsics;
 using System.Runtime.Intrinsics.X86;
@@ -19,16 +20,19 @@ namespace SharpFastNoise2.Functions
 
         // Broadcast
 
-        public static f32 Broad_f32(float value) => Vector128.Create(value);
-        public static i32 Broad_i32(int value) => Vector128.Create(value);
+        public static f32 Broad(float value) => Vector128.Create(value);
+        public static i32 Broad(int value) => Vector128.Create(value);
 
         // Load
 
-        public static f32 Load_f32(ref readonly float p) => Vector128.LoadUnsafe(in p);
-        public static i32 Load_i32(ref readonly int p) => Vector128.LoadUnsafe(in p);
+        public static f32 Load(ref readonly float p) => Vector128.LoadUnsafe(in p);
+        public static i32 Load(ref readonly int p) => Vector128.LoadUnsafe(in p);
 
-        public static f32 Load_f32(ref readonly float p, nuint elementOffset) => Vector128.LoadUnsafe(in p, elementOffset);
-        public static i32 Load_i32(ref readonly int p, nuint elementOffset) => Vector128.LoadUnsafe(in p, elementOffset);
+        public static f32 Load(ref readonly float p, nuint elementOffset) => Vector128.LoadUnsafe(in p, elementOffset);
+        public static i32 Load(ref readonly int p, nuint elementOffset) => Vector128.LoadUnsafe(in p, elementOffset);
+
+        public static f32 Load(ReadOnlySpan<float> p) => Vector128.Create(p);
+        public static i32 Load(ReadOnlySpan<int> p) => Vector128.Create(p);
 
         // Incremented
 
@@ -37,31 +41,34 @@ namespace SharpFastNoise2.Functions
 
         // Store
 
-        public static void Store_f32(ref float p, f32 a) => a.StoreUnsafe(ref p);
-        public static void Store_i32(ref int p, i32 a) => a.StoreUnsafe(ref p);
+        public static void Store(ref float p, f32 a) => a.StoreUnsafe(ref p);
+        public static void Store(ref int p, i32 a) => a.StoreUnsafe(ref p);
 
-        public static void Store_f32(ref float p, nuint elementOffset, f32 a) => a.StoreUnsafe(ref p, elementOffset);
-        public static void Store_i32(ref int p, nuint elementOffset, i32 a) => a.StoreUnsafe(ref p, elementOffset);
+        public static void Store(ref float p, nuint elementOffset, f32 a) => a.StoreUnsafe(ref p, elementOffset);
+        public static void Store(ref int p, nuint elementOffset, i32 a) => a.StoreUnsafe(ref p, elementOffset);
+
+        public static void Store(Span<float> p, f32 a) => a.CopyTo(p);
+        public static void Store(Span<int> p, i32 a) => a.CopyTo(p);
 
         // Extract
 
-        public static float Extract0_f32(f32 a) => a.ToScalar();
-        public static int Extract0_i32(i32 a) => a.ToScalar();
+        public static float Extract0(f32 a) => a.ToScalar();
+        public static int Extract0(i32 a) => a.ToScalar();
 
-        public static float Extract_f32(f32 a, int idx) => a.GetElement(idx);
-        public static int Extract_i32(i32 a, int idx) => a.GetElement(idx);
+        public static float Extract(f32 a, int idx) => a.GetElement(idx);
+        public static int Extract(i32 a, int idx) => a.GetElement(idx);
 
         // Cast
 
-        public static f32 Casti32_f32(i32 a) => a.AsSingle();
-        public static i32 Castf32_i32(f32 a) => a.AsInt32();
+        public static f32 Cast_f32(i32 a) => a.AsSingle();
+        public static i32 Cast_i32(f32 a) => a.AsInt32();
 
         // Convert
 
-        public static f32 Converti32_f32(i32 a) => Vector128.ConvertToSingle(a);
+        public static f32 Convert_f32(i32 a) => Vector128.ConvertToSingle(a);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static i32 Convertf32_i32(f32 a)
+        public static i32 Convert_i32(f32 a)
         {
             if (Sse2.IsSupported)
             {
@@ -75,7 +82,7 @@ namespace SharpFastNoise2.Functions
                 // val_2p23_f32 = (a + val_2p23_f32) - val_2p23_f32;
                 // return val_2p23_f32 | sign;
 
-                f32 aSign = a & Vector128.Create(unchecked((int) 0x80000000)).AsSingle();
+                f32 aSign = a & Vector128.Create(unchecked((int)0x80000000)).AsSingle();
                 f32 v = a & (aSign | Vector128.Create(0.5f));
                 return Vector128.ConvertToInt32(v);
             }
@@ -84,7 +91,7 @@ namespace SharpFastNoise2.Functions
         // Select
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static f32 Select_f32(m32 m, f32 a, f32 b)
+        public static f32 Select(m32 m, f32 a, f32 b)
         {
             if (Sse41.IsSupported)
             {
@@ -97,7 +104,7 @@ namespace SharpFastNoise2.Functions
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static i32 Select_i32(m32 m, i32 a, i32 b)
+        public static i32 Select(m32 m, i32 a, i32 b)
         {
             if (Sse41.IsSupported)
             {
@@ -111,34 +118,77 @@ namespace SharpFastNoise2.Functions
 
         // Min
 
-        public static f32 Min_f32(f32 a, f32 b) => Vector128.Min(a, b);
-        public static i32 Min_i32(i32 a, i32 b) => Vector128.Min(a, b);
+        public static f32 Min(f32 a, f32 b) => Vector128.Min(a, b);
+        public static i32 Min(i32 a, i32 b) => Vector128.Min(a, b);
+
+        // Min/Max-Across based on
+        //  https://stackoverflow.com/questions/6996764/fastest-way-to-do-horizontal-sse-vector-sum-or-other-reduction/35270026#35270026
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float MinAcross(f32 a)
+        {
+            f32 v1 = Vector128.Shuffle(a, Vector128.Create(2, 3, 0, 1));
+            f32 v2 = Vector128.Min(a, v1);
+            f32 v3 = Vector128.Shuffle(v2, Vector128.Create(1, 0, 0, 0));
+            f32 v4 = Sse.IsSupported ? Sse.MinScalar(v2, v3) : Vector128.Min(v2, v3);
+            return v4.ToScalar();
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static int MinAcross(i32 a)
+        {
+            i32 v1 = Vector128.Shuffle(a, Vector128.Create(2, 3, 0, 1));
+            i32 v2 = Vector128.Min(a, v1);
+            i32 v3 = Vector128.Shuffle(v2, Vector128.Create(1, 0, 0, 0));
+            i32 v4 = Vector128.Min(v2, v3);
+            return v4.ToScalar();
+        }
 
         // Max
 
-        public static f32 Max_f32(f32 a, f32 b) => Vector128.Max(a, b);
-        public static i32 Max_i32(i32 a, i32 b) => Vector128.Max(a, b);
+        public static f32 Max(f32 a, f32 b) => Vector128.Max(a, b);
+        public static i32 Max(i32 a, i32 b) => Vector128.Max(a, b);
 
-        // Bitwise       
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float MaxAcross(f32 a)
+        {
+            f32 v1 = Vector128.Shuffle(a, Vector128.Create(2, 3, 0, 1));
+            f32 v2 = Vector128.Max(a, v1);
+            f32 v3 = Vector128.Shuffle(v2, Vector128.Create(1, 0, 0, 0));
+            f32 v4 = Sse.IsSupported ? Sse.MaxScalar(v2, v3) : Vector128.Max(v2, v3);
+            return v4.ToScalar();
+        }
 
-        public static f32 BitwiseAndNot_f32(f32 a, f32 b) => Vector128.AndNot(a, b);
-        public static i32 BitwiseAndNot_i32(i32 a, i32 b) => Vector128.AndNot(a, b);
-        public static m32 BitwiseAndNot_m32(m32 a, m32 b) => Vector128.AndNot(a, b);
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static int MaxAcross(i32 a)
+        {
+            i32 v1 = Vector128.Shuffle(a, Vector128.Create(2, 3, 0, 1));
+            i32 v2 = Vector128.Max(a, v1);
+            i32 v3 = Vector128.Shuffle(v2, Vector128.Create(1, 0, 0, 0));
+            i32 v4 = Vector128.Max(v2, v3);
+            return v4.ToScalar();
+        }
 
-        public static f32 BitwiseShiftRightZX_f32(f32 a, [ConstantExpected] byte b) => a >>> b;
-        public static i32 BitwiseShiftRightZX_i32(i32 a, [ConstantExpected] byte b) => a >>> b;
+        // Bitwise
+
+        public static f32 AndNot(f32 a, f32 b) => Vector128.AndNot(a, b);
+        public static i32 AndNot(i32 a, i32 b) => Vector128.AndNot(a, b);
+        public static m32 AndNot(m32 a, m32 b) => Vector128.AndNot(a, b);
+
+        public static f32 ShiftRightLogical(f32 a, [ConstantExpected] byte b) => a >>> b;
+        public static i32 ShiftRightLogical(i32 a, [ConstantExpected] byte b) => a >>> b;
 
         // Abs
 
-        public static f32 Abs_f32(f32 a) => Vector128.Abs(a);
-        public static i32 Abs_i32(i32 a) => Vector128.Abs(a);
+        public static f32 Abs(f32 a) => Vector128.Abs(a);
+        public static i32 Abs(i32 a) => Vector128.Abs(a);
 
         // Float math
 
-        public static f32 Sqrt_f32(f32 a) => Vector128.Sqrt(a);
+        public static f32 Sqrt(f32 a) => Vector128.Sqrt(a);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static f32 InvSqrt_f32(f32 a)
+        public static f32 ReciprocalSqrt(f32 a)
         {
             if (Sse.IsSupported)
             {
@@ -151,7 +201,7 @@ namespace SharpFastNoise2.Functions
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static f32 Reciprocal_f32(f32 a)
+        public static f32 Reciprocal(f32 a)
         {
             if (Sse.IsSupported)
             {
@@ -166,7 +216,7 @@ namespace SharpFastNoise2.Functions
         // Rounding: http://dss.stephanierct.com/DevBlog/?p=8
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static f32 Floor_f32(f32 a)
+        public static f32 Floor(f32 a)
         {
             if (Sse41.IsSupported)
             {
@@ -181,7 +231,7 @@ namespace SharpFastNoise2.Functions
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static f32 Ceil_f32(f32 a)
+        public static f32 Ceiling(f32 a)
         {
             if (Sse41.IsSupported)
             {
@@ -196,7 +246,7 @@ namespace SharpFastNoise2.Functions
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static f32 Round_f32(f32 a)
+        public static f32 Round(f32 a)
         {
             if (Sse41.IsSupported)
             {
@@ -204,20 +254,20 @@ namespace SharpFastNoise2.Functions
             }
             else
             {
-                return Vector128.ConvertToSingle(Convertf32_i32(a));
+                return Vector128.ConvertToSingle(Convert_i32(a));
             }
         }
 
         // Mask
 
-        public static i32 Mask_i32(i32 a, m32 m) => a & m.AsInt32();
-        public static f32 Mask_f32(f32 a, m32 m) => a & m.AsSingle();
+        public static i32 Mask(i32 a, m32 m) => a & m.AsInt32();
+        public static f32 Mask(f32 a, m32 m) => a & m.AsSingle();
 
-        public static i32 NMask_i32(i32 a, m32 m) => Vector128.AndNot(a, m.AsInt32());
-        public static f32 NMask_f32(f32 a, m32 m) => Vector128.AndNot(a, m.AsSingle());
+        public static i32 NMask(i32 a, m32 m) => Vector128.AndNot(a, m.AsInt32());
+        public static f32 NMask(f32 a, m32 m) => Vector128.AndNot(a, m.AsSingle());
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool AnyMask_bool(m32 m)
+        public static bool AnyMask(m32 m)
         {
             if (Sse41.IsSupported)
             {
@@ -229,13 +279,25 @@ namespace SharpFastNoise2.Functions
             }
         }
 
-        public static i32 MaskedIncrement_i32(i32 a, m32 m) => a - m.AsInt32();
-        public static i32 MaskedDecrement_i32(i32 a, m32 m) => a + m.AsInt32();
+        public static bool AllMask(m32 m) => m.ExtractMostSignificantBits() == 0xF;
+
+        // Bit Ops
+
+        public static int Log2(m32 a) => BitOperations.Log2(a.ExtractMostSignificantBits());
+        public static int PopCount(m32 a) => BitOperations.PopCount(a.ExtractMostSignificantBits());
+
+        public static int LeadingZeroCount(m32 a) => BitOperations.LeadingZeroCount(a.ExtractMostSignificantBits());
+        public static int TrailingZeroCount(m32 a) => BitOperations.TrailingZeroCount(a.ExtractMostSignificantBits());
+
+        // Masked int32
+
+        public static i32 MaskIncrement(i32 a, m32 m) => a - m.AsInt32();
+        public static i32 MaskDecrement(i32 a, m32 m) => a + m.AsInt32();
 
         // FMA
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static f32 FMulAdd_f32(f32 a, f32 b, f32 c)
+        public static f32 FMulAdd(f32 a, f32 b, f32 c)
         {
             if (Fma.IsSupported)
             {
@@ -248,7 +310,7 @@ namespace SharpFastNoise2.Functions
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static f32 FNMulAdd_f32(f32 a, f32 b, f32 c)
+        public static f32 FNMulAdd(f32 a, f32 b, f32 c)
         {
             if (Fma.IsSupported)
             {
