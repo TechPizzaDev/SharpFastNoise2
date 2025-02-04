@@ -48,17 +48,11 @@ namespace SharpFastNoise2.Functions
 
         // Store
 
-        public static void Store(ref float p, f32 a) =>
-            Unsafe.WriteUnaligned(ref Unsafe.As<f32, byte>(ref p), a);
+        public static void Store(ref float p,f32 a) => p = a;
+        public static void Store(ref int p,i32 a) => p = a;
 
-        public static void Store(ref int p, i32 a) =>
-            Unsafe.WriteUnaligned(ref Unsafe.As<i32, byte>(ref p), a);
-
-        public static void Store(ref float p, nuint elementOffset, f32 a) =>
-            Unsafe.WriteUnaligned(ref Unsafe.Add(ref Unsafe.As<f32, byte>(ref p), elementOffset), a);
-
-        public static void Store(ref int p, nuint elementOffset, i32 a) =>
-            Unsafe.WriteUnaligned(ref Unsafe.Add(ref Unsafe.As<i32, byte>(ref p), elementOffset), a);
+        public static void Store(ref float p, nuint elementOffset, f32 a) => Unsafe.Add(ref p, elementOffset) = a;
+        public static void Store(ref int p, nuint elementOffset, i32 a) => Unsafe.Add(ref p, elementOffset) = a;
 
         public static void Store(Span<float> p, f32 a) => p[0] = a;
 
