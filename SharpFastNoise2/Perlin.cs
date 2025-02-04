@@ -5,14 +5,13 @@ using SharpFastNoise2.Generators;
 
 namespace SharpFastNoise2
 {
-    public struct Perlin<m32, f32, i32, F> :
+    public struct Perlin<f32, i32, F> :
         INoiseGenerator2D<f32, i32>,
         INoiseGenerator3D<f32, i32>,
         INoiseGenerator4D<f32, i32>
-        where m32 : unmanaged
         where f32 : unmanaged
         where i32 : unmanaged
-        where F : IFunctionList<m32, f32, i32, F>
+        where F : IFunctionList<f32, i32, F>
     {
         public static int UnitSize => F.Count;
 
@@ -34,17 +33,17 @@ namespace SharpFastNoise2
             f32 xf1 = F.Sub(xf0, F.Broad((float)1));
             f32 yf1 = F.Sub(yf0, F.Broad((float)1));
 
-            xs = Utils<m32, f32, i32, F>.InterpQuintic(xs);
-            ys = Utils<m32, f32, i32, F>.InterpQuintic(ys);
+            xs = Utils<f32, i32, F>.InterpQuintic(xs);
+            ys = Utils<f32, i32, F>.InterpQuintic(ys);
 
-            return F.Mul(F.Broad(0.579106986522674560546875f), Utils<m32, f32, i32, F>.Lerp(
-                Utils<m32, f32, i32, F>.Lerp(
-                    F.GetGradientDot(Utils<m32, f32, i32, F>.HashPrimes(seed, x0, y0), xf0, yf0),
-                    F.GetGradientDot(Utils<m32, f32, i32, F>.HashPrimes(seed, x1, y0), xf1, yf0),
+            return F.Mul(F.Broad(0.579106986522674560546875f), Utils<f32, i32, F>.Lerp(
+                Utils<f32, i32, F>.Lerp(
+                    F.GetGradientDot(Utils<f32, i32, F>.HashPrimes(seed, x0, y0), xf0, yf0),
+                    F.GetGradientDot(Utils<f32, i32, F>.HashPrimes(seed, x1, y0), xf1, yf0),
                     xs),
-                Utils<m32, f32, i32, F>.Lerp(
-                    F.GetGradientDot(Utils<m32, f32, i32, F>.HashPrimes(seed, x0, y1), xf0, yf1),
-                    F.GetGradientDot(Utils<m32, f32, i32, F>.HashPrimes(seed, x1, y1), xf1, yf1),
+                Utils<f32, i32, F>.Lerp(
+                    F.GetGradientDot(Utils<f32, i32, F>.HashPrimes(seed, x0, y1), xf0, yf1),
+                    F.GetGradientDot(Utils<f32, i32, F>.HashPrimes(seed, x1, y1), xf1, yf1),
                     xs),
                 ys));
         }
@@ -70,29 +69,29 @@ namespace SharpFastNoise2
             f32 yf1 = F.Sub(yf0, F.Broad((float)1));
             f32 zf1 = F.Sub(zf0, F.Broad((float)1));
 
-            xs = Utils<m32, f32, i32, F>.InterpQuintic(xs);
-            ys = Utils<m32, f32, i32, F>.InterpQuintic(ys);
-            zs = Utils<m32, f32, i32, F>.InterpQuintic(zs);
+            xs = Utils<f32, i32, F>.InterpQuintic(xs);
+            ys = Utils<f32, i32, F>.InterpQuintic(ys);
+            zs = Utils<f32, i32, F>.InterpQuintic(zs);
 
-            return F.Mul(F.Broad(0.964921414852142333984375f), Utils<m32, f32, i32, F>.Lerp(
-                Utils<m32, f32, i32, F>.Lerp(
-                    Utils<m32, f32, i32, F>.Lerp(
-                        F.GetGradientDot(Utils<m32, f32, i32, F>.HashPrimes(seed, x0, y0, z0), xf0, yf0, zf0),
-                        F.GetGradientDot(Utils<m32, f32, i32, F>.HashPrimes(seed, x1, y0, z0), xf1, yf0, zf0),
+            return F.Mul(F.Broad(0.964921414852142333984375f), Utils<f32, i32, F>.Lerp(
+                Utils<f32, i32, F>.Lerp(
+                    Utils<f32, i32, F>.Lerp(
+                        F.GetGradientDot(Utils<f32, i32, F>.HashPrimes(seed, x0, y0, z0), xf0, yf0, zf0),
+                        F.GetGradientDot(Utils<f32, i32, F>.HashPrimes(seed, x1, y0, z0), xf1, yf0, zf0),
                         xs),
-                    Utils<m32, f32, i32, F>.Lerp(
-                        F.GetGradientDot(Utils<m32, f32, i32, F>.HashPrimes(seed, x0, y1, z0), xf0, yf1, zf0),
-                        F.GetGradientDot(Utils<m32, f32, i32, F>.HashPrimes(seed, x1, y1, z0), xf1, yf1, zf0),
+                    Utils<f32, i32, F>.Lerp(
+                        F.GetGradientDot(Utils<f32, i32, F>.HashPrimes(seed, x0, y1, z0), xf0, yf1, zf0),
+                        F.GetGradientDot(Utils<f32, i32, F>.HashPrimes(seed, x1, y1, z0), xf1, yf1, zf0),
                         xs),
                     ys),
-                Utils<m32, f32, i32, F>.Lerp(
-                    Utils<m32, f32, i32, F>.Lerp(
-                        F.GetGradientDot(Utils<m32, f32, i32, F>.HashPrimes(seed, x0, y0, z1), xf0, yf0, zf1),
-                        F.GetGradientDot(Utils<m32, f32, i32, F>.HashPrimes(seed, x1, y0, z1), xf1, yf0, zf1),
+                Utils<f32, i32, F>.Lerp(
+                    Utils<f32, i32, F>.Lerp(
+                        F.GetGradientDot(Utils<f32, i32, F>.HashPrimes(seed, x0, y0, z1), xf0, yf0, zf1),
+                        F.GetGradientDot(Utils<f32, i32, F>.HashPrimes(seed, x1, y0, z1), xf1, yf0, zf1),
                         xs),
-                    Utils<m32, f32, i32, F>.Lerp(
-                        F.GetGradientDot(Utils<m32, f32, i32, F>.HashPrimes(seed, x0, y1, z1), xf0, yf1, zf1),
-                        F.GetGradientDot(Utils<m32, f32, i32, F>.HashPrimes(seed, x1, y1, z1), xf1, yf1, zf1),
+                    Utils<f32, i32, F>.Lerp(
+                        F.GetGradientDot(Utils<f32, i32, F>.HashPrimes(seed, x0, y1, z1), xf0, yf1, zf1),
+                        F.GetGradientDot(Utils<f32, i32, F>.HashPrimes(seed, x1, y1, z1), xf1, yf1, zf1),
                         xs),
                     ys),
                 zs));
@@ -124,53 +123,53 @@ namespace SharpFastNoise2
             f32 zf1 = F.Sub(zf0, F.Broad((float)1));
             f32 wf1 = F.Sub(wf0, F.Broad((float)1));
 
-            xs = Utils<m32, f32, i32, F>.InterpQuintic(xs);
-            ys = Utils<m32, f32, i32, F>.InterpQuintic(ys);
-            zs = Utils<m32, f32, i32, F>.InterpQuintic(zs);
-            ws = Utils<m32, f32, i32, F>.InterpQuintic(ws);
+            xs = Utils<f32, i32, F>.InterpQuintic(xs);
+            ys = Utils<f32, i32, F>.InterpQuintic(ys);
+            zs = Utils<f32, i32, F>.InterpQuintic(zs);
+            ws = Utils<f32, i32, F>.InterpQuintic(ws);
 
-            return F.Mul(F.Broad(0.964921414852142333984375f), Utils<m32, f32, i32, F>.Lerp(
-                Utils<m32, f32, i32, F>.Lerp(
-                    Utils<m32, f32, i32, F>.Lerp(
-                        Utils<m32, f32, i32, F>.Lerp(
-                            F.GetGradientDot(Utils<m32, f32, i32, F>.HashPrimes(seed, x0, y0, z0, w0), xf0, yf0, zf0, wf0),
-                            F.GetGradientDot(Utils<m32, f32, i32, F>.HashPrimes(seed, x1, y0, z0, w0), xf1, yf0, zf0, wf0),
+            return F.Mul(F.Broad(0.964921414852142333984375f), Utils<f32, i32, F>.Lerp(
+                Utils<f32, i32, F>.Lerp(
+                    Utils<f32, i32, F>.Lerp(
+                        Utils<f32, i32, F>.Lerp(
+                            F.GetGradientDot(Utils<f32, i32, F>.HashPrimes(seed, x0, y0, z0, w0), xf0, yf0, zf0, wf0),
+                            F.GetGradientDot(Utils<f32, i32, F>.HashPrimes(seed, x1, y0, z0, w0), xf1, yf0, zf0, wf0),
                             xs),
-                        Utils<m32, f32, i32, F>.Lerp(
-                            F.GetGradientDot(Utils<m32, f32, i32, F>.HashPrimes(seed, x0, y1, z0, w0), xf0, yf1, zf0, wf0),
-                            F.GetGradientDot(Utils<m32, f32, i32, F>.HashPrimes(seed, x1, y1, z0, w0), xf1, yf1, zf0, wf0),
+                        Utils<f32, i32, F>.Lerp(
+                            F.GetGradientDot(Utils<f32, i32, F>.HashPrimes(seed, x0, y1, z0, w0), xf0, yf1, zf0, wf0),
+                            F.GetGradientDot(Utils<f32, i32, F>.HashPrimes(seed, x1, y1, z0, w0), xf1, yf1, zf0, wf0),
                             xs),
                         ys),
-                    Utils<m32, f32, i32, F>.Lerp(
-                        Utils<m32, f32, i32, F>.Lerp(
-                            F.GetGradientDot(Utils<m32, f32, i32, F>.HashPrimes(seed, x0, y0, z1, w0), xf0, yf0, zf1, wf0),
-                            F.GetGradientDot(Utils<m32, f32, i32, F>.HashPrimes(seed, x1, y0, z1, w0), xf1, yf0, zf1, wf0),
+                    Utils<f32, i32, F>.Lerp(
+                        Utils<f32, i32, F>.Lerp(
+                            F.GetGradientDot(Utils<f32, i32, F>.HashPrimes(seed, x0, y0, z1, w0), xf0, yf0, zf1, wf0),
+                            F.GetGradientDot(Utils<f32, i32, F>.HashPrimes(seed, x1, y0, z1, w0), xf1, yf0, zf1, wf0),
                             xs),
-                        Utils<m32, f32, i32, F>.Lerp(
-                            F.GetGradientDot(Utils<m32, f32, i32, F>.HashPrimes(seed, x0, y1, z1, w0), xf0, yf1, zf1, wf0),
-                            F.GetGradientDot(Utils<m32, f32, i32, F>.HashPrimes(seed, x1, y1, z1, w0), xf1, yf1, zf1, wf0),
+                        Utils<f32, i32, F>.Lerp(
+                            F.GetGradientDot(Utils<f32, i32, F>.HashPrimes(seed, x0, y1, z1, w0), xf0, yf1, zf1, wf0),
+                            F.GetGradientDot(Utils<f32, i32, F>.HashPrimes(seed, x1, y1, z1, w0), xf1, yf1, zf1, wf0),
                             xs),
                         ys),
                     zs),
-                Utils<m32, f32, i32, F>.Lerp(
-                    Utils<m32, f32, i32, F>.Lerp(
-                        Utils<m32, f32, i32, F>.Lerp(
-                            F.GetGradientDot(Utils<m32, f32, i32, F>.HashPrimes(seed, x0, y0, z0, w1), xf0, yf0, zf0, wf1),
-                            F.GetGradientDot(Utils<m32, f32, i32, F>.HashPrimes(seed, x1, y0, z0, w1), xf1, yf0, zf0, wf1),
+                Utils<f32, i32, F>.Lerp(
+                    Utils<f32, i32, F>.Lerp(
+                        Utils<f32, i32, F>.Lerp(
+                            F.GetGradientDot(Utils<f32, i32, F>.HashPrimes(seed, x0, y0, z0, w1), xf0, yf0, zf0, wf1),
+                            F.GetGradientDot(Utils<f32, i32, F>.HashPrimes(seed, x1, y0, z0, w1), xf1, yf0, zf0, wf1),
                             xs),
-                        Utils<m32, f32, i32, F>.Lerp(
-                            F.GetGradientDot(Utils<m32, f32, i32, F>.HashPrimes(seed, x0, y1, z0, w1), xf0, yf1, zf0, wf1),
-                            F.GetGradientDot(Utils<m32, f32, i32, F>.HashPrimes(seed, x1, y1, z0, w1), xf1, yf1, zf0, wf1),
+                        Utils<f32, i32, F>.Lerp(
+                            F.GetGradientDot(Utils<f32, i32, F>.HashPrimes(seed, x0, y1, z0, w1), xf0, yf1, zf0, wf1),
+                            F.GetGradientDot(Utils<f32, i32, F>.HashPrimes(seed, x1, y1, z0, w1), xf1, yf1, zf0, wf1),
                             xs),
                         ys),
-                    Utils<m32, f32, i32, F>.Lerp(
-                        Utils<m32, f32, i32, F>.Lerp(
-                            F.GetGradientDot(Utils<m32, f32, i32, F>.HashPrimes(seed, x0, y0, z1, w1), xf0, yf0, zf1, wf1),
-                            F.GetGradientDot(Utils<m32, f32, i32, F>.HashPrimes(seed, x1, y0, z1, w1), xf1, yf0, zf1, wf1),
+                    Utils<f32, i32, F>.Lerp(
+                        Utils<f32, i32, F>.Lerp(
+                            F.GetGradientDot(Utils<f32, i32, F>.HashPrimes(seed, x0, y0, z1, w1), xf0, yf0, zf1, wf1),
+                            F.GetGradientDot(Utils<f32, i32, F>.HashPrimes(seed, x1, y0, z1, w1), xf1, yf0, zf1, wf1),
                             xs),
-                        Utils<m32, f32, i32, F>.Lerp(
-                            F.GetGradientDot(Utils<m32, f32, i32, F>.HashPrimes(seed, x0, y1, z1, w1), xf0, yf1, zf1, wf1),
-                            F.GetGradientDot(Utils<m32, f32, i32, F>.HashPrimes(seed, x1, y1, z1, w1), xf1, yf1, zf1, wf1),
+                        Utils<f32, i32, F>.Lerp(
+                            F.GetGradientDot(Utils<f32, i32, F>.HashPrimes(seed, x0, y1, z1, w1), xf0, yf1, zf1, wf1),
+                            F.GetGradientDot(Utils<f32, i32, F>.HashPrimes(seed, x1, y1, z1, w1), xf1, yf1, zf1, wf1),
                             xs),
                         ys),
                     zs),
@@ -186,7 +185,7 @@ namespace SharpFastNoise2
             float frequency,
             int seed)
         {
-            return NoiseGenerator2DHelper.GenUniformGrid<m32, f32, i32, F, Perlin<m32, f32, i32, F>>(
+            return NoiseGenerator2DHelper.GenUniformGrid<f32, i32, F, Perlin<f32, i32, F>>(
                 ref this,
                 destination,
                 xStart,
@@ -208,7 +207,7 @@ namespace SharpFastNoise2
             float frequency,
             int seed)
         {
-            return NoiseGenerator3DHelper.GenUniformGrid<m32, f32, i32, F, Perlin<m32, f32, i32, F>>(
+            return NoiseGenerator3DHelper.GenUniformGrid<f32, i32, F, Perlin<f32, i32, F>>(
                 ref this,
                 destination,
                 xStart,
@@ -234,7 +233,7 @@ namespace SharpFastNoise2
             float frequency,
             int seed)
         {
-            return NoiseGenerator4DHelper.GenUniformGrid<m32, f32, i32, F, Perlin<m32, f32, i32, F>>(
+            return NoiseGenerator4DHelper.GenUniformGrid<f32, i32, F, Perlin<f32, i32, F>>(
                 ref this,
                 destination,
                 xStart,
@@ -257,7 +256,7 @@ namespace SharpFastNoise2
             float yOffset,
             int seed)
         {
-            return NoiseGenerator2DHelper.GenPositionArray<m32, f32, i32, F, Perlin<m32, f32, i32, F>>(
+            return NoiseGenerator2DHelper.GenPositionArray<f32, i32, F, Perlin<f32, i32, F>>(
                 ref this,
                 destination,
                 xPosArray,
@@ -277,7 +276,7 @@ namespace SharpFastNoise2
             float zOffset,
             int seed)
         {
-            return NoiseGenerator3DHelper.GenPositionArray<m32, f32, i32, F, Perlin<m32, f32, i32, F>>(
+            return NoiseGenerator3DHelper.GenPositionArray<f32, i32, F, Perlin<f32, i32, F>>(
                 ref this,
                 destination,
                 xPosArray,
@@ -301,7 +300,7 @@ namespace SharpFastNoise2
             float wOffset,
             int seed)
         {
-            return NoiseGenerator4DHelper.GenPositionArray<m32, f32, i32, F, Perlin<m32, f32, i32, F>>(
+            return NoiseGenerator4DHelper.GenPositionArray<f32, i32, F, Perlin<f32, i32, F>>(
                 ref this,
                 destination,
                 xPosArray,
@@ -317,7 +316,7 @@ namespace SharpFastNoise2
 
         public float GenSingle2D(float x, float y, int seed)
         {
-            return NoiseGenerator2DHelper.GenSingle<m32, f32, i32, F, Perlin<m32, f32, i32, F>>(
+            return NoiseGenerator2DHelper.GenSingle<f32, i32, F, Perlin<f32, i32, F>>(
                 ref this,
                 x,
                 y,
@@ -326,7 +325,7 @@ namespace SharpFastNoise2
 
         public float GenSingle3D(float x, float y, float z, int seed)
         {
-            return NoiseGenerator3DHelper.GenSingle<m32, f32, i32, F, Perlin<m32, f32, i32, F>>(
+            return NoiseGenerator3DHelper.GenSingle<f32, i32, F, Perlin<f32, i32, F>>(
                 ref this,
                 x,
                 y,
@@ -336,7 +335,7 @@ namespace SharpFastNoise2
 
         public float GenSingle4D(float x, float y, float z, float w, int seed)
         {
-            return NoiseGenerator4DHelper.GenSingle<m32, f32, i32, F, Perlin<m32, f32, i32, F>>(
+            return NoiseGenerator4DHelper.GenSingle<f32, i32, F, Perlin<f32, i32, F>>(
                 ref this,
                 x,
                 y,
@@ -352,7 +351,7 @@ namespace SharpFastNoise2
             float frequency,
             int seed)
         {
-            return NoiseGenerator4DHelper.GenTileable<m32, f32, i32, F, Perlin<m32, f32, i32, F>>(
+            return NoiseGenerator4DHelper.GenTileable<f32, i32, F, Perlin<f32, i32, F>>(
                 ref this,
                 destination,
                 xSize,

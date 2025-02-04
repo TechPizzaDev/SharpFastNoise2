@@ -20,11 +20,10 @@ namespace SharpFastNoise2
         {
         }
         
-        public void Apply<m32, f32, i32, F>(f32 min, f32 max)
-            where m32 : unmanaged
+        public void Apply<f32, i32, F>(f32 min, f32 max)
             where f32 : unmanaged
             where i32 : unmanaged
-            where F : IFunctionList<m32, f32, i32, F>
+            where F : IFunctionList<f32, i32, F>
         {
             float scalarMin = F.MinAcross(min);
             float scalarMax = F.MaxAcross(max);

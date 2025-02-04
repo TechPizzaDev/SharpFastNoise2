@@ -5,13 +5,12 @@ using SharpFastNoise2.Generators;
 
 namespace SharpFastNoise2
 {
-    public struct OpenSimplex2<m32, f32, i32, F> :
+    public struct OpenSimplex2<f32, i32, F> :
         INoiseGenerator2D<f32, i32>,
         INoiseGenerator3D<f32, i32>
-        where m32 : unmanaged
         where f32 : unmanaged
         where i32 : unmanaged
-        where F : IFunctionList<m32, f32, i32, F>
+        where F : IFunctionList<f32, i32, F>
     {
         public static int UnitSize => F.Count;
 
@@ -35,7 +34,7 @@ namespace SharpFastNoise2
             x0 = F.Sub(x, F.Sub(x0, g));
             y0 = F.Sub(y, F.Sub(y0, g));
 
-            m32 i1 = F.GreaterThan(x0, y0);
+            f32 i1 = F.GreaterThan(x0, y0);
             //m32 j1 = ~i1; //NMasked funcs
 
             f32 x1 = F.Add(F.MaskSub(x0, F.Broad(1f), i1), F.Broad(G2));
@@ -59,17 +58,17 @@ namespace SharpFastNoise2
             t2 = F.Mul(t2, t2);
 
             f32 n0 = F.GetGradientDotFancy(
-                Utils<m32, f32, i32, F>.HashPrimes(seed, i, j), x0, y0);
+                Utils<f32, i32, F>.HashPrimes(seed, i, j), x0, y0);
 
             f32 n1 = F.GetGradientDotFancy(
-                Utils<m32, f32, i32, F>.HashPrimes(
+                Utils<f32, i32, F>.HashPrimes(
                     seed,
-                    F.MaskAdd(i, F.Broad(Primes.X), i1),
-                    F.NMaskAdd(j, F.Broad(Primes.Y), i1)),
+                    F.MaskAdd(i, F.Broad(Primes.X), F.Cast_i32(i1)),
+                    F.NMaskAdd(j, F.Broad(Primes.Y), F.Cast_i32(i1))),
                 x1, y1);
 
             f32 n2 = F.GetGradientDotFancy(
-                Utils<m32, f32, i32, F>.HashPrimes(
+                Utils<f32, i32, F>.HashPrimes(
                     seed,
                     F.Add(i, F.Broad(Primes.X)),
                     F.Add(j, F.Broad(Primes.Y))),
@@ -100,9 +99,9 @@ namespace SharpFastNoise2
                 f32 score0xr = F.Abs(d0xr);
                 f32 score0yr = F.Abs(d0yr);
                 f32 score0zr = F.Abs(d0zr);
-                m32 dir0xr = F.LessThanOrEqual(F.Max(score0yr, score0zr), score0xr);
-                m32 dir0yr = F.AndNot(F.LessThanOrEqual(F.Max(score0zr, score0xr), score0yr), dir0xr);
-                m32 dir0zr = F.Complement(F.Or(dir0xr, dir0yr));
+                f32 dir0xr = F.LessThanOrEqual(F.Max(score0yr, score0zr), score0xr);
+                f32 dir0yr = F.AndNot(F.LessThanOrEqual(F.Max(score0zr, score0xr), score0yr), dir0xr);
+                f32 dir0zr = F.Complement(F.Or(dir0xr, dir0yr));
                 f32 v1xr = F.MaskAdd(v0xr, F.Or(F.Broad(1.0f), F.And(F.Broad(-1.0f), d0xr)), dir0xr);
                 f32 v1yr = F.MaskAdd(v0yr, F.Or(F.Broad(1.0f), F.And(F.Broad(-1.0f), d0yr)), dir0yr);
                 f32 v1zr = F.MaskAdd(v0zr, F.Or(F.Broad(1.0f), F.And(F.Broad(-1.0f), d0zr)), dir0zr);
@@ -127,8 +126,8 @@ namespace SharpFastNoise2
                 t1 = F.Mul(t1, t1);
                 t1 = F.Mul(t1, t1);
 
-                f32 v0 = F.GetGradientDot(Utils<m32, f32, i32, F>.HashPrimes(seed, hv0xr, hv0yr, hv0zr), d0xr, d0yr, d0zr);
-                f32 v1 = F.GetGradientDot(Utils<m32, f32, i32, F>.HashPrimes(seed, hv1xr, hv1yr, hv1zr), d1xr, d1yr, d1zr);
+                f32 v0 = F.GetGradientDot(Utils<f32, i32, F>.HashPrimes(seed, hv0xr, hv0yr, hv0zr), d0xr, d0yr, d0zr);
+                f32 v1 = F.GetGradientDot(Utils<f32, i32, F>.HashPrimes(seed, hv1xr, hv1yr, hv1zr), d1xr, d1yr, d1zr);
 
                 val = F.FMulAdd(v0, t0, F.FMulAdd(v1, t1, val));
 
@@ -156,7 +155,7 @@ namespace SharpFastNoise2
             float frequency,
             int seed)
         {
-            return NoiseGenerator2DHelper.GenUniformGrid<m32, f32, i32, F, OpenSimplex2<m32, f32, i32, F>>(
+            return NoiseGenerator2DHelper.GenUniformGrid<f32, i32, F, OpenSimplex2<f32, i32, F>>(
                 ref this,
                 destination,
                 xStart,
@@ -178,7 +177,7 @@ namespace SharpFastNoise2
             float frequency,
             int seed)
         {
-            return NoiseGenerator3DHelper.GenUniformGrid<m32, f32, i32, F, OpenSimplex2<m32, f32, i32, F>>(
+            return NoiseGenerator3DHelper.GenUniformGrid<f32, i32, F, OpenSimplex2<f32, i32, F>>(
                 ref this,
                 destination,
                 xStart,
@@ -227,7 +226,7 @@ namespace SharpFastNoise2
             float yOffset,
             int seed)
         {
-            return NoiseGenerator2DHelper.GenPositionArray<m32, f32, i32, F, OpenSimplex2<m32, f32, i32, F>>(
+            return NoiseGenerator2DHelper.GenPositionArray<f32, i32, F, OpenSimplex2<f32, i32, F>>(
                 ref this,
                 destination,
                 xPosArray,
@@ -247,7 +246,7 @@ namespace SharpFastNoise2
             float zOffset,
             int seed)
         {
-            return NoiseGenerator3DHelper.GenPositionArray<m32, f32, i32, F, OpenSimplex2<m32, f32, i32, F>>(
+            return NoiseGenerator3DHelper.GenPositionArray<f32, i32, F, OpenSimplex2<f32, i32, F>>(
                 ref this,
                 destination,
                 xPosArray,
@@ -287,7 +286,7 @@ namespace SharpFastNoise2
 
         public float GenSingle2D(float x, float y, int seed)
         {
-            return NoiseGenerator2DHelper.GenSingle<m32, f32, i32, F, OpenSimplex2<m32, f32, i32, F>>(
+            return NoiseGenerator2DHelper.GenSingle<f32, i32, F, OpenSimplex2<f32, i32, F>>(
                 ref this,
                 x,
                 y,
@@ -296,7 +295,7 @@ namespace SharpFastNoise2
 
         public float GenSingle3D(float x, float y, float z, int seed)
         {
-            return NoiseGenerator3DHelper.GenSingle<m32, f32, i32, F, OpenSimplex2<m32, f32, i32, F>>(
+            return NoiseGenerator3DHelper.GenSingle<f32, i32, F, OpenSimplex2<f32, i32, F>>(
                 ref this,
                 x,
                 y,

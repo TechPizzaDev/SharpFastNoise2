@@ -5,9 +5,9 @@ using SharpFastNoise2.Functions;
 
 namespace Benchmarks
 {
-    using PerlinNoise16 = Perlin<Vector512<int>, Vector512<float>, Vector512<int>, Avx512Functions>;
+    using PerlinNoise16 = Perlin<Vector512<float>, Vector512<int>, Avx512Functions>;
 
-    public class Perlin_16_Avx512 : BenchNoiseBase<Vector512<int>, Vector512<float>, Vector512<int>, Avx512Functions>
+    public class Perlin_16_Avx512 : BenchNoiseBase<Vector512<float>, Vector512<int>, Avx512Functions>
     {
         [Benchmark]
         public void Perlin_2Dx16()

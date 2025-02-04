@@ -9,9 +9,8 @@ namespace SharpFastNoise2.Functions
 {
     using f32 = Single;
     using i32 = Int32;
-    using m32 = UInt32;
 
-    public struct ScalarFunctions : IFunctionList<m32, f32, i32, ScalarFunctions>
+    public struct ScalarFunctions : IFunctionList<f32, i32, ScalarFunctions>
     {
         public static bool IsSupported => true;
 
@@ -78,8 +77,8 @@ namespace SharpFastNoise2.Functions
 
         // Select
 
-        public static f32 Select(m32 m, f32 a, f32 b) => m != 0 ? a : b;
-        public static i32 Select(m32 m, i32 a, i32 b) => m != 0 ? a : b;
+        public static f32 Select(f32 m, f32 a, f32 b) => Unsafe.BitCast<f32, i32>(m) != 0 ? a : b;
+        public static i32 Select(i32 m, i32 a, i32 b) => m != 0 ? a : b;
 
         // Min
 
@@ -113,7 +112,6 @@ namespace SharpFastNoise2.Functions
 
         public static f32 AndNot(f32 a, f32 b) => Cast_f32(Cast_i32(a) & ~Cast_i32(b));
         public static i32 AndNot(i32 a, i32 b) => a & ~b;
-        public static m32 AndNot(m32 a, m32 b) => a & ~b;
 
         public static f32 ShiftRightLogical(f32 a, [ConstantExpected] byte b) => Cast_f32(Cast_i32(a) >>> b);
         public static i32 ShiftRightLogical(i32 a, [ConstantExpected] byte b) => a >>> b;
@@ -162,27 +160,27 @@ namespace SharpFastNoise2.Functions
 
         // Mask
 
-        public static i32 Mask(i32 a, m32 m) => m != 0 ? a : 0;
-        public static f32 Mask(f32 a, m32 m) => m != 0 ? a : 0;
+        public static i32 Mask(i32 a, i32 m) => m != 0 ? a : 0;
+        public static f32 Mask(f32 a, f32 m) => m != 0 ? a : 0;
 
-        public static i32 NMask(i32 a, m32 m) => m != 0 ? 0 : a;
-        public static f32 NMask(f32 a, m32 m) => m != 0 ? 0 : a;
+        public static i32 NMask(i32 a, i32 m) => m != 0 ? 0 : a;
+        public static f32 NMask(f32 a, f32 m) => m != 0 ? 0 : a;
 
-        public static bool AnyMask(m32 m) => m != 0;
-        public static bool AllMask(m32 m) => m == m32.MaxValue;
+        public static bool AnyMask(i32 m) => m != 0;
+        public static bool AllMask(i32 m) => m == -1;
 
         // Bit Ops
 
-        public static int Log2(m32 a) => BitOperations.Log2(a);
-        public static int PopCount(m32 a) => BitOperations.PopCount(a);
+        public static int Log2(i32 a) => BitOperations.Log2((uint)a);
+        public static int PopCount(i32 a) => BitOperations.PopCount((uint)a);
 
-        public static int LeadingZeroCount(m32 a) => BitOperations.LeadingZeroCount(a);
-        public static int TrailingZeroCount(m32 a) => BitOperations.TrailingZeroCount(a);
+        public static int LeadingZeroCount(i32 a) => BitOperations.LeadingZeroCount((uint)a);
+        public static int TrailingZeroCount(i32 a) => BitOperations.TrailingZeroCount(a);
 
         // Masked int32
 
-        public static i32 MaskIncrement(i32 a, m32 m) => a - (int) m;
-        public static i32 MaskDecrement(i32 a, m32 m) => a + (int) m;
+        public static i32 MaskIncrement(i32 a, i32 m) => a - m;
+        public static i32 MaskDecrement(i32 a, i32 m) => a + m;
 
         // FMA
 
@@ -192,22 +190,22 @@ namespace SharpFastNoise2.Functions
         // Float math
 
         public static f32 Add(f32 lhs, f32 rhs) => lhs + rhs;
-        public static f32 And(f32 lhs, f32 rhs) => Cast_f32(And(Cast_i32(lhs), Cast_i32(rhs)));
-        public static f32 Complement(f32 lhs) => Cast_f32(Complement(Cast_i32(lhs)));
+        public static f32 And(f32 lhs, f32 rhs) => Cast_f32(Cast_i32(lhs) & Cast_i32(rhs));
+        public static f32 Complement(f32 lhs) => Cast_f32(~Cast_i32(lhs));
         public static f32 Div(f32 lhs, f32 rhs) => lhs / rhs;
-        public static m32 Equal(f32 lhs, f32 rhs) => (lhs == rhs).AsUInt32();
-        public static m32 GreaterThan(f32 lhs, f32 rhs) => (lhs > rhs).AsUInt32();
-        public static m32 GreaterThanOrEqual(f32 lhs, f32 rhs) => (lhs >= rhs).AsUInt32();
-        public static f32 LeftShift(f32 lhs, [ConstantExpected] byte rhs) => Cast_f32(LeftShift(Cast_i32(lhs), rhs));
-        public static m32 LessThan(f32 lhs, f32 rhs) => (lhs < rhs).AsUInt32();
-        public static m32 LessThanOrEqual(f32 lhs, f32 rhs) => (lhs <= rhs).AsUInt32();
+        public static f32 Equal(f32 lhs, f32 rhs) => (lhs == rhs).AsFloat();
+        public static f32 GreaterThan(f32 lhs, f32 rhs) => (lhs > rhs).AsFloat();
+        public static f32 GreaterThanOrEqual(f32 lhs, f32 rhs) => (lhs >= rhs).AsFloat();
+        public static f32 LeftShift(f32 lhs, [ConstantExpected] byte rhs) => Cast_f32(Cast_i32(lhs) << rhs);
+        public static f32 LessThan(f32 lhs, f32 rhs) => (lhs < rhs).AsFloat();
+        public static f32 LessThanOrEqual(f32 lhs, f32 rhs) => (lhs <= rhs).AsFloat();
         public static f32 Mul(f32 lhs, f32 rhs) => lhs * rhs;
         public static f32 Negate(f32 lhs) => -lhs;
-        public static m32 NotEqual(f32 lhs, f32 rhs) => (lhs != rhs).AsUInt32();
-        public static f32 Or(f32 lhs, f32 rhs) => Cast_f32(Or(Cast_i32(lhs), Cast_i32(rhs)));
-        public static f32 RightShift(f32 lhs, [ConstantExpected] byte rhs) => Cast_f32(RightShift(Cast_i32(lhs), rhs));
+        public static f32 NotEqual(f32 lhs, f32 rhs) => (lhs != rhs).AsFloat();
+        public static f32 Or(f32 lhs, f32 rhs) => Cast_f32(Cast_i32(lhs) | Cast_i32(rhs));
+        public static f32 RightShift(f32 lhs, [ConstantExpected] byte rhs) => Cast_f32(Cast_i32(lhs) >> rhs);
         public static f32 Sub(f32 lhs, f32 rhs) => lhs - rhs;
-        public static f32 Xor(f32 lhs, f32 rhs) => Cast_f32(Xor(Cast_i32(lhs), Cast_i32(rhs)));
+        public static f32 Xor(f32 lhs, f32 rhs) => Cast_f32(Cast_i32(lhs) ^ Cast_i32(rhs));
 
         // Int math
 
@@ -215,24 +213,18 @@ namespace SharpFastNoise2.Functions
         public static i32 And(i32 lhs, i32 rhs) => lhs & rhs;
         public static i32 Complement(i32 lhs) => ~lhs;
         public static i32 Div(i32 lhs, i32 rhs) => lhs / rhs;
-        public static m32 Equal(i32 lhs, i32 rhs) => (lhs == rhs).AsUInt32();
-        public static m32 GreaterThan(i32 lhs, i32 rhs) => (lhs > rhs).AsUInt32();
-        public static m32 GreaterThanOrEqual(i32 lhs, i32 rhs) => (lhs >= rhs).AsUInt32();
+        public static i32 Equal(i32 lhs, i32 rhs) => (lhs == rhs).AsInt32();
+        public static i32 GreaterThan(i32 lhs, i32 rhs) => (lhs > rhs).AsInt32();
+        public static i32 GreaterThanOrEqual(i32 lhs, i32 rhs) => (lhs >= rhs).AsInt32();
         public static i32 LeftShift(i32 lhs, [ConstantExpected] byte rhs) => lhs << rhs;
-        public static m32 LessThan(i32 lhs, i32 rhs) => (lhs < rhs).AsUInt32();
-        public static m32 LessThanOrEqual(i32 lhs, i32 rhs) => (lhs <= rhs).AsUInt32();
+        public static i32 LessThan(i32 lhs, i32 rhs) => (lhs < rhs).AsInt32();
+        public static i32 LessThanOrEqual(i32 lhs, i32 rhs) => (lhs <= rhs).AsInt32();
         public static i32 Mul(i32 lhs, i32 rhs) => lhs * rhs;
         public static i32 Negate(i32 lhs) => -lhs;
-        public static m32 NotEqual(i32 lhs, i32 rhs) => (lhs != rhs).AsUInt32();
+        public static i32 NotEqual(i32 lhs, i32 rhs) => (lhs != rhs).AsInt32();
         public static i32 Or(i32 lhs, i32 rhs) => lhs | rhs;
         public static i32 RightShift(i32 lhs, [ConstantExpected] byte rhs) => lhs >> rhs;
         public static i32 Sub(i32 lhs, i32 rhs) => lhs - rhs;
         public static i32 Xor(i32 lhs, i32 rhs) => lhs ^ rhs;
-
-        // Mask math
-
-        public static m32 And(m32 lhs, m32 rhs) => lhs & rhs;
-        public static m32 Complement(m32 lhs) => ~lhs;
-        public static m32 Or(m32 lhs, m32 rhs) => lhs | rhs;
     }
 }

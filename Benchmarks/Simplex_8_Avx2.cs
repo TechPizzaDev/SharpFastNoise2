@@ -5,9 +5,9 @@ using SharpFastNoise2.Functions;
 
 namespace Benchmarks
 {
-    using SimplexNoise8 = Simplex<Vector256<int>, Vector256<float>, Vector256<int>, Avx2Functions>;
+    using SimplexNoise8 = Simplex<Vector256<float>, Vector256<int>, Avx2Functions>;
 
-    public class Simplex_8_Avx2 : BenchNoiseBase<Vector256<int>, Vector256<float>, Vector256<int>, Avx2Functions>
+    public class Simplex_8_Avx2 : BenchNoiseBase<Vector256<float>, Vector256<int>, Avx2Functions>
     {
         [Benchmark]
         public void Simplex_2Dx8()

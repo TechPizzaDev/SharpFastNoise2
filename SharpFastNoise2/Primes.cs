@@ -6,7 +6,5 @@
         public const int Y = 1136930381;
         public const int Z = 1720413743;
         public const int W = 1066037191;
-
-        public static int[] Lookup = new int[] { X, Y, Z, W };
     }
 }

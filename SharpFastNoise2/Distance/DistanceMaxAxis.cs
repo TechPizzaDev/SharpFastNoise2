@@ -3,11 +3,10 @@ using SharpFastNoise2.Functions;
 
 namespace SharpFastNoise2.Distance
 {
-    public struct DistanceMaxAxis<m32, f32, i32, F> : IDistanceFunction<m32, f32, i32, F>
-        where m32 : unmanaged
+    public struct DistanceMaxAxis<f32, i32, F> : IDistanceFunction<f32, i32, F>
         where f32 : unmanaged
         where i32 : unmanaged
-        where F : IFunctionList<m32, f32, i32, F>
+        where F : IFunctionList<f32, i32, F>
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static f32 CalcDistance(f32 dX, f32 dY)

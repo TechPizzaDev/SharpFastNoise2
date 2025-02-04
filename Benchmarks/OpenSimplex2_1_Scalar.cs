@@ -4,9 +4,9 @@ using SharpFastNoise2.Functions;
 
 namespace Benchmarks
 {
-    using OpenSimplex2Noise1 = OpenSimplex2<int, float, int, ScalarFunctions>;
+    using OpenSimplex2Noise1 = OpenSimplex2<float, int, ScalarFunctions>;
 
-    public class OpenSimplex2_1_Scalar : BenchNoiseBase<int, float, int, ScalarFunctions>
+    public class OpenSimplex2_1_Scalar : BenchNoiseBase<float, int, ScalarFunctions>
     {
         [Benchmark]
         public void OpenSimplex2_2Dx1()

@@ -35,8 +35,8 @@ namespace Sandbox
 
                 WriteTileable<
                     Vector512<float>, Vector512<int>,
-                    CellularValue<Vector512<uint>, Vector512<float>, Vector512<int>, Avx512Functions,
-                        DistanceEuclidean<Vector512<uint>, Vector512<float>, Vector512<int>, Avx512Functions>>>(
+                    CellularValue<Vector512<float>, Vector512<int>, Avx512Functions,
+                        DistanceEuclidean<Vector512<float>, Vector512<int>, Avx512Functions>>>(
                     path,
                     generator: new(),
                     seed,
@@ -45,8 +45,8 @@ namespace Sandbox
 
                 WriteTileable<
                     Vector256<float>, Vector256<int>,
-                    CellularValue<Vector256<uint>, Vector256<float>, Vector256<int>, Avx2Functions,
-                        DistanceEuclidean<Vector256<uint>, Vector256<float>, Vector256<int>, Avx2Functions>>>(
+                    CellularValue<Vector256<float>, Vector256<int>, Avx2Functions,
+                        DistanceEuclidean<Vector256<float>, Vector256<int>, Avx2Functions>>>(
                     path,
                     generator: new(),
                     seed,
@@ -55,8 +55,8 @@ namespace Sandbox
 
                 WriteTileable<
                     Vector128<float>, Vector128<int>,
-                    CellularValue<Vector128<uint>, Vector128<float>, Vector128<int>, Sse2Functions,
-                        DistanceEuclidean<Vector128<uint>, Vector128<float>, Vector128<int>, Sse2Functions>>>(
+                    CellularValue<Vector128<float>, Vector128<int>, Sse2Functions,
+                        DistanceEuclidean<Vector128<float>, Vector128<int>, Sse2Functions>>>(
                     path,
                     generator: new(),
                     seed,
@@ -65,8 +65,8 @@ namespace Sandbox
 
                 WriteTileable<
                     float, int,
-                    CellularValue<uint, float, int, ScalarFunctions,
-                        DistanceEuclidean<uint, float, int, ScalarFunctions>>>(
+                    CellularValue<float, int, ScalarFunctions,
+                        DistanceEuclidean<float, int, ScalarFunctions>>>(
                     path,
                     generator: new(),
                     seed,
@@ -82,8 +82,8 @@ namespace Sandbox
                 float dy = 8;
 
                 const float pi = MathF.PI;
-                var noise = new CellularValue<uint, float, int, ScalarFunctions,
-                    DistanceEuclidean<uint, float, int, ScalarFunctions>>();
+                var noise = new CellularValue<float, int, ScalarFunctions,
+                    DistanceEuclidean<float, int, ScalarFunctions>>();
 
                 for (int y = 0; y < 256; y++)
                 {
@@ -92,8 +92,8 @@ namespace Sandbox
                         float s = x / 256f;
                         float t = y / 256f;
 
-                        (float sSin, float sCos) = Utils<uint, float, int, ScalarFunctions>.SinCos_f32(s * 2 * pi);
-                        (float tSin, float tCos) = Utils<uint, float, int, ScalarFunctions>.SinCos_f32(t * 2 * pi);
+                        (float sSin, float sCos) = Utils<float, int, ScalarFunctions>.SinCos_f32(s * 2 * pi);
+                        (float tSin, float tCos) = Utils<float, int, ScalarFunctions>.SinCos_f32(t * 2 * pi);
 
                         float nx = sCos * dx / (2 * pi);
                         float ny = tCos * dy / (2 * pi);
@@ -113,13 +113,13 @@ namespace Sandbox
             if (true)
             {
                 void WriteDistanceFunc<D>()
-                    where D : IDistanceFunction<Vector256<uint>, Vector256<float>, Vector256<int>, Avx2Functions>
+                    where D : IDistanceFunction<Vector256<float>, Vector256<int>, Avx2Functions>
                 {
                     string dpath = Path.Combine(basePath, $"CellularValue_{{0}}_{typeof(D).Name}");
 
                     Write<
-                        Vector256<uint>, Vector256<float>, Vector256<int>, Avx2Functions,
-                        CellularValue<Vector256<uint>, Vector256<float>, Vector256<int>, Avx2Functions, D>>(
+                        Vector256<float>, Vector256<int>, Avx2Functions,
+                        CellularValue<Vector256<float>, Vector256<int>, Avx2Functions, D>>(
                         dpath,
                         generator: new(),
                         seed,
@@ -128,18 +128,18 @@ namespace Sandbox
                         height);
                 }
 
-                WriteDistanceFunc<DistanceEuclidean<Vector256<uint>, Vector256<float>, Vector256<int>, Avx2Functions>>();
-                WriteDistanceFunc<DistanceEuclideanSquared<Vector256<uint>, Vector256<float>, Vector256<int>, Avx2Functions>>();
-                WriteDistanceFunc<DistanceManhattan<Vector256<uint>, Vector256<float>, Vector256<int>, Avx2Functions>>();
-                WriteDistanceFunc<DistanceHybrid<Vector256<uint>, Vector256<float>, Vector256<int>, Avx2Functions>>();
-                WriteDistanceFunc<DistanceMaxAxis<Vector256<uint>, Vector256<float>, Vector256<int>, Avx2Functions>>();
+                WriteDistanceFunc<DistanceEuclidean<Vector256<float>, Vector256<int>, Avx2Functions>>();
+                WriteDistanceFunc<DistanceEuclideanSquared<Vector256<float>, Vector256<int>, Avx2Functions>>();
+                WriteDistanceFunc<DistanceManhattan<Vector256<float>, Vector256<int>, Avx2Functions>>();
+                WriteDistanceFunc<DistanceHybrid<Vector256<float>, Vector256<int>, Avx2Functions>>();
+                WriteDistanceFunc<DistanceMaxAxis<Vector256<float>, Vector256<int>, Avx2Functions>>();
 
                 string path = Path.Combine(basePath, $"CellularValue_{{0}}");
 
                 Write<
-                    Vector512<uint>, Vector512<float>, Vector512<int>, Avx512Functions,
-                    CellularValue<Vector512<uint>, Vector512<float>, Vector512<int>, Avx512Functions,
-                        DistanceEuclidean<Vector512<uint>, Vector512<float>, Vector512<int>, Avx512Functions>>>(
+                    Vector512<float>, Vector512<int>, Avx512Functions,
+                    CellularValue<Vector512<float>, Vector512<int>, Avx512Functions,
+                        DistanceEuclidean<Vector512<float>, Vector512<int>, Avx512Functions>>>(
                     path,
                     generator: new(),
                     seed,
@@ -148,9 +148,9 @@ namespace Sandbox
                     height);
 
                 Write<
-                    Vector256<uint>, Vector256<float>, Vector256<int>, Avx2Functions,
-                    CellularValue<Vector256<uint>, Vector256<float>, Vector256<int>, Avx2Functions,
-                        DistanceEuclidean<Vector256<uint>, Vector256<float>, Vector256<int>, Avx2Functions>>>(
+                    Vector256<float>, Vector256<int>, Avx2Functions,
+                    CellularValue<Vector256<float>, Vector256<int>, Avx2Functions,
+                        DistanceEuclidean<Vector256<float>, Vector256<int>, Avx2Functions>>>(
                     path,
                     generator: new(),
                     seed,
@@ -159,9 +159,9 @@ namespace Sandbox
                     height);
 
                 Write<
-                    Vector128<uint>, Vector128<float>, Vector128<int>, Sse2Functions,
-                    CellularValue<Vector128<uint>, Vector128<float>, Vector128<int>, Sse2Functions,
-                        DistanceEuclidean<Vector128<uint>, Vector128<float>, Vector128<int>, Sse2Functions>>>(
+                    Vector128<float>, Vector128<int>, Sse2Functions,
+                    CellularValue<Vector128<float>, Vector128<int>, Sse2Functions,
+                        DistanceEuclidean<Vector128<float>, Vector128<int>, Sse2Functions>>>(
                     path,
                     generator: new(),
                     seed,
@@ -170,9 +170,9 @@ namespace Sandbox
                     height);
 
                 Write<
-                    uint, float, int, ScalarFunctions,
-                    CellularValue<uint, float, int, ScalarFunctions,
-                        DistanceEuclidean<uint, float, int, ScalarFunctions>>>(
+                    float, int, ScalarFunctions,
+                    CellularValue<float, int, ScalarFunctions,
+                        DistanceEuclidean<float, int, ScalarFunctions>>>(
                     path,
                     generator: new(),
                     seed,
@@ -186,8 +186,8 @@ namespace Sandbox
                 string path = Path.Combine(basePath, "Perlin_{0}");
 
                 Write<
-                    Vector512<uint>, Vector512<float>, Vector512<int>, Avx512Functions,
-                    Perlin<Vector512<uint>, Vector512<float>, Vector512<int>, Avx512Functions>>(
+                    Vector512<float>, Vector512<int>, Avx512Functions,
+                    Perlin<Vector512<float>, Vector512<int>, Avx512Functions>>(
                     path,
                     generator: new(),
                     seed,
@@ -196,8 +196,8 @@ namespace Sandbox
                     height);
 
                 Write<
-                    Vector256<uint>, Vector256<float>, Vector256<int>, Avx2Functions,
-                    Perlin<Vector256<uint>, Vector256<float>, Vector256<int>, Avx2Functions>>(
+                    Vector256<float>, Vector256<int>, Avx2Functions,
+                    Perlin<Vector256<float>, Vector256<int>, Avx2Functions>>(
                     path,
                     generator: new(),
                     seed,
@@ -206,8 +206,8 @@ namespace Sandbox
                     height);
 
                 Write<
-                    Vector128<uint>, Vector128<float>, Vector128<int>, Sse2Functions,
-                    Perlin<Vector128<uint>, Vector128<float>, Vector128<int>, Sse2Functions>>(
+                    Vector128<float>, Vector128<int>, Sse2Functions,
+                    Perlin<Vector128<float>, Vector128<int>, Sse2Functions>>(
                     path,
                     generator: new(),
                     seed,
@@ -216,8 +216,8 @@ namespace Sandbox
                     height);
 
                 Write<
-                    uint, float, int, ScalarFunctions,
-                    Perlin<uint, float, int, ScalarFunctions>>(
+                    float, int, ScalarFunctions,
+                    Perlin<float, int, ScalarFunctions>>(
                     path,
                     generator: new(),
                     seed,
@@ -231,8 +231,8 @@ namespace Sandbox
                 string path = Path.Combine(basePath, "Simplex_{0}");
 
                 Write<
-                    Vector512<uint>, Vector512<float>, Vector512<int>, Avx512Functions,
-                    Simplex<Vector512<uint>, Vector512<float>, Vector512<int>, Avx512Functions>>(
+                    Vector512<float>, Vector512<int>, Avx512Functions,
+                    Simplex<Vector512<float>, Vector512<int>, Avx512Functions>>(
                     path,
                     generator: new(),
                     seed,
@@ -241,8 +241,8 @@ namespace Sandbox
                     height);
 
                 Write<
-                    Vector256<uint>, Vector256<float>, Vector256<int>, Avx2Functions,
-                    Simplex<Vector256<uint>, Vector256<float>, Vector256<int>, Avx2Functions>>(
+                    Vector256<float>, Vector256<int>, Avx2Functions,
+                    Simplex<Vector256<float>, Vector256<int>, Avx2Functions>>(
                     path,
                     generator: new(),
                     seed,
@@ -251,8 +251,8 @@ namespace Sandbox
                     height);
 
                 Write<
-                    Vector128<uint>, Vector128<float>, Vector128<int>, Sse2Functions,
-                    Simplex<Vector128<uint>, Vector128<float>, Vector128<int>, Sse2Functions>>(
+                    Vector128<float>, Vector128<int>, Sse2Functions,
+                    Simplex<Vector128<float>, Vector128<int>, Sse2Functions>>(
                     path,
                     generator: new(),
                     seed,
@@ -261,8 +261,8 @@ namespace Sandbox
                     height);
 
                 Write<
-                    uint, float, int, ScalarFunctions,
-                    Simplex<uint, float, int, ScalarFunctions>>(
+                    float, int, ScalarFunctions,
+                    Simplex<float, int, ScalarFunctions>>(
                     path,
                     generator: new(),
                     seed,
@@ -276,8 +276,8 @@ namespace Sandbox
                 string path = Path.Combine(basePath, "OpenSimplex2_{0}");
 
                 Write<
-                    Vector512<uint>, Vector512<float>, Vector512<int>, Avx512Functions,
-                    OpenSimplex2<Vector512<uint>, Vector512<float>, Vector512<int>, Avx512Functions>>(
+                    Vector512<float>, Vector512<int>, Avx512Functions,
+                    OpenSimplex2<Vector512<float>, Vector512<int>, Avx512Functions>>(
                     path,
                     generator: new(),
                     seed,
@@ -286,8 +286,8 @@ namespace Sandbox
                     height);
 
                 Write<
-                    Vector256<uint>, Vector256<float>, Vector256<int>, Avx2Functions,
-                    OpenSimplex2<Vector256<uint>, Vector256<float>, Vector256<int>, Avx2Functions>>(
+                    Vector256<float>, Vector256<int>, Avx2Functions,
+                    OpenSimplex2<Vector256<float>, Vector256<int>, Avx2Functions>>(
                     path,
                     generator: new(),
                     seed,
@@ -296,8 +296,8 @@ namespace Sandbox
                     height);
 
                 Write<
-                    Vector128<uint>, Vector128<float>, Vector128<int>, Sse2Functions,
-                    OpenSimplex2<Vector128<uint>, Vector128<float>, Vector128<int>, Sse2Functions>>(
+                    Vector128<float>, Vector128<int>, Sse2Functions,
+                    OpenSimplex2<Vector128<float>, Vector128<int>, Sse2Functions>>(
                     path,
                     generator: new(),
                     seed,
@@ -306,8 +306,8 @@ namespace Sandbox
                     height);
 
                 Write<
-                    uint, float, int, ScalarFunctions,
-                    OpenSimplex2<uint, float, int, ScalarFunctions>>(
+                    float, int, ScalarFunctions,
+                    OpenSimplex2<float, int, ScalarFunctions>>(
                     path,
                     generator: new(),
                     seed,
@@ -317,24 +317,23 @@ namespace Sandbox
             }
         }
 
-        public static void Write<m32, f32, i32, F, G>(
+        public static void Write<f32, i32, F, G>(
             string basePath,
             G generator,
             int seed,
             float offsetX,
             int width,
             int height)
-            where m32 : unmanaged
             where f32 : unmanaged
             where i32 : unmanaged
-            where F : IFunctionList<m32, f32, i32, F>
+            where F : IFunctionList<f32, i32, F>
             where G : INoiseGeneratorAbstract
         {
             using Image<L16> image = new(width, height);
             Stopwatch w = new();
 
-            var vSeed = F.Broad_i32(seed);
-            var vIncrementX = F.Div(F.Add(F.Incremented_f32(), F.Broad_f32(offsetX)), F.Broad_f32(32));
+            var vSeed = F.Broad(seed);
+            var vIncrementX = F.Div(F.Add(F.Incremented_f32(), F.Broad(offsetX)), F.Broad(32f));
 
             if (generator is INoiseGenerator4D<f32, i32> gen4D)
             {
@@ -344,16 +343,16 @@ namespace Sandbox
                 w.Restart();
                 for (int y = 0; y < image.Height; y++)
                 {
-                    f32 vy = F.Broad_f32(y / 32f);
+                    f32 vy = F.Broad(y / 32f);
 
                     for (int x = 0; x < image.Width; x += G.UnitSize)
                     {
-                        f32 vx = F.Add(F.Broad_f32(x / 32f), vIncrementX);
+                        f32 vx = F.Add(F.Broad(x / 32f), vIncrementX);
                         f32 noise = gen4D.Gen(vx, vy, default, default, vSeed);
 
                         for (int i = 0; i < G.UnitSize; i++)
                         {
-                            image[x + i, y] = new L16((ushort) ((F.Extract_f32(noise, i) + 1) * 0.5f * ushort.MaxValue));
+                            image[x + i, y] = new L16((ushort) ((F.Extract(noise, i) + 1) * 0.5f * ushort.MaxValue));
                         }
                     }
                 }
@@ -375,16 +374,16 @@ namespace Sandbox
                 w.Restart();
                 for (int y = 0; y < image.Height; y++)
                 {
-                    f32 vy = F.Broad_f32(y / 32f);
+                    f32 vy = F.Broad(y / 32f);
 
                     for (int x = 0; x < image.Width; x += G.UnitSize)
                     {
-                        f32 vx = F.Add(F.Broad_f32(x / 32f), vIncrementX);
+                        f32 vx = F.Add(F.Broad(x / 32f), vIncrementX);
                         f32 noise = gen3D.Gen(vx, vy, default, vSeed);
 
                         for (int i = 0; i < G.UnitSize; i++)
                         {
-                            image[x + i, y] = new L16((ushort) ((F.Extract_f32(noise, i) + 1) * 0.5f * ushort.MaxValue));
+                            image[x + i, y] = new L16((ushort) ((F.Extract(noise, i) + 1) * 0.5f * ushort.MaxValue));
                         }
                     }
                 }
@@ -406,16 +405,16 @@ namespace Sandbox
                 w.Restart();
                 for (int y = 0; y < image.Height; y++)
                 {
-                    f32 vy = F.Broad_f32(y / 32f);
+                    f32 vy = F.Broad(y / 32f);
 
                     for (int x = 0; x < image.Width; x += G.UnitSize)
                     {
-                        f32 vx = F.Add(F.Broad_f32(x / 32f), vIncrementX);
+                        f32 vx = F.Add(F.Broad(x / 32f), vIncrementX);
                         f32 noise = gen2D.Gen(vx, vy, vSeed);
 
                         for (int i = 0; i < G.UnitSize; i++)
                         {
-                            image[x + i, y] = new L16((ushort) ((F.Extract_f32(noise, i) + 1) * 0.5f * ushort.MaxValue));
+                            image[x + i, y] = new L16((ushort) ((F.Extract(noise, i) + 1) * 0.5f * ushort.MaxValue));
                         }
                     }
                 }
@@ -439,12 +438,12 @@ namespace Sandbox
                 {
                     for (int x = 0; x < image.Width; x += G.UnitSize)
                     {
-                        f32 vx = F.Add(F.Broad_f32(x / 32f), vIncrementX);
+                        f32 vx = F.Add(F.Broad(x / 32f), vIncrementX);
                         f32 noise = gen1D.Gen(vx, vSeed);
 
                         for (int i = 0; i < G.UnitSize; i++)
                         {
-                            image[x + i, y] = new L16((ushort) ((F.Extract_f32(noise, i) + 1) * 0.5f * ushort.MaxValue));
+                            image[x + i, y] = new L16((ushort) ((F.Extract(noise, i) + 1) * 0.5f * ushort.MaxValue));
                         }
                     }
                 }
@@ -472,14 +471,13 @@ namespace Sandbox
             float[] dst = new float[width * height];
             string path = string.Format(basePath, $"x{G.UnitSize}") + ".png";
 
-            Console.Write("Generating ");
+            Console.Write($"Generating \"{path}\" ");
             Stopwatch w = new();
 
             w.Start();
             generator.GenTileable2D(dst.AsSpan(), width, height, 1f / 32f, seed);
             w.Stop();
-
-            Console.Write($"({w.Elapsed.TotalMilliseconds,6:0.0}ms) \"{path}\" ");
+            Console.Write($"({w.Elapsed.TotalMilliseconds,4:0.0}ms)");
 
             w.Restart();
             using Image<L16> image = new(width, height);
@@ -502,7 +500,7 @@ namespace Sandbox
             image.Save(path);
             w.Stop();
 
-            Console.WriteLine($"({w.Elapsed.TotalMilliseconds,4:0.0}ms encode)");
+            Console.WriteLine($" ({w.Elapsed.TotalMilliseconds,4:0.0}ms encode)");
         }
     }
 }

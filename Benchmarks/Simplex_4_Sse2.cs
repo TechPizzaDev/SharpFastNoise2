@@ -5,9 +5,9 @@ using SharpFastNoise2.Functions;
 
 namespace Benchmarks
 {
-    using SimplexNoise4 = Simplex<Vector128<int>, Vector128<float>, Vector128<int>, Sse2Functions>;
+    using SimplexNoise4 = Simplex<Vector128<float>, Vector128<int>, Sse2Functions>;
 
-    public class Simplex_4_Sse2 : BenchNoiseBase<Vector128<int>, Vector128<float>, Vector128<int>, Sse2Functions>
+    public class Simplex_4_Sse2 : BenchNoiseBase<Vector128<float>, Vector128<int>, Sse2Functions>
     {
         [Benchmark]
         public void Simplex_2Dx4()

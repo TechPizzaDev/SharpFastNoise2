@@ -4,8 +4,8 @@ using SharpFastNoise2.Generators;
 
 namespace Benchmarks
 {
-    public class BenchNoiseBase<m32, f32, i32, F>
-        where F : IFunctionList<m32, f32, i32, F>
+    public class BenchNoiseBase<f32, i32, F>
+        where F : IFunctionList<f32, i32, F>
     {
         [Params(
             16 * 16,
@@ -26,10 +26,10 @@ namespace Benchmarks
         public void Generate1D<G>(G noise, int count)
             where G : INoiseGenerator1D<f32, i32>
         {
-            var seed = F.Broad_i32(Seed);
+            var seed = F.Broad(Seed);
             for (int x = 0; x < count; x += F.Count)
             {
-                noise.Gen(F.Broad_f32(x * Mul), seed);
+                noise.Gen(F.Broad(x * Mul), seed);
             }
         }
 
@@ -42,10 +42,10 @@ namespace Benchmarks
         public void Generate2D<G>(G noise, int count)
             where G : INoiseGenerator2D<f32, i32>
         {
-            var seed = F.Broad_i32(Seed);
+            var seed = F.Broad(Seed);
             for (int x = 0; x < count; x += F.Count)
             {
-                noise.Gen(F.Broad_f32(x * Mul), default, seed);
+                noise.Gen(F.Broad(x * Mul), default, seed);
             }
         }
 
@@ -58,10 +58,10 @@ namespace Benchmarks
         public void Generate3D<G>(G noise, int count)
             where G : INoiseGenerator3D<f32, i32>
         {
-            var seed = F.Broad_i32(Seed);
+            var seed = F.Broad(Seed);
             for (int x = 0; x < count; x += F.Count)
             {
-                noise.Gen(F.Broad_f32(x * Mul), default, default, seed);
+                noise.Gen(F.Broad(x * Mul), default, default, seed);
             }
         }
 
@@ -74,10 +74,10 @@ namespace Benchmarks
         public void Generate4D<G>(G noise, int count)
             where G : INoiseGenerator4D<f32, i32>
         {
-            var seed = F.Broad_i32(Seed);
+            var seed = F.Broad(Seed);
             for (int x = 0; x < count; x += F.Count)
             {
-                noise.Gen(F.Broad_f32(x * Mul), default, default, default, seed);
+                noise.Gen(F.Broad(x * Mul), default, default, default, seed);
             }
         }
     }

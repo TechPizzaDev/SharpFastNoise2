@@ -3,8 +3,8 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace SharpFastNoise2.Functions
 {
-    public partial interface IFunctionList<m32, f32, i32, F>
-        where F : IFunctionList<m32, f32, i32, F>
+    public partial interface IFunctionList<f32, i32, F>
+        where F : IFunctionList<f32, i32, F>
     {
         static abstract bool IsSupported { get; }
 
@@ -62,8 +62,8 @@ namespace SharpFastNoise2.Functions
 
         // Select
 
-        static abstract f32 Select(m32 m, f32 a, f32 b);
-        static abstract i32 Select(m32 m, i32 a, i32 b);
+        static abstract f32 Select(f32 m, f32 a, f32 b);
+        static abstract i32 Select(i32 m, i32 a, i32 b);
 
         // Min
 
@@ -79,7 +79,6 @@ namespace SharpFastNoise2.Functions
 
         static abstract f32 AndNot(f32 a, f32 b);
         static abstract i32 AndNot(i32 a, i32 b);
-        static abstract m32 AndNot(m32 a, m32 b);
 
         static abstract f32 ShiftRightLogical(f32 a, [ConstantExpected] byte b);
         static abstract i32 ShiftRightLogical(i32 a, [ConstantExpected] byte b);
@@ -104,41 +103,41 @@ namespace SharpFastNoise2.Functions
 
         // Mask
 
-        static abstract i32 Mask(i32 a, m32 m);
-        static abstract f32 Mask(f32 a, m32 m);
+        static abstract i32 Mask(i32 a, i32 m);
+        static abstract f32 Mask(f32 a, f32 m);
 
-        static abstract i32 NMask(i32 a, m32 m);
-        static abstract f32 NMask(f32 a, m32 m);
+        static abstract i32 NMask(i32 a, i32 m);
+        static abstract f32 NMask(f32 a, f32 m);
 
-        static abstract bool AnyMask(m32 m);
-        static abstract bool AllMask(m32 m);
+        static abstract bool AnyMask(i32 m);
+        static abstract bool AllMask(i32 m);
 
         // Masked float
 
-        static virtual f32 MaskAdd(f32 a, f32 b, m32 m) => F.Add(a, F.Mask(b, m));
-        static virtual f32 MaskSub(f32 a, f32 b, m32 m) => F.Sub(a, F.Mask(b, m));
-        static virtual f32 MaskMul(f32 a, f32 b, m32 m) => F.Mul(a, F.Mask(b, m));
+        static virtual f32 MaskAdd(f32 a, f32 b, f32 m) => F.Add(a, F.Mask(b, m));
+        static virtual f32 MaskSub(f32 a, f32 b, f32 m) => F.Sub(a, F.Mask(b, m));
+        static virtual f32 MaskMul(f32 a, f32 b, f32 m) => F.Mul(a, F.Mask(b, m));
 
         // NMasked float
 
-        static virtual f32 NMaskAdd(f32 a, f32 b, m32 m) => F.Add(a, F.NMask(b, m));
-        static virtual f32 NMaskSub(f32 a, f32 b, m32 m) => F.Sub(a, F.NMask(b, m));
-        static virtual f32 NMaskMul(f32 a, f32 b, m32 m) => F.Mul(a, F.NMask(b, m));
+        static virtual f32 NMaskAdd(f32 a, f32 b, f32 m) => F.Add(a, F.NMask(b, m));
+        static virtual f32 NMaskSub(f32 a, f32 b, f32 m) => F.Sub(a, F.NMask(b, m));
+        static virtual f32 NMaskMul(f32 a, f32 b, f32 m) => F.Mul(a, F.NMask(b, m));
 
         // Masked int32
 
-        static virtual i32 MaskAdd(i32 a, i32 b, m32 m) => F.Add(a, F.Mask(b, m));
-        static virtual i32 MaskSub(i32 a, i32 b, m32 m) => F.Sub(a, F.Mask(b, m));
-        static virtual i32 MaskMul(i32 a, i32 b, m32 m) => F.Mul(a, F.Mask(b, m));
+        static virtual i32 MaskAdd(i32 a, i32 b, i32 m) => F.Add(a, F.Mask(b, m));
+        static virtual i32 MaskSub(i32 a, i32 b, i32 m) => F.Sub(a, F.Mask(b, m));
+        static virtual i32 MaskMul(i32 a, i32 b, i32 m) => F.Mul(a, F.Mask(b, m));
 
-        static virtual i32 MaskIncrement(i32 a, m32 m) => F.MaskSub(a, F.Broad(-1), m);
-        static virtual i32 MaskDecrement(i32 a, m32 m) => F.MaskAdd(a, F.Broad(-1), m);
+        static virtual i32 MaskIncrement(i32 a, i32 m) => F.MaskSub(a, F.Broad(-1), m);
+        static virtual i32 MaskDecrement(i32 a, i32 m) => F.MaskAdd(a, F.Broad(-1), m);
 
         // NMasked int32
 
-        static virtual i32 NMaskAdd(i32 a, i32 b, m32 m) => F.Add(a, F.NMask(b, m));
-        static virtual i32 NMaskSub(i32 a, i32 b, m32 m) => F.Sub(a, F.NMask(b, m));
-        static virtual i32 NMaskMul(i32 a, i32 b, m32 m) => F.Mul(a, F.NMask(b, m));
+        static virtual i32 NMaskAdd(i32 a, i32 b, i32 m) => F.Add(a, F.NMask(b, m));
+        static virtual i32 NMaskSub(i32 a, i32 b, i32 m) => F.Sub(a, F.NMask(b, m));
+        static virtual i32 NMaskMul(i32 a, i32 b, i32 m) => F.Mul(a, F.NMask(b, m));
 
         // FMA
 
@@ -151,15 +150,15 @@ namespace SharpFastNoise2.Functions
         static abstract f32 And(f32 lhs, f32 rhs);
         static abstract f32 Div(f32 lhs, f32 rhs);
         static abstract f32 Complement(f32 lhs);
-        static abstract m32 Equal(f32 lhs, f32 rhs);
-        static abstract m32 GreaterThan(f32 lhs, f32 rhs);
-        static abstract m32 GreaterThanOrEqual(f32 lhs, f32 rhs);
+        static abstract f32 Equal(f32 lhs, f32 rhs);
+        static abstract f32 GreaterThan(f32 lhs, f32 rhs);
+        static abstract f32 GreaterThanOrEqual(f32 lhs, f32 rhs);
         static abstract f32 LeftShift(f32 lhs, [ConstantExpected] byte rhs);
-        static abstract m32 LessThan(f32 lhs, f32 rhs);
-        static abstract m32 LessThanOrEqual(f32 lhs, f32 rhs);
+        static abstract f32 LessThan(f32 lhs, f32 rhs);
+        static abstract f32 LessThanOrEqual(f32 lhs, f32 rhs);
         static abstract f32 Mul(f32 lhs, f32 rhs);
         static abstract f32 Negate(f32 lhs);
-        static abstract m32 NotEqual(f32 lhs, f32 rhs);
+        static abstract f32 NotEqual(f32 lhs, f32 rhs);
         static abstract f32 Or(f32 lhs, f32 rhs);
         static abstract f32 RightShift(f32 lhs, [ConstantExpected] byte rhs);
         static abstract f32 Sub(f32 lhs, f32 rhs);
@@ -171,24 +170,18 @@ namespace SharpFastNoise2.Functions
         static abstract i32 And(i32 lhs, i32 rhs);
         static abstract i32 Div(i32 lhs, i32 rhs);
         static abstract i32 Complement(i32 lhs);
-        static abstract m32 Equal(i32 lhs, i32 rhs);
-        static abstract m32 GreaterThan(i32 lhs, i32 rhs);
-        static abstract m32 GreaterThanOrEqual(i32 lhs, i32 rhs);
+        static abstract i32 Equal(i32 lhs, i32 rhs);
+        static abstract i32 GreaterThan(i32 lhs, i32 rhs);
+        static abstract i32 GreaterThanOrEqual(i32 lhs, i32 rhs);
         static abstract i32 LeftShift(i32 lhs, [ConstantExpected] byte rhs);
-        static abstract m32 LessThan(i32 lhs, i32 rhs);
-        static abstract m32 LessThanOrEqual(i32 lhs, i32 rhs);
+        static abstract i32 LessThan(i32 lhs, i32 rhs);
+        static abstract i32 LessThanOrEqual(i32 lhs, i32 rhs);
         static abstract i32 Mul(i32 lhs, i32 rhs);
         static abstract i32 Negate(i32 lhs);
-        static abstract m32 NotEqual(i32 lhs, i32 rhs);
+        static abstract i32 NotEqual(i32 lhs, i32 rhs);
         static abstract i32 Or(i32 lhs, i32 rhs);
         static abstract i32 RightShift(i32 lhs, [ConstantExpected] byte rhs);
         static abstract i32 Sub(i32 lhs, i32 rhs);
         static abstract i32 Xor(i32 lhs, i32 rhs);
-
-        // Mask math
-
-        static abstract m32 And(m32 lhs, m32 rhs);
-        static abstract m32 Complement(m32 lhs);
-        static abstract m32 Or(m32 lhs, m32 rhs);
     }
 }

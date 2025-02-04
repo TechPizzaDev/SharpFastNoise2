@@ -5,9 +5,9 @@ using SharpFastNoise2.Functions;
 
 namespace Benchmarks
 {
-    using OpenSimplex2Noise16 = OpenSimplex2<Vector512<int>, Vector512<float>, Vector512<int>, Avx512Functions>;
+    using OpenSimplex2Noise16 = OpenSimplex2<Vector512<float>, Vector512<int>, Avx512Functions>;
 
-    public class OpenSimplex2_16_Avx512 : BenchNoiseBase<Vector512<int>, Vector512<float>, Vector512<int>, Avx512Functions>
+    public class OpenSimplex2_16_Avx512 : BenchNoiseBase<Vector512<float>, Vector512<int>, Avx512Functions>
     {
         [Benchmark]
         public void OpenSimplex2_2Dx16()

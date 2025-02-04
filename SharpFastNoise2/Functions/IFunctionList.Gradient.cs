@@ -2,8 +2,8 @@
 
 namespace SharpFastNoise2.Functions
 {
-    public partial interface IFunctionList<m32, f32, i32, F>
-        where F : IFunctionList<m32, f32, i32, F>
+    public partial interface IFunctionList<f32, i32, F>
+        where F : IFunctionList<f32, i32, F>
     {
         // Gradient dot fancy
 
@@ -15,7 +15,7 @@ namespace SharpFastNoise2.Functions
                 F.Broad(1.3333333333333333f)));
 
             // Bit-4 = Choose X Y ordering
-            m32 xy = F.NotEqual(F.And(index, F.Broad(1 << 2)), F.Broad(0));
+            f32 xy = F.Cast_f32(F.NotEqual(F.And(index, F.Broad(1 << 2)), F.Broad(0)));
             f32 a = F.Select(xy, fY, fX);
             f32 b = F.Select(xy, fX, fY);
 
@@ -23,7 +23,7 @@ namespace SharpFastNoise2.Functions
             b = F.Xor(b, F.Cast_f32(F.LeftShift(index, 31)));
 
             // Bit-2 = Mul a by 2 or Root3
-            m32 aMul2 = F.NotEqual(F.And(index, F.Broad(1 << 1)), F.Broad(0));
+            f32 aMul2 = F.Cast_f32(F.NotEqual(F.And(index, F.Broad(1 << 1)), F.Broad(0)));
 
             a = F.Mul(a, F.Select(aMul2, F.Broad((float)2), F.Broad(Gradient.ROOT3)));
             // b zero value if a mul 2
@@ -43,7 +43,7 @@ namespace SharpFastNoise2.Functions
 
             i32 bit1 = F.LeftShift(hash, 31);
             i32 bit2 = F.LeftShift(F.RightShift(hash, 1), 31);
-            m32 mbit4 = F.NotEqual(F.And(hash, F.Broad(1 << 2)), F.Broad(0));
+            f32 mbit4 = F.Cast_f32(F.NotEqual(F.And(hash, F.Broad(1 << 2)), F.Broad(0)));
 
             fX = F.Xor(fX, F.Cast_f32(bit1));
             fY = F.Xor(fY, F.Cast_f32(bit2));
@@ -60,11 +60,11 @@ namespace SharpFastNoise2.Functions
             i32 hasha13 = F.And(hash, F.Broad(13));
 
             //if h < 8 then x, else y
-            f32 u = F.Select(F.LessThan(hasha13, F.Broad(8)), fX, fY);
+            f32 u = F.Select(F.Cast_f32(F.LessThan(hasha13, F.Broad(8))), fX, fY);
 
             //if h < 4 then y else if h is 12 or 14 then x else z
-            f32 v = F.Select(F.Equal(hasha13, F.Broad(12)), fX, fZ);
-            v = F.Select(F.LessThan(hasha13, F.Broad(2)), fY, v);
+            f32 v = F.Select(F.Cast_f32(F.Equal(hasha13, F.Broad(12))), fX, fZ);
+            v = F.Select(F.Cast_f32(F.LessThan(hasha13, F.Broad(2))), fY, v);
 
             //if h1 then -u else u
             //if h2 then -v else v
@@ -79,13 +79,13 @@ namespace SharpFastNoise2.Functions
         {
             i32 p = F.And(hash, F.Broad(3 << 3));
 
-            f32 a = F.Select(F.GreaterThan(p, F.Broad(0)), fX, fY);
-            f32 b = F.Select(F.GreaterThan(p, F.Broad(1 << 3)), fY, fZ);
-            f32 c = F.Select(F.GreaterThan(p, F.Broad(2 << 3)), fZ, fW);
+            f32 a = F.Select(F.Cast_f32(F.GreaterThan(p, F.Broad(0))), fX, fY);
+            f32 b = F.Select(F.Cast_f32(F.GreaterThan(p, F.Broad(1 << 3))), fY, fZ);
+            f32 c = F.Select(F.Cast_f32(F.GreaterThan(p, F.Broad(2 << 3))), fZ, fW);
 
             f32 aSign = F.Cast_f32(F.LeftShift(hash, 31));
-            f32 bSign = F.Cast_f32(F.And(F.LeftShift(hash, 30), F.Broad(unchecked((int) 0x80000000))));
-            f32 cSign = F.Cast_f32(F.And(F.LeftShift(hash, 29), F.Broad(unchecked((int) 0x80000000))));
+            f32 bSign = F.And(F.Cast_f32(F.LeftShift(hash, 30)), F.Broad(-0f));
+            f32 cSign = F.And(F.Cast_f32(F.LeftShift(hash, 29)), F.Broad(-0f));
             return F.Add(F.Add(F.Xor(a, aSign), F.Xor(b, bSign)), F.Xor(c, cSign));
         }
     }

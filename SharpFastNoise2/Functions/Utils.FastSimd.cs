@@ -4,11 +4,10 @@ using SharpFastNoise2.Functions;
 
 namespace SharpFastNoise2
 {
-    public partial struct Utils<m32, f32, i32, F>
-        where m32 : unmanaged
+    public partial struct Utils<f32, i32, F>
         where f32 : unmanaged
         where i32 : unmanaged
-        where F : IFunctionList<m32, f32, i32, F>
+        where F : IFunctionList<f32, i32, F>
     {
         // Trig
 
@@ -17,9 +16,9 @@ namespace SharpFastNoise2
         {
             f32 y = F.Sub(value, F.Mul(F.Broad(MathF.Tau), F.Round(F.Div(value, F.Broad(MathF.Tau)))));
 
-            f32 signBit = F.Cast_f32(F.Broad(unchecked((int) 0x80000000)));
-            m32 gHalfPi = F.GreaterThan(y, F.Broad(0.5f * MathF.PI));
-            m32 lHalfPi = F.LessThan(y, F.Xor(F.Broad(0.5f * MathF.PI), signBit));
+            f32 signBit = F.Broad(-0f);
+            f32 gHalfPi = F.GreaterThan(y, F.Broad(0.5f * MathF.PI));
+            f32 lHalfPi = F.LessThan(y, F.Xor(F.Broad(0.5f * MathF.PI), signBit));
 
             f32 sign = F.Mask(signBit, F.Or(gHalfPi, lHalfPi));
             f32 yRhs = F.Xor(y, sign);
@@ -89,7 +88,7 @@ namespace SharpFastNoise2
             f32 fx = F.FMulAdd(x, F.Broad(1.44269504088896341f), F.Broad(0.5f));
 
             f32 flr = F.Floor(fx);
-            fx = F.MaskSub(flr, F.Broad((float)1), F.GreaterThan(flr, fx));
+            fx = F.MaskSub(flr, F.Broad(1f), F.GreaterThan(flr, fx));
 
             x = F.FNMulAdd(fx, F.Broad(0.693359375f), x);
             x = F.FNMulAdd(fx, F.Broad(-2.12194440e-4f), x);
@@ -100,7 +99,7 @@ namespace SharpFastNoise2
             y = F.FMulAdd(y, x, F.Broad(4.1665795894E-2f));
             y = F.FMulAdd(y, x, F.Broad(1.6666665459E-1f));
             y = F.FMulAdd(y, x, F.Broad(5.0000001201E-1f));
-            y = F.FMulAdd(y, F.Mul(x, x), F.Add(x, F.Broad((float)1)));
+            y = F.FMulAdd(y, F.Mul(x, x), F.Add(x, F.Broad(1f)));
 
             // build 2^n
             i32 i = F.Convert_i32(fx);
@@ -114,7 +113,7 @@ namespace SharpFastNoise2
 
         public static f32 Log_f32(f32 x)
         {
-            m32 validMask = F.GreaterThan(x, F.Broad((float)0));
+            f32 validMask = F.GreaterThan(x, F.Broad(0f));
 
             x = F.Max(x, F.Cast_f32(F.Broad(0x00800000)));  // cut off denormalized stuff
 
@@ -129,12 +128,12 @@ namespace SharpFastNoise2
             i = F.Sub(i, F.Broad(0x7f));
             f32 e = F.Convert_f32(i);
 
-            e = F.Add(e, F.Broad((float)1));
+            e = F.Add(e, F.Broad(1f));
 
-            m32 mask = F.LessThan(x, F.Broad(0.707106781186547524f));
+            f32 mask = F.LessThan(x, F.Broad(0.707106781186547524f));
             x = F.MaskAdd(x, x, mask);
-            x = F.Sub(x, F.Broad((float)1));
-            e = F.MaskSub(e, F.Broad((float)1), mask);
+            x = F.Sub(x, F.Broad(1f));
+            e = F.MaskSub(e, F.Broad(1f), mask);
 
             f32 y = F.Broad(7.0376836292E-2f);
             y = F.FMulAdd(y, x, F.Broad(-1.1514610310E-1f));
