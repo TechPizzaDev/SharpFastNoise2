@@ -234,7 +234,7 @@ namespace SharpFastNoise2.Functions
             f32 gX = Avx512F.PermuteVar16x32(Vector512.Create(ROOT3, ROOT3, 2, 2, 1, -1, 0, 0, -ROOT3, -ROOT3, -2, -2, -1, 1, 0, 0), index);
             f32 gY = Avx512F.PermuteVar16x32(Vector512.Create(1, -1, 0, 0, ROOT3, ROOT3, 2, 2, -1, 1, 0, 0, -ROOT3, -ROOT3, -2, -2), index);
 
-            return FMulAdd(gX, fX, fY * gY);
+            return Avx512F.FusedMultiplyAdd(gX, fX, fY * gY);
         }
 
         // Gradient dot
@@ -250,7 +250,7 @@ namespace SharpFastNoise2.Functions
                 1, 1, -1, -1, 1 + ROOT2, 1 + ROOT2, -1 - ROOT2, -1 - ROOT2,
                 1, 1, -1, -1, 1 + ROOT2, 1 + ROOT2, -1 - ROOT2, -1 - ROOT2), hash);
 
-            return FMulAdd(gX, fX, fY * gY);
+            return Avx512F.FusedMultiplyAdd(gX, fX, fY * gY);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -260,7 +260,7 @@ namespace SharpFastNoise2.Functions
             f32 gY = Avx512F.PermuteVar16x32(Vector512.Create(1f, 1, -1, -1, 0, 0, 0, 0, 1, -1, 1, -1, 1, -1, 1, -1), hash);
             f32 gZ = Avx512F.PermuteVar16x32(Vector512.Create(0f, 0, 0, 0, 1, 1, -1, -1, 1, 1, -1, -1, 0, 1, 0, -1), hash);
 
-            return FMulAdd(gX, fX, FMulAdd(fY, gY, fZ * gZ));
+            return Avx512F.FusedMultiplyAdd(gX, fX, Avx512F.FusedMultiplyAdd(fY, gY, fZ * gZ));
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -286,7 +286,8 @@ namespace SharpFastNoise2.Functions
                 hash,
                 Vector512.Create(1f, 1, 1, 1, -1, -1, -1, -1, 0, 0, 0, 0, 0, 0, 0, 0));
 
-            return FMulAdd(gX, fX, FMulAdd(fY, gY, FMulAdd(fZ, gZ, fW * gW)));
+            return Avx512F.FusedMultiplyAdd(
+                gX, fX, Avx512F.FusedMultiplyAdd(fY, gY, Avx512F.FusedMultiplyAdd(fZ, gZ, fW * gW)));
         }
     }
 }

@@ -1,5 +1,4 @@
-﻿using System.Runtime.CompilerServices;
-
+﻿
 namespace SharpFastNoise2.Functions
 {
     public partial interface IFunctionList<f32, i32, F>
@@ -7,7 +6,6 @@ namespace SharpFastNoise2.Functions
     {
         // Gradient dot fancy
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         static virtual f32 GetGradientDotFancy(i32 hash, f32 fX, f32 fY)
         {
             i32 index = F.Convert_i32(F.Mul(
@@ -25,7 +23,7 @@ namespace SharpFastNoise2.Functions
             // Bit-2 = Mul a by 2 or Root3
             f32 aMul2 = F.Cast_f32(F.NotEqual(F.And(index, F.Broad(1 << 1)), F.Broad(0)));
 
-            a = F.Mul(a, F.Select(aMul2, F.Broad((float)2), F.Broad(Gradient.ROOT3)));
+            a = F.Mul(a, F.Select(aMul2, F.Broad(2f), F.Broad(Gradient.ROOT3)));
             // b zero value if a mul 2
             b = F.NMask(b, aMul2);
 
@@ -35,7 +33,6 @@ namespace SharpFastNoise2.Functions
 
         // Gradient dot
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         static virtual f32 GetGradientDot(i32 hash, f32 fX, f32 fY)
         {
             // ( 1+R2, 1 ) ( -1-R2, 1 ) ( 1+R2, -1 ) ( -1-R2, -1 )
@@ -54,7 +51,6 @@ namespace SharpFastNoise2.Functions
             return F.FMulAdd(F.Broad(1.0f + Gradient.ROOT2), a, b);
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         static virtual f32 GetGradientDot(i32 hash, f32 fX, f32 fY, f32 fZ)
         {
             i32 hasha13 = F.And(hash, F.Broad(13));
@@ -74,7 +70,6 @@ namespace SharpFastNoise2.Functions
             return F.Add(F.Xor(u, h1), F.Xor(v, h2));
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         static virtual f32 GetGradientDot(i32 hash, f32 fX, f32 fY, f32 fZ, f32 fW)
         {
             i32 p = F.And(hash, F.Broad(3 << 3));
