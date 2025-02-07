@@ -87,7 +87,7 @@ namespace SharpFastNoise2
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static f32 InterpHermite(f32 t)
         {
-            return F.Mul(F.Mul(t, t), F.FNMulAdd(t, F.Broad((float)2), F.Broad((float)3)));
+            return F.Mul(F.Mul(t, t), F.FMulAdd(t, F.Broad(-2f), F.Broad(3f)));
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -97,77 +97,47 @@ namespace SharpFastNoise2
                 F.Mul(F.Mul(t, t), t),
                 F.FMulAdd(
                     t,
-                    F.FMulAdd(t, F.Broad((float)6), F.Broad((float)-15)),
-                    F.Broad((float)10)));
+                    F.FMulAdd(t, F.Broad(6f), F.Broad(-15f)),
+                    F.Broad(10f)));
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static f32 CalcDistance(DistanceFunction distFunc, f32 dX, f32 dY)
         {
-            switch (distFunc)
+            return distFunc switch
             {
-                default:
-                case DistanceFunction.Euclidean:
-                    return DistanceEuclidean<f32, i32, F>.CalcDistance(dX, dY);
-
-                case DistanceFunction.EuclideanSquared:
-                    return DistanceEuclideanSquared<f32, i32, F>.CalcDistance(dX, dY);
-
-                case DistanceFunction.Manhattan:
-                    return DistanceManhattan<f32, i32, F>.CalcDistance(dX, dY);
-
-                case DistanceFunction.Hybrid:
-                    return DistanceHybrid<f32, i32, F>.CalcDistance(dX, dY);
-
-                case DistanceFunction.MaxAxis:
-                    return DistanceMaxAxis<f32, i32, F>.CalcDistance(dX, dY);
-            }
+                DistanceFunction.Euclidean => DistanceEuclidean<f32, i32, F>.CalcDistance(dX, dY),
+                DistanceFunction.EuclideanSquared => DistanceEuclideanSquared<f32, i32, F>.CalcDistance(dX, dY),
+                DistanceFunction.Manhattan => DistanceManhattan<f32, i32, F>.CalcDistance(dX, dY),
+                DistanceFunction.Hybrid => DistanceHybrid<f32, i32, F>.CalcDistance(dX, dY),
+                DistanceFunction.MaxAxis => DistanceMaxAxis<f32, i32, F>.CalcDistance(dX, dY),
+                _ => DistanceEuclideanEstimate<f32, i32, F>.CalcDistance(dX, dY),
+            };
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static f32 CalcDistance(DistanceFunction distFunc, f32 dX, f32 dY, f32 dZ)
         {
-            switch (distFunc)
+            return distFunc switch
             {
-                default:
-                case DistanceFunction.Euclidean:
-                    return DistanceEuclidean<f32, i32, F>.CalcDistance(dX, dY, dZ);
-
-                case DistanceFunction.EuclideanSquared:
-                    return DistanceEuclideanSquared<f32, i32, F>.CalcDistance(dX, dY, dZ);
-
-                case DistanceFunction.Manhattan:
-                    return DistanceManhattan<f32, i32, F>.CalcDistance(dX, dY, dZ);
-
-                case DistanceFunction.Hybrid:
-                    return DistanceHybrid<f32, i32, F>.CalcDistance(dX, dY, dZ);
-
-                case DistanceFunction.MaxAxis:
-                    return DistanceMaxAxis<f32, i32, F>.CalcDistance(dX, dY, dZ);
-            }
+                DistanceFunction.Euclidean => DistanceEuclidean<f32, i32, F>.CalcDistance(dX, dY, dZ),
+                DistanceFunction.EuclideanSquared => DistanceEuclideanSquared<f32, i32, F>.CalcDistance(dX, dY, dZ),
+                DistanceFunction.Manhattan => DistanceManhattan<f32, i32, F>.CalcDistance(dX, dY, dZ),
+                DistanceFunction.Hybrid => DistanceHybrid<f32, i32, F>.CalcDistance(dX, dY, dZ),
+                DistanceFunction.MaxAxis => DistanceMaxAxis<f32, i32, F>.CalcDistance(dX, dY, dZ),
+                _ => DistanceEuclideanEstimate<f32, i32, F>.CalcDistance(dX, dY, dZ),
+            };
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static f32 CalcDistance(DistanceFunction distFunc, f32 dX, f32 dY, f32 dZ, f32 dW)
         {
-            switch (distFunc)
+            return distFunc switch
             {
-                default:
-                case DistanceFunction.Euclidean:
-                    return DistanceEuclidean<f32, i32, F>.CalcDistance(dX, dY, dZ, dW);
-
-                case DistanceFunction.EuclideanSquared:
-                    return DistanceEuclideanSquared<f32, i32, F>.CalcDistance(dX, dY, dZ, dW);
-
-                case DistanceFunction.Manhattan:
-                    return DistanceManhattan<f32, i32, F>.CalcDistance(dX, dY, dZ, dW);
-
-                case DistanceFunction.Hybrid:
-                    return DistanceHybrid<f32, i32, F>.CalcDistance(dX, dY, dZ, dW);
-
-                case DistanceFunction.MaxAxis:
-                    return DistanceMaxAxis<f32, i32, F>.CalcDistance(dX, dY, dZ, dW);
-            }
+                DistanceFunction.Euclidean => DistanceEuclidean<f32, i32, F>.CalcDistance(dX, dY, dZ, dW),
+                DistanceFunction.EuclideanSquared => DistanceEuclideanSquared<f32, i32, F>.CalcDistance(dX, dY, dZ, dW),
+                DistanceFunction.Manhattan => DistanceManhattan<f32, i32, F>.CalcDistance(dX, dY, dZ, dW),
+                DistanceFunction.Hybrid => DistanceHybrid<f32, i32, F>.CalcDistance(dX, dY, dZ, dW),
+                DistanceFunction.MaxAxis => DistanceMaxAxis<f32, i32, F>.CalcDistance(dX, dY, dZ, dW),
+                _ => DistanceEuclideanEstimate<f32, i32, F>.CalcDistance(dX, dY, dZ, dW),
+            };
         }
     }
 }

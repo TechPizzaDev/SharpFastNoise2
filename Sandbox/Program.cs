@@ -36,7 +36,7 @@ namespace Sandbox
                 WriteTileable<
                     Vector512<float>, Vector512<int>,
                     CellularValue<Vector512<float>, Vector512<int>, Avx512Functions,
-                        DistanceEuclidean<Vector512<float>, Vector512<int>, Avx512Functions>>>(
+                        DistanceEuclideanEstimate<Vector512<float>, Vector512<int>, Avx512Functions>>>(
                     path,
                     generator: new(),
                     seed,
@@ -46,7 +46,7 @@ namespace Sandbox
                 WriteTileable<
                     Vector256<float>, Vector256<int>,
                     CellularValue<Vector256<float>, Vector256<int>, Avx2Functions,
-                        DistanceEuclidean<Vector256<float>, Vector256<int>, Avx2Functions>>>(
+                        DistanceEuclideanEstimate<Vector256<float>, Vector256<int>, Avx2Functions>>>(
                     path,
                     generator: new(),
                     seed,
@@ -56,7 +56,7 @@ namespace Sandbox
                 WriteTileable<
                     Vector128<float>, Vector128<int>,
                     CellularValue<Vector128<float>, Vector128<int>, Sse2Functions,
-                        DistanceEuclidean<Vector128<float>, Vector128<int>, Sse2Functions>>>(
+                        DistanceEuclideanEstimate<Vector128<float>, Vector128<int>, Sse2Functions>>>(
                     path,
                     generator: new(),
                     seed,
@@ -66,7 +66,7 @@ namespace Sandbox
                 WriteTileable<
                     float, int,
                     CellularValue<float, int, ScalarFunctions,
-                        DistanceEuclidean<float, int, ScalarFunctions>>>(
+                        DistanceEuclideanEstimate<float, int, ScalarFunctions>>>(
                     path,
                     generator: new(),
                     seed,
@@ -83,7 +83,7 @@ namespace Sandbox
 
                 const float pi = MathF.PI;
                 var noise = new CellularValue<float, int, ScalarFunctions,
-                    DistanceEuclidean<float, int, ScalarFunctions>>();
+                    DistanceEuclideanEstimate<float, int, ScalarFunctions>>();
 
                 for (int y = 0; y < 256; y++)
                 {
@@ -127,8 +127,9 @@ namespace Sandbox
                         width,
                         height);
                 }
-
+                
                 WriteDistanceFunc<DistanceEuclidean<Vector256<float>, Vector256<int>, Avx2Functions>>();
+                WriteDistanceFunc<DistanceEuclideanEstimate<Vector256<float>, Vector256<int>, Avx2Functions>>();
                 WriteDistanceFunc<DistanceEuclideanSquared<Vector256<float>, Vector256<int>, Avx2Functions>>();
                 WriteDistanceFunc<DistanceManhattan<Vector256<float>, Vector256<int>, Avx2Functions>>();
                 WriteDistanceFunc<DistanceHybrid<Vector256<float>, Vector256<int>, Avx2Functions>>();
@@ -139,7 +140,7 @@ namespace Sandbox
                 Write<
                     Vector512<float>, Vector512<int>, Avx512Functions,
                     CellularValue<Vector512<float>, Vector512<int>, Avx512Functions,
-                        DistanceEuclidean<Vector512<float>, Vector512<int>, Avx512Functions>>>(
+                        DistanceEuclideanEstimate<Vector512<float>, Vector512<int>, Avx512Functions>>>(
                     path,
                     generator: new(),
                     seed,
@@ -150,7 +151,7 @@ namespace Sandbox
                 Write<
                     Vector256<float>, Vector256<int>, Avx2Functions,
                     CellularValue<Vector256<float>, Vector256<int>, Avx2Functions,
-                        DistanceEuclidean<Vector256<float>, Vector256<int>, Avx2Functions>>>(
+                        DistanceEuclideanEstimate<Vector256<float>, Vector256<int>, Avx2Functions>>>(
                     path,
                     generator: new(),
                     seed,
@@ -161,7 +162,7 @@ namespace Sandbox
                 Write<
                     Vector128<float>, Vector128<int>, Sse2Functions,
                     CellularValue<Vector128<float>, Vector128<int>, Sse2Functions,
-                        DistanceEuclidean<Vector128<float>, Vector128<int>, Sse2Functions>>>(
+                        DistanceEuclideanEstimate<Vector128<float>, Vector128<int>, Sse2Functions>>>(
                     path,
                     generator: new(),
                     seed,
@@ -172,7 +173,7 @@ namespace Sandbox
                 Write<
                     float, int, ScalarFunctions,
                     CellularValue<float, int, ScalarFunctions,
-                        DistanceEuclidean<float, int, ScalarFunctions>>>(
+                        DistanceEuclideanEstimate<float, int, ScalarFunctions>>>(
                     path,
                     generator: new(),
                     seed,

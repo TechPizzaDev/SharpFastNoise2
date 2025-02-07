@@ -2,6 +2,7 @@
 {
     public enum DistanceFunction
     {
+        EuclideanEstimate,
         EuclideanSquared,
         Euclidean,
         Manhattan,
