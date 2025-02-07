@@ -20,8 +20,6 @@ namespace SharpFastNoise2.Generators
             where F : IFunctionList<f32, i32, F>
             where G : INoiseGenerator2D<f32, i32>
         {
-            f32 min = F.Broad(float.PositiveInfinity);
-            f32 max = F.Broad(float.NegativeInfinity);
             f32 freqV = F.Broad(frequency);
             i32 seedV = F.Broad(seed);
 
@@ -32,15 +30,18 @@ namespace SharpFastNoise2.Generators
             i32 xMax = F.Add(xSizeV, F.Add(xIdx, F.Broad(-1)));
 
             ref float noiseOut = ref MemoryMarshal.GetReference(destination);
-            nuint xStep = (nuint)xSize;
-            nuint totalValues = xStep * (nuint)ySize;
+            nuint xStep = (nuint) xSize;
+            nuint totalValues = xStep * (nuint) ySize;
             nuint index = 0;
 
             xIdx = F.Add(xIdx, F.Incremented_i32());
 
             GeneratorHelper.AxisReset<f32, i32, F>(true, ref xIdx, ref yIdx, xMax, xSizeV, xStep);
 
-            while (index <= totalValues - (nuint)F.Count)
+            f32 min = F.Broad(float.PositiveInfinity);
+            f32 max = F.Broad(float.NegativeInfinity);
+
+            while (index <= totalValues - (nuint) F.Count)
             {
                 f32 xPos = F.Mul(F.Convert_f32(xIdx), freqV);
                 f32 yPos = F.Mul(F.Convert_f32(yIdx), freqV);
@@ -51,21 +52,21 @@ namespace SharpFastNoise2.Generators
                 min = F.Min(min, gen);
                 max = F.Max(max, gen);
 
-                index += (nuint)F.Count;
+                index += (nuint) F.Count;
                 xIdx = F.Add(xIdx, F.Broad(F.Count));
 
                 GeneratorHelper.AxisReset<f32, i32, F>(false, ref xIdx, ref yIdx, xMax, xSizeV, xStep);
             }
 
+            f32 finalGen = default;
+            if (totalValues - index > 0)
             {
                 f32 xPos = F.Mul(F.Convert_f32(xIdx), freqV);
                 f32 yPos = F.Mul(F.Convert_f32(yIdx), freqV);
 
-                f32 gen = generator.Gen(xPos, yPos, seedV);
-
-                return GeneratorHelper.DoRemaining<f32, i32, F>(
-                    ref noiseOut, totalValues, index, min, max, gen);
+                finalGen = generator.Gen(xPos, yPos, seedV);
             }
+            return GeneratorHelper.DoRemaining<f32, i32, F>(ref noiseOut, totalValues, index, min, max, finalGen);
         }
 
         public static OutputMinMax GenPositionArray<f32, i32, F, G>(
@@ -81,8 +82,6 @@ namespace SharpFastNoise2.Generators
             where F : IFunctionList<f32, i32, F>
             where G : INoiseGenerator2D<f32, i32>
         {
-            f32 min = F.Broad(float.PositiveInfinity);
-            f32 max = F.Broad(float.NegativeInfinity);
             i32 seedV = F.Broad(seed);
             f32 xOffsetV = F.Broad(xOffset);
             f32 yOffsetV = F.Broad(yOffset);
@@ -91,9 +90,12 @@ namespace SharpFastNoise2.Generators
             ref float xPosRef = ref MemoryMarshal.GetReference(xPosArray);
             ref float yPosRef = ref MemoryMarshal.GetReference(yPosArray);
 
-            nuint count = (nuint)destination.Length;
+            f32 min = F.Broad(float.PositiveInfinity);
+            f32 max = F.Broad(float.NegativeInfinity);
+
+            nuint count = (nuint) destination.Length;
             nuint index = 0;
-            while (index <= count - (nuint)F.Count)
+            while (index <= count - (nuint) F.Count)
             {
                 f32 xPos = F.Add(xOffsetV, F.Load(ref xPosRef, index));
                 f32 yPos = F.Add(yOffsetV, F.Load(ref yPosRef, index));
@@ -104,24 +106,24 @@ namespace SharpFastNoise2.Generators
                 min = F.Min(min, gen);
                 max = F.Max(max, gen);
 
-                index += (nuint)F.Count;
+                index += (nuint) F.Count;
             }
 
+            f32 finalGen = default;
+            if (count - index > 0)
             {
                 f32 xPos = F.Add(xOffsetV, F.Load(ref xPosRef, index));
                 f32 yPos = F.Add(yOffsetV, F.Load(ref yPosRef, index));
 
-                f32 gen = generator.Gen(xPos, yPos, seedV);
-
-                return GeneratorHelper.DoRemaining<f32, i32, F>(
-                    ref noiseOut, count, index, min, max, gen);
+                finalGen = generator.Gen(xPos, yPos, seedV);
             }
+            return GeneratorHelper.DoRemaining<f32, i32, F>(ref noiseOut, count, index, min, max, finalGen);
         }
 
         public static float GenSingle<f32, i32, F, G>(
             ref G generator,
-            float x, 
-            float y, 
+            float x,
+            float y,
             int seed)
             where f32 : unmanaged
             where i32 : unmanaged
