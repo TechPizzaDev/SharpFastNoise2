@@ -33,25 +33,38 @@ namespace SharpFastNoise2
 
         public int ValueIndex
         {
-            get => _valueIndex;
+            readonly get => _valueIndex;
             set => _valueIndex = Math.Min(Math.Max(value, 0), DistanceArray<f32>.Count - 1);
         }
 
-        public f32 Gen(f32 x, f32 y, i32 seed)
+        public readonly f32 Gen(f32 x, f32 y, i32 seed)
         {
-            f32 jitter = F.Mul(F.Broad(Cellular.kJitter2D), F.Broad(1f)); //this->GetSourceValue(mJitterModifier, seed, x, y);
-            DistanceArray<f32> value = new();
-            DistanceArray<f32> distance = new();
+            DistanceArray<f32> valueArray = new();
+            DistanceArray<f32> distanceArray = new();
+
+            int count = _valueIndex + 1;
+            Span<f32> values = valueArray[..count];
+            Span<f32> distances = distanceArray[..count];
 
             f32 initDistValue = F.Broad(float.PositiveInfinity);
-            for (int i = 0; i < DistanceArray<f32>.Count; i++)
+            for (int i = 0; i < count; i++)
             {
-                value[i] = initDistValue;
-                distance[i] = initDistValue;
+                values[i] = initDistValue;
+                distances[i] = initDistValue;
             }
 
-            i32 xc = F.Add(F.Convert_i32(x), F.Broad(-1));
-            i32 ycBase = F.Add(F.Convert_i32(y), F.Broad(-1));
+            f32 jitter = F.Mul(F.Broad(Cellular.kJitter2D), F.Broad(1f)); //this->GetSourceValue(mJitterModifier, seed, x, y);
+            Gen(values, distances, jitter, seed, x, y);
+
+            return values[count - 1];
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveOptimization)]
+        public readonly void Gen(Span<f32> values, Span<f32> distances, f32 jitter, i32 seed, f32 x, f32 y)
+        {
+            i32 icn1 = F.Broad(-1);
+            i32 xc = F.Add(F.Convert_i32(x), icn1);
+            i32 ycBase = F.Add(F.Convert_i32(y), icn1);
 
             f32 xcf = F.Sub(F.Convert_f32(xc), x);
             f32 ycfBase = F.Sub(F.Convert_f32(ycBase), y);
@@ -66,62 +79,54 @@ namespace SharpFastNoise2
                 for (int yi = 0; yi < 3; yi++)
                 {
                     i32 hash = Utils<f32, i32, F>.HashPrimesHB(seed, xc, yc);
-                    f32 xd = F.Sub(F.Convert_f32(F.And(hash, F.Broad(0xffff))), F.Broad(0xffff / 2.0f));
-                    f32 yd = F.Sub(F.Convert_f32(F.And(F.RightShift(hash, 16), F.Broad(0xffff))), F.Broad(0xffff / 2.0f));
+                    f32 halfMask = F.Broad(0xffff / 2.0f);
+                    f32 xd = F.Sub(F.Convert_f32(F.And(hash, F.Broad(0xffff))), halfMask);
+                    f32 yd = F.Sub(F.Convert_f32(F.RightShift(hash, 16)), halfMask);
 
                     f32 invMag = F.Mul(jitter, F.ReciprocalSqrt(F.FMulAdd(xd, xd, F.Mul(yd, yd))));
                     xd = F.FMulAdd(xd, invMag, xcf);
                     yd = F.FMulAdd(yd, invMag, ycf);
 
-                    f32 newCellValue = F.Mul(F.Broad((float) (1.0 / int.MaxValue)), F.Convert_f32(hash));
                     f32 newDistance = D.CalcDistance(xd, yd);
+                    SelectCell(values, distances, hash, newDistance);
 
-                    for (int i = 0; ; i++)
-                    {
-                        f32 closer = F.LessThan(newDistance, distance[i]);
-
-                        f32 localDistance = distance[i];
-                        f32 localCellValue = value[i];
-
-                        distance[i] = F.Select(closer, newDistance, distance[i]);
-                        value[i] = F.Select(closer, newCellValue, value[i]);
-
-                        if (i > _valueIndex)
-                        {
-                            break;
-                        }
-
-                        newDistance = F.Select(closer, localDistance, newDistance);
-                        newCellValue = F.Select(closer, localCellValue, newCellValue);
-                    }
-
-                    ycf = F.Add(ycf, F.Broad((float)1));
+                    ycf = F.Add(ycf, F.Broad(1f));
                     yc = F.Add(yc, F.Broad(Primes.Y));
                 }
-                xcf = F.Add(xcf, F.Broad((float)1));
+                xcf = F.Add(xcf, F.Broad(1f));
                 xc = F.Add(xc, F.Broad(Primes.X));
             }
+        }
 
-            return value[_valueIndex];
+        public readonly f32 Gen(f32 x, f32 y, f32 z, i32 seed)
+        {
+            DistanceArray<f32> valueArray = new();
+            DistanceArray<f32> distanceArray = new();
+
+            int count = _valueIndex + 1;
+            Span<f32> values = valueArray[..count];
+            Span<f32> distances = distanceArray[..count];
+
+            f32 initDistValue = F.Broad(float.PositiveInfinity);
+            for (int i = 0; i < count; i++)
+            {
+                values[i] = initDistValue;
+                distances[i] = initDistValue;
+            }
+
+            f32 jitter = F.Mul(F.Broad(Cellular.kJitter3D), F.Broad(1f)); //this->GetSourceValue(mJitterModifier, seed, x, y, z);
+            Gen(values, distances, jitter, seed, x, y, z);
+
+            return values[count - 1];
         }
 
         [MethodImpl(MethodImplOptions.AggressiveOptimization)]
-        public f32 Gen(f32 x, f32 y, f32 z, i32 seed)
+        public readonly void Gen(Span<f32> values, Span<f32> distances, f32 jitter, i32 seed, f32 x, f32 y, f32 z)
         {
-            f32 jitter = F.Mul(F.Broad(Cellular.kJitter3D), F.Broad((float)1)); //this->GetSourceValue(mJitterModifier, seed, x, y, z);
-            DistanceArray<f32> value = new();
-            DistanceArray<f32> distance = new();
-
-            f32 initDistValue = F.Broad(float.PositiveInfinity);
-            for (int i = 0; i < DistanceArray<f32>.Count; i++)
-            {
-                value[i] = initDistValue;
-                distance[i] = initDistValue;
-            }
-
-            i32 xc = F.Add(F.Convert_i32(x), F.Broad(-1));
-            i32 ycBase = F.Add(F.Convert_i32(y), F.Broad(-1));
-            i32 zcBase = F.Add(F.Convert_i32(z), F.Broad(-1));
+            i32 icn1 = F.Broad(-1);
+            i32 xc = F.Add(F.Convert_i32(x), icn1);
+            i32 ycBase = F.Add(F.Convert_i32(y), icn1);
+            i32 zcBase = F.Add(F.Convert_i32(z), icn1);
 
             f32 xcf = F.Sub(F.Convert_f32(xc), x);
             f32 ycfBase = F.Sub(F.Convert_f32(ycBase), y);
@@ -142,68 +147,61 @@ namespace SharpFastNoise2
                     for (int zi = 0; zi < 3; zi++)
                     {
                         i32 hash = Utils<f32, i32, F>.HashPrimesHB(seed, xc, yc, zc);
-                        f32 xd = F.Sub(F.Convert_f32(F.And(hash, F.Broad(0x3ff))), F.Broad(0x3ff / 2.0f));
-                        f32 yd = F.Sub(F.Convert_f32(F.And(F.RightShift(hash, 10), F.Broad(0x3ff))), F.Broad(0x3ff / 2.0f));
-                        f32 zd = F.Sub(F.Convert_f32(F.And(F.RightShift(hash, 20), F.Broad(0x3ff))), F.Broad(0x3ff / 2.0f));
+                        i32 mask = F.Broad(0x3ff);
+                        f32 halfMask = F.Broad(0x3ff / 2.0f);
+                        f32 xd = F.Sub(F.Convert_f32(F.And(hash, mask)), halfMask);
+                        f32 yd = F.Sub(F.Convert_f32(F.And(F.RightShift(hash, 10), mask)), halfMask);
+                        f32 zd = F.Sub(F.Convert_f32(F.And(F.RightShift(hash, 20), mask)), halfMask);
 
                         f32 invMag = F.Mul(jitter, F.ReciprocalSqrt(F.FMulAdd(xd, xd, F.FMulAdd(yd, yd, F.Mul(zd, zd)))));
                         xd = F.FMulAdd(xd, invMag, xcf);
                         yd = F.FMulAdd(yd, invMag, ycf);
                         zd = F.FMulAdd(zd, invMag, zcf);
 
-                        f32 newCellValue = F.Mul(F.Broad((float) (1.0 / int.MaxValue)), F.Convert_f32(hash));
                         f32 newDistance = D.CalcDistance(xd, yd, zd);
+                        SelectCell(values, distances, hash, newDistance);
 
-                        for (int i = 0; ; i++)
-                        {
-                            f32 closer = F.LessThan(newDistance, distance[i]);
-
-                            f32 localDistance = distance[i];
-                            f32 localCellValue = value[i];
-
-                            distance[i] = F.Select(closer, newDistance, distance[i]);
-                            value[i] = F.Select(closer, newCellValue, value[i]);
-
-                            if (i > _valueIndex)
-                            {
-                                break;
-                            }
-
-                            newDistance = F.Select(closer, localDistance, newDistance);
-                            newCellValue = F.Select(closer, localCellValue, newCellValue);
-                        }
-
-                        zcf = F.Add(zcf, F.Broad((float)1));
+                        zcf = F.Add(zcf, F.Broad(1f));
                         zc = F.Add(zc, F.Broad(Primes.Z));
                     }
-                    ycf = F.Add(ycf, F.Broad((float)1));
+                    ycf = F.Add(ycf, F.Broad(1f));
                     yc = F.Add(yc, F.Broad(Primes.Y));
                 }
-                xcf = F.Add(xcf, F.Broad((float)1));
+                xcf = F.Add(xcf, F.Broad(1f));
                 xc = F.Add(xc, F.Broad(Primes.X));
             }
+        }
 
-            return value[_valueIndex];
+        public readonly f32 Gen(f32 x, f32 y, f32 z, f32 w, i32 seed)
+        {
+            DistanceArray<f32> valueArray = new();
+            DistanceArray<f32> distanceArray = new();
+
+            int count = _valueIndex + 1;
+            Span<f32> values = valueArray[..count];
+            Span<f32> distances = distanceArray[..count];
+
+            f32 initDistValue = F.Broad(float.PositiveInfinity);
+            for (int i = 0; i < count; i++)
+            {
+                values[i] = initDistValue;
+                distances[i] = initDistValue;
+            }
+
+            f32 jitter = F.Mul(F.Broad(Cellular.kJitter4D), F.Broad(1f)); //this->GetSourceValue(mJitterModifier, seed, x, y, z, w);
+            Gen(values, distances, jitter, seed, x, y, z, w);
+
+            return values[count - 1];
         }
 
         [MethodImpl(MethodImplOptions.AggressiveOptimization)]
-        public f32 Gen(f32 x, f32 y, f32 z, f32 w, i32 seed)
+        public readonly void Gen(Span<f32> values, Span<f32> distances, f32 jitter, i32 seed, f32 x, f32 y, f32 z, f32 w)
         {
-            f32 jitter = F.Mul(F.Broad(Cellular.kJitter4D), F.Broad((float)1)); //this->GetSourceValue(mJitterModifier, seed, x, y, z, w);
-            DistanceArray<f32> value = new();
-            DistanceArray<f32> distance = new();
-
-            f32 initDistValue = F.Broad(float.PositiveInfinity);
-            for (int i = 0; i < DistanceArray<f32>.Count; i++)
-            {
-                value[i] = initDistValue;
-                distance[i] = initDistValue;
-            }
-
-            i32 xc = F.Add(F.Convert_i32(x), F.Broad(-1));
-            i32 ycBase = F.Add(F.Convert_i32(y), F.Broad(-1));
-            i32 zcBase = F.Add(F.Convert_i32(z), F.Broad(-1));
-            i32 wcBase = F.Add(F.Convert_i32(w), F.Broad(-1));
+            i32 icn1 = F.Broad(-1);
+            i32 xc = F.Add(F.Convert_i32(x), icn1);
+            i32 ycBase = F.Add(F.Convert_i32(y), icn1);
+            i32 zcBase = F.Add(F.Convert_i32(z), icn1);
+            i32 wcBase = F.Add(F.Convert_i32(w), icn1);
 
             f32 xcf = F.Sub(F.Convert_f32(xc), x);
             f32 ycfBase = F.Sub(F.Convert_f32(ycBase), y);
@@ -230,10 +228,12 @@ namespace SharpFastNoise2
                         for (int wi = 0; wi < 3; wi++)
                         {
                             i32 hash = Utils<f32, i32, F>.HashPrimesHB(seed, xc, yc, zc, wc);
-                            f32 xd = F.Sub(F.Convert_f32(F.And(hash, F.Broad(0xff))), F.Broad(0xff / 2.0f));
-                            f32 yd = F.Sub(F.Convert_f32(F.And(F.RightShift(hash, 8), F.Broad(0xff))), F.Broad(0xff / 2.0f));
-                            f32 zd = F.Sub(F.Convert_f32(F.And(F.RightShift(hash, 16), F.Broad(0xff))), F.Broad(0xff / 2.0f));
-                            f32 wd = F.Sub(F.Convert_f32(F.And(F.RightShift(hash, 24), F.Broad(0xff))), F.Broad(0xff / 2.0f));
+                            i32 mask = F.Broad(0xff);
+                            f32 halfMask = F.Broad(0xff / 2.0f);
+                            f32 xd = F.Sub(F.Convert_f32(F.And(hash, mask)), halfMask);
+                            f32 yd = F.Sub(F.Convert_f32(F.And(F.RightShift(hash, 8), mask)), halfMask);
+                            f32 zd = F.Sub(F.Convert_f32(F.And(F.RightShift(hash, 16), mask)), halfMask);
+                            f32 wd = F.Sub(F.Convert_f32(F.RightShift(hash, 24)), halfMask);
 
                             f32 invMag = F.Mul(jitter, F.ReciprocalSqrt(
                                 F.FMulAdd(xd, xd, F.FMulAdd(yd, yd, F.FMulAdd(zd, zd, F.Mul(wd, wd))))));
@@ -243,42 +243,42 @@ namespace SharpFastNoise2
                             zd = F.FMulAdd(zd, invMag, zcf);
                             wd = F.FMulAdd(wd, invMag, wcf);
 
-                            f32 newCellValue = F.Mul(F.Broad((float) (1.0 / int.MaxValue)), F.Convert_f32(hash));
                             f32 newDistance = D.CalcDistance(xd, yd, zd, wd);
+                            SelectCell(values, distances, hash, newDistance);
 
-                            for (int i = 0; ; i++)
-                            {
-                                f32 closer = F.LessThan(newDistance, distance[i]);
-
-                                f32 localDistance = distance[i];
-                                f32 localCellValue = value[i];
-
-                                distance[i] = F.Select(closer, newDistance, distance[i]);
-                                value[i] = F.Select(closer, newCellValue, value[i]);
-
-                                if (i > _valueIndex)
-                                {
-                                    break;
-                                }
-
-                                newDistance = F.Select(closer, localDistance, newDistance);
-                                newCellValue = F.Select(closer, localCellValue, newCellValue);
-                            }
-
-                            wcf = F.Add(wcf, F.Broad((float)1));
+                            wcf = F.Add(wcf, F.Broad(1f));
                             wc = F.Add(wc, F.Broad(Primes.W));
                         }
-                        zcf = F.Add(zcf, F.Broad((float)1));
+                        zcf = F.Add(zcf, F.Broad(1f));
                         zc = F.Add(zc, F.Broad(Primes.Z));
                     }
-                    ycf = F.Add(ycf, F.Broad((float)1));
+                    ycf = F.Add(ycf, F.Broad(1f));
                     yc = F.Add(yc, F.Broad(Primes.Y));
                 }
-                xcf = F.Add(xcf, F.Broad((float)1));
+                xcf = F.Add(xcf, F.Broad(1f));
                 xc = F.Add(xc, F.Broad(Primes.X));
             }
+        }
+        
+        [MethodImpl(MethodImplOptions.AggressiveOptimization)]
+        private static void SelectCell(Span<f32> values, Span<f32> distances, i32 hash, f32 distance)
+        {
+            f32 newDistance = distance;
+            f32 newValue = F.Mul(F.Broad((float) (1.0 / int.MaxValue)), F.Convert_f32(hash));
 
-            return value[_valueIndex];
+            for (int i = 0; i < values.Length && i < distances.Length; i++)
+            {
+                f32 localDistance = distances[i];
+                f32 localCellValue = values[i];
+
+                f32 closer = F.LessThan(newDistance, localDistance);
+
+                distances[i] = F.Select(closer, newDistance, localDistance);
+                values[i] = F.Select(closer, newValue, localCellValue);
+
+                newDistance = F.Select(closer, localDistance, newDistance);
+                newValue = F.Select(closer, localCellValue, newValue);
+            }
         }
 
         public OutputMinMax GenUniformGrid2D(
