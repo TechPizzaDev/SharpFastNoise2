@@ -10,8 +10,6 @@ namespace SharpFastNoise2.Generators
             f32 min,
             f32 max,
             f32 finalGen)
-            where f32 : unmanaged
-            where i32 : unmanaged
             where F : IFunctionList<f32, i32, F>
         {
             OutputMinMax minMax = new();
@@ -29,8 +27,6 @@ namespace SharpFastNoise2.Generators
 
         public static (i32 A, i32 B) AxisReset<f32, i32, F>(
             bool initial, i32 aIdx, i32 bIdx, i32 aMax, i32 aSize, int aStep)
-            where f32 : unmanaged
-            where i32 : unmanaged
             where F : IFunctionList<f32, i32, F>
         {
             for (int resetLoop = initial ? aStep : 0; resetLoop < F.Count; resetLoop += aStep)

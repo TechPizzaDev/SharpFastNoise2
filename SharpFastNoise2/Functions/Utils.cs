@@ -5,8 +5,6 @@ using SharpFastNoise2.Functions;
 namespace SharpFastNoise2
 {
     public partial struct Utils<f32, i32, F>
-        where f32 : unmanaged
-        where i32 : unmanaged
         where F : IFunctionList<f32, i32, F>
     {
         private const int Prime = 0x27d4eb2d;

@@ -21,8 +21,6 @@ namespace SharpFastNoise2
         }
         
         public void Apply<f32, i32, F>(f32 min, f32 max)
-            where f32 : unmanaged
-            where i32 : unmanaged
             where F : IFunctionList<f32, i32, F>
         {
             float scalarMin = F.MinAcross(min);

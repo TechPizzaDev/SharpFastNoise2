@@ -8,8 +8,6 @@ namespace SharpFastNoise2
     public struct OpenSimplex2<f32, i32, F> :
         INoiseGenerator2D<f32, i32>,
         INoiseGenerator3D<f32, i32>
-        where f32 : unmanaged
-        where i32 : unmanaged
         where F : IFunctionList<f32, i32, F>
     {
         public static int UnitSize => F.Count;

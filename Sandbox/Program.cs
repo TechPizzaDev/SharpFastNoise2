@@ -128,7 +128,7 @@ namespace Sandbox
                         width,
                         height);
                 }
-                
+
                 WriteDistanceFunc<DistanceEuclidean<Vector256<float>, Vector256<int>, Avx2Functions>>();
                 WriteDistanceFunc<DistanceEuclideanEstimate<Vector256<float>, Vector256<int>, Avx2Functions>>();
                 WriteDistanceFunc<DistanceEuclideanSquared<Vector256<float>, Vector256<int>, Avx2Functions>>();
@@ -337,8 +337,6 @@ namespace Sandbox
             float offsetX,
             int width,
             int height)
-            where f32 : unmanaged
-            where i32 : unmanaged
             where F : IFunctionList<f32, i32, F>
             where G : INoiseGeneratorAbstract
         {
@@ -364,7 +362,7 @@ namespace Sandbox
                         for (int x = 0; x < row.Length; x += G.UnitSize)
                         {
                             f32 vx = F.Add(F.Broad(x / 32f), vIncrementX);
-                            f32 noise = gen4D.Gen(vx, vy, default, default, vSeed);
+                            f32 noise = gen4D.Gen(vx, vy, F.Broad(0f), F.Broad(0f), vSeed);
                             StoreUnit<f32, i32, F>(row.Slice(x, F.Count), noise);
                         }
                     }
@@ -394,7 +392,7 @@ namespace Sandbox
                         for (int x = 0; x < image.Width; x += G.UnitSize)
                         {
                             f32 vx = F.Add(F.Broad(x / 32f), vIncrementX);
-                            f32 noise = gen3D.Gen(vx, vy, default, vSeed);
+                            f32 noise = gen3D.Gen(vx, vy, F.Broad(0f), vSeed);
                             StoreUnit<f32, i32, F>(row.Slice(x, F.Count), noise);
                         }
                     }
@@ -474,8 +472,6 @@ namespace Sandbox
             int seed,
             int width,
             int height)
-            where f32 : unmanaged
-            where i32 : unmanaged
             where G : INoiseGenerator4D<f32, i32>
         {
             float[] dst = new float[width * height];

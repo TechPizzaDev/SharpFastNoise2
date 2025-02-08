@@ -18,8 +18,6 @@ namespace SharpFastNoise2.Generators
             int wSize,
             float frequency,
             int seed)
-            where f32 : unmanaged
-            where i32 : unmanaged
             where F : IFunctionList<f32, i32, F>
             where G : INoiseGenerator4D<f32, i32>
         {
@@ -72,7 +70,7 @@ namespace SharpFastNoise2.Generators
                 (zIdx, wIdx) = GeneratorHelper.AxisReset<f32, i32, F>(false, zIdx, wIdx, zMax, zSizeV, zStep);
             }
 
-            f32 finalGen = default;
+            f32 finalGen = F.Broad(0f);
             if (destination.Length > 0)
             {
                 f32 xPos = F.Mul(F.Convert_f32(xIdx), freqV);
@@ -97,8 +95,6 @@ namespace SharpFastNoise2.Generators
             float zOffset,
             float wOffset,
             int seed)
-            where f32 : unmanaged
-            where i32 : unmanaged
             where F : IFunctionList<f32, i32, F>
             where G : INoiseGenerator4D<f32, i32>
         {
@@ -131,7 +127,7 @@ namespace SharpFastNoise2.Generators
                 destination = destination.Slice(F.Count);
             }
 
-            f32 finalGen = default;
+            f32 finalGen = F.Broad(0f);
             if (destination.Length > 0)
             {
                 f32 xPos = F.Add(xOffsetV, F.LoadOrZero(xPosArray));
@@ -151,8 +147,6 @@ namespace SharpFastNoise2.Generators
             float z,
             float w,
             int seed)
-            where f32 : unmanaged
-            where i32 : unmanaged
             where F : IFunctionList<f32, i32, F>
             where G : INoiseGenerator4D<f32, i32>
         {
@@ -171,8 +165,6 @@ namespace SharpFastNoise2.Generators
             int ySize,
             float frequency,
             int seed)
-            where f32 : unmanaged
-            where i32 : unmanaged
             where F : IFunctionList<f32, i32, F>
             where G : INoiseGenerator4D<f32, i32>
         {

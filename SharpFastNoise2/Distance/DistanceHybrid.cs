@@ -4,8 +4,6 @@ using SharpFastNoise2.Functions;
 namespace SharpFastNoise2.Distance
 {
     public struct DistanceHybrid<f32, i32, F> : IDistanceFunction<f32, i32, F>
-        where f32 : unmanaged
-        where i32 : unmanaged
         where F : IFunctionList<f32, i32, F>
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
