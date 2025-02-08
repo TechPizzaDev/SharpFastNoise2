@@ -16,106 +16,30 @@ namespace Sandbox
         static void Main(string[] args)
         {
             string basePath = "NoiseTextures";
-            Directory.CreateDirectory(basePath);
 
+            int width = 1024;
+            int height = 1024;
             int seed = 1234;
             float offsetX = 0;
 
             if (true)
             {
-                WriteAll(basePath, 1024, 1024, seed, offsetX);
+                WriteAll(basePath, seed, width, height, offsetX);
             }
 
             if (true)
             {
                 string tileableBasePath = "TileableNoiseTextures";
-                Directory.CreateDirectory(tileableBasePath);
 
-                string path = Path.Combine(tileableBasePath, "CellularValue_{0}");
-
-                WriteTileable<
-                    Vector512<float>, Vector512<int>,
-                    CellularValue<Vector512<float>, Vector512<int>, Avx512Functions,
-                        DistanceEuclideanEstimate<Vector512<float>, Vector512<int>, Avx512Functions>>>(
-                    path,
-                    generator: new(),
-                    seed,
-                    1024,
-                    1024);
-
-                WriteTileable<
-                    Vector256<float>, Vector256<int>,
-                    CellularValue<Vector256<float>, Vector256<int>, Avx2Functions,
-                        DistanceEuclideanEstimate<Vector256<float>, Vector256<int>, Avx2Functions>>>(
-                    path,
-                    generator: new(),
-                    seed,
-                    1024,
-                    1024);
-
-                WriteTileable<
-                    Vector128<float>, Vector128<int>,
-                    CellularValue<Vector128<float>, Vector128<int>, Sse2Functions,
-                        DistanceEuclideanEstimate<Vector128<float>, Vector128<int>, Sse2Functions>>>(
-                    path,
-                    generator: new(),
-                    seed,
-                    1024,
-                    1024);
-
-                WriteTileable<
-                    float, int,
-                    CellularValue<float, int, ScalarFunctions,
-                        DistanceEuclideanEstimate<float, int, ScalarFunctions>>>(
-                    path,
-                    generator: new(),
-                    seed,
-                    1024,
-                    1024);
+                string path = Path.Combine(tileableBasePath, "CellularValue");
+                WriteTileableCellularValue<Vector512<float>, Vector512<int>, Avx512Functions>(path, seed, width, height);
+                WriteTileableCellularValue<Vector256<float>, Vector256<int>, Avx2Functions>(path, seed, width, height);
+                WriteTileableCellularValue<Vector128<float>, Vector128<int>, Sse2Functions>(path, seed, width, height);
+                WriteTileableCellularValue<float, int, ScalarFunctions>(path, seed, width, height);
             }
         }
 
-        static void WriteAll(string basePath, int width, int height, int seed, float offsetX)
-        {
-            if (true)
-            {
-                string path = Path.Combine(basePath, $"CellularValue_{{0}}");
-                WriteCellularValue<Vector512<float>, Vector512<int>, Avx512Functions>(path, width, height, seed, offsetX);
-                WriteCellularValue<Vector256<float>, Vector256<int>, Avx2Functions>(path, width, height, seed, offsetX);
-                WriteCellularValue<Vector128<float>, Vector128<int>, Sse2Functions>(path, width, height, seed, offsetX);
-                WriteCellularValue<float, int, ScalarFunctions>(path, width, height, seed, offsetX);
-            }
-
-            if (true)
-            {
-                string path = Path.Combine(basePath, "Perlin_{0}");
-                WritePerlin<Vector512<float>, Vector512<int>, Avx512Functions>(path, width, height, seed, offsetX);
-                WritePerlin<Vector256<float>, Vector256<int>, Avx2Functions>(path, width, height, seed, offsetX);
-                WritePerlin<Vector128<float>, Vector128<int>, Sse2Functions>(path, width, height, seed, offsetX);
-                WritePerlin<float, int, ScalarFunctions>(path, width, height, seed, offsetX);
-            }
-
-            if (true)
-            {
-                string path = Path.Combine(basePath, "Simplex_{0}");
-                WriteSimplex<Vector512<float>, Vector512<int>, Avx512Functions>(path, width, height, seed, offsetX);
-                WriteSimplex<Vector256<float>, Vector256<int>, Avx2Functions>(path, width, height, seed, offsetX);
-                WriteSimplex<Vector128<float>, Vector128<int>, Sse2Functions>(path, width, height, seed, offsetX);
-                WriteSimplex<float, int, ScalarFunctions>(path, width, height, seed, offsetX);
-            }
-
-            if (true)
-            {
-                string path = Path.Combine(basePath, "OpenSimplex2_{0}");
-                WriteOpenSimplex2<Vector512<float>, Vector512<int>, Avx512Functions>(path, width, height, seed, offsetX);
-                WriteOpenSimplex2<Vector256<float>, Vector256<int>, Avx2Functions>(path, width, height, seed, offsetX);
-                WriteOpenSimplex2<Vector128<float>, Vector128<int>, Sse2Functions>(path, width, height, seed, offsetX);
-                WriteOpenSimplex2<float, int, ScalarFunctions>(path, width, height, seed, offsetX);
-            }
-        }
-
-        private static void WriteCellularValue<f32, i32, F>(
-            string basePath, int width, int height, int seed, float offsetX)
+        static void WriteTileableCellularValue<f32, i32, F>(string basePath, int seed, int width, int height)
             where F : IFunctionList<f32, i32, F>
         {
             WriteFor<DistanceEuclidean<f32, i32, F>>();
@@ -128,30 +52,104 @@ namespace Sandbox
             void WriteFor<D>()
                 where D : IDistanceFunction<f32, i32, F>
             {
-                string dpath = basePath + $"_{typeof(D).Name}";
+                string dpath = Path.Combine(basePath, GetDistanceName(typeof(D)));
+                WriteTileable<f32, i32, CellularValue<f32, i32, F, D>>(dpath, generator: new(), seed, width, height);
+            }
+        }
+
+        static void WriteAll(string basePath, int seed, int width, int height, float offsetX)
+        {
+            if (true)
+            {
+                string path = Path.Combine(basePath, "CellularValue");
+                WriteCellularValue<Vector512<float>, Vector512<int>, Avx512Functions>(path, seed, width, height, offsetX);
+                WriteCellularValue<Vector256<float>, Vector256<int>, Avx2Functions>(path, seed, width, height, offsetX);
+                WriteCellularValue<Vector128<float>, Vector128<int>, Sse2Functions>(path, seed, width, height, offsetX);
+                WriteCellularValue<float, int, ScalarFunctions>(path, seed, width, height, offsetX);
+            }
+
+            if (true)
+            {
+                string path = Path.Combine(basePath, "Perlin");
+                WritePerlin<Vector512<float>, Vector512<int>, Avx512Functions>(path, seed, width, height, offsetX);
+                WritePerlin<Vector256<float>, Vector256<int>, Avx2Functions>(path, seed, width, height, offsetX);
+                WritePerlin<Vector128<float>, Vector128<int>, Sse2Functions>(path, seed, width, height, offsetX);
+                WritePerlin<float, int, ScalarFunctions>(path, seed, width, height, offsetX);
+            }
+
+            if (true)
+            {
+                string path = Path.Combine(basePath, "Simplex");
+                WriteSimplex<Vector512<float>, Vector512<int>, Avx512Functions>(path, seed, width, height, offsetX);
+                WriteSimplex<Vector256<float>, Vector256<int>, Avx2Functions>(path, seed, width, height, offsetX);
+                WriteSimplex<Vector128<float>, Vector128<int>, Sse2Functions>(path, seed, width, height, offsetX);
+                WriteSimplex<float, int, ScalarFunctions>(path, seed, width, height, offsetX);
+            }
+
+            if (true)
+            {
+                string path = Path.Combine(basePath, "OpenSimplex2");
+                WriteOpenSimplex2<Vector512<float>, Vector512<int>, Avx512Functions>(path, seed, width, height, offsetX);
+                WriteOpenSimplex2<Vector256<float>, Vector256<int>, Avx2Functions>(path, seed, width, height, offsetX);
+                WriteOpenSimplex2<Vector128<float>, Vector128<int>, Sse2Functions>(path, seed, width, height, offsetX);
+                WriteOpenSimplex2<float, int, ScalarFunctions>(path, seed, width, height, offsetX);
+            }
+        }
+
+        private static void WriteCellularValue<f32, i32, F>(
+            string basePath, int seed, int width, int height, float offsetX)
+            where F : IFunctionList<f32, i32, F>
+        {
+            WriteFor<DistanceEuclidean<f32, i32, F>>();
+            WriteFor<DistanceEuclideanEstimate<f32, i32, F>>();
+            WriteFor<DistanceEuclideanSquared<f32, i32, F>>();
+            WriteFor<DistanceManhattan<f32, i32, F>>();
+            WriteFor<DistanceHybrid<f32, i32, F>>();
+            WriteFor<DistanceMaxAxis<f32, i32, F>>();
+
+            void WriteFor<D>()
+                where D : IDistanceFunction<f32, i32, F>
+            {
+                string dpath = Path.Combine(basePath, GetDistanceName(typeof(D)));
                 Write<f32, i32, F, CellularValue<f32, i32, F, D>>(dpath, generator: new(), seed, offsetX, width, height);
             }
         }
 
         private static void WritePerlin<f32, i32, F>(
-            string basePath, int width, int height, int seed, float offsetX)
+            string basePath, int seed, int width, int height, float offsetX)
             where F : IFunctionList<f32, i32, F>
         {
             Write<f32, i32, F, Perlin<f32, i32, F>>(basePath, generator: new(), seed, offsetX, width, height);
         }
 
         private static void WriteSimplex<f32, i32, F>(
-            string basePath, int width, int height, int seed, float offsetX)
+            string basePath, int seed, int width, int height, float offsetX)
             where F : IFunctionList<f32, i32, F>
         {
             Write<f32, i32, F, Simplex<f32, i32, F>>(basePath, generator: new(), seed, offsetX, width, height);
         }
 
         private static void WriteOpenSimplex2<f32, i32, F>(
-            string basePath, int width, int height, int seed, float offsetX)
+            string basePath, int seed, int width, int height, float offsetX)
             where F : IFunctionList<f32, i32, F>
         {
             Write<f32, i32, F, OpenSimplex2<f32, i32, F>>(basePath, generator: new(), seed, offsetX, width, height);
+        }
+
+        static void Save(Image image, string? path)
+        {
+            if (path == null)
+            {
+                return;
+            }
+
+            string? parent = Path.GetDirectoryName(path);
+            if (parent != null)
+            {
+                Directory.CreateDirectory(parent);
+            }
+
+            image.Save(path + ".png");
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -183,7 +181,7 @@ namespace Sandbox
 
             if (generator is INoiseGenerator4D<f32, i32> gen4D)
             {
-                string path = string.Format(basePath, $"4Dx{G.UnitSize}") + ".png";
+                string path = Path.Join(basePath, $"4Dx{G.UnitSize}");
                 Console.Write($"Generating \"{path}\" ");
 
                 w.Restart();
@@ -206,14 +204,14 @@ namespace Sandbox
                 Console.Write($"({w.Elapsed.TotalMilliseconds,4:0.0}ms)");
 
                 w.Restart();
-                image.Save(path);
+                Save(image, path);
                 w.Stop();
                 Console.WriteLine($" ({w.Elapsed.TotalMilliseconds,4:0.0}ms encode)");
             }
 
             if (generator is INoiseGenerator3D<f32, i32> gen3D)
             {
-                string path = string.Format(basePath, $"3Dx{G.UnitSize}") + ".png";
+                string path = Path.Join(basePath, $"3Dx{G.UnitSize}");
                 Console.Write($"Generating \"{path}\" ");
 
                 w.Restart();
@@ -236,14 +234,14 @@ namespace Sandbox
                 Console.Write($"({w.Elapsed.TotalMilliseconds,4:0.0}ms)");
 
                 w.Restart();
-                image.Save(path);
+                Save(image, path);
                 w.Stop();
                 Console.WriteLine($" ({w.Elapsed.TotalMilliseconds,4:0.0}ms encode)");
             }
 
             if (generator is INoiseGenerator2D<f32, i32> gen2D)
             {
-                string path = string.Format(basePath, $"2Dx{G.UnitSize}") + ".png";
+                string path = Path.Join(basePath, $"2Dx{G.UnitSize}");
                 Console.Write($"Generating \"{path}\" ");
 
                 w.Restart();
@@ -266,14 +264,14 @@ namespace Sandbox
                 Console.Write($"({w.Elapsed.TotalMilliseconds,4:0.0}ms)");
 
                 w.Restart();
-                image.Save(path);
+                Save(image, path);
                 w.Stop();
                 Console.WriteLine($" ({w.Elapsed.TotalMilliseconds,4:0.0}ms encode)");
             }
 
             if (generator is INoiseGenerator1D<f32, i32> gen1D)
             {
-                string path = string.Format(basePath, $"1Dx{G.UnitSize}") + ".png";
+                string path = Path.Join(basePath, $"1Dx{G.UnitSize}");
                 Console.Write($"Generating \"{path}\" ");
 
                 w.Restart();
@@ -295,7 +293,7 @@ namespace Sandbox
                 Console.Write($"({w.Elapsed.TotalMilliseconds,4:0.0}ms)");
 
                 w.Restart();
-                image.Save(path);
+                Save(image, path);
                 w.Stop();
                 Console.WriteLine($" ({w.Elapsed.TotalMilliseconds,4:0.0}ms encode)");
             }
@@ -310,7 +308,7 @@ namespace Sandbox
             where G : INoiseGenerator4D<f32, i32>
         {
             float[] dst = new float[width * height];
-            string path = string.Format(basePath, $"x{G.UnitSize}") + ".png";
+            string path = Path.Join(basePath, $"x{G.UnitSize}");
 
             Console.Write($"Generating \"{path}\" ");
             Stopwatch w = new();
@@ -340,9 +338,26 @@ namespace Sandbox
             Console.Write($" ({w.Elapsed.TotalMilliseconds:0.0}ms convert)");
 
             w.Restart();
-            image.Save(path);
+            Save(image, path);
             w.Stop();
             Console.WriteLine($" ({w.Elapsed.TotalMilliseconds,4:0.0}ms encode)");
+        }
+
+        static string GetDistanceName(Type type)
+        {
+            string name = type.Name;
+            string prefix = "Distance";
+            if (name.StartsWith(prefix))
+            {
+                name = name.Substring(prefix.Length);
+            }
+
+            int lastTick = name.LastIndexOf('`');
+            if (lastTick != -1)
+            {
+                name = name.Substring(0, lastTick);
+            }
+            return name;
         }
     }
 }
