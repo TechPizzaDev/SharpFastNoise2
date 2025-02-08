@@ -73,7 +73,15 @@ namespace SharpFastNoise2.Functions
         // Convert
 
         public static f32 Convert_f32(i32 a) => a;
-        public static i32 Convert_i32(f32 a) => (int)MathF.Round(a);
+
+        public static i32 Convert_i32(f32 a)
+        {
+#if NET9_0_OR_GREATER
+            return float.ConvertToIntegerNative<int>(MathF.Round(a));
+#else
+            return (int) MathF.Round(a);
+#endif
+        }
 
         // Select
 
@@ -124,33 +132,8 @@ namespace SharpFastNoise2.Functions
         // Float math
 
         public static f32 Sqrt(f32 a) => MathF.Sqrt(a);
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static f32 ReciprocalSqrt(f32 a)
-        {
-            if (Sse.IsSupported)
-            {
-                return Sse.ReciprocalSqrtScalar(Vector128.CreateScalarUnsafe(a)).ToScalar();
-            }
-
-            f32 xhalf = 0.5f * a;
-            a = Cast_f32(0x5f3759df - (Cast_i32(a) >> 1));
-            a *= 1.5f - xhalf * a * a;
-            return a;
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static f32 Reciprocal(f32 a)
-        {
-            if (Sse.IsSupported)
-            {
-                return Sse.ReciprocalScalar(Vector128.CreateScalarUnsafe(a)).ToScalar();
-            }
-
-            // pow( pow(x,-0.5), 2 ) = pow( x, -1 ) = 1.0 / x
-            a = Cast_f32((int)(0xbe6eb3beU - (uint)Cast_i32(a)) >> 1);
-            return a * a;
-        }
+        public static f32 ReciprocalSqrt(f32 a) => MathF.ReciprocalSqrtEstimate(a);
+        public static f32 Reciprocal(f32 a) => MathF.ReciprocalEstimate(a);
 
         // Rounding
 

@@ -35,8 +35,23 @@ namespace SharpFastNoise2.Functions
 
         // Incremented
 
-        public static f32 Incremented_f32() => Vector128.Create(0f, 1, 2, 3);
-        public static i32 Incremented_i32() => Vector128.Create(0, 1, 2, 3);
+        public static f32 Incremented_f32()
+        {
+#if NET9_0_OR_GREATER
+            return f32.Indices;
+#else
+            return Vector128.Create(0f, 1, 2, 3);
+#endif
+        }
+
+        public static i32 Incremented_i32()
+        {
+#if NET9_0_OR_GREATER
+            return i32.Indices;
+#else
+            return Vector128.Create(0, 1, 2, 3);
+#endif
+        }
 
         // Store
 
@@ -222,7 +237,7 @@ namespace SharpFastNoise2.Functions
             }
             else
             {
-                f32 fval = Vector128.ConvertToSingle(Vector128.ConvertToInt32(a));
+                f32 fval = Vector128.ConvertToSingle(Convert_i32(a));
                 f32 cmp = Vector128.LessThan(a, fval);
                 return fval - (cmp & Vector128.Create(1f));
             }
@@ -237,7 +252,7 @@ namespace SharpFastNoise2.Functions
             }
             else
             {
-                f32 fval = Vector128.ConvertToSingle(Vector128.ConvertToInt32(a));
+                f32 fval = Vector128.ConvertToSingle(Convert_i32(a));
                 f32 cmp = Vector128.LessThan(fval, a);
                 return fval + (cmp & Vector128.Create(1f));
             }
@@ -252,7 +267,11 @@ namespace SharpFastNoise2.Functions
             }
             else
             {
+#if NET9_0_OR_GREATER
+                return Vector128.Round(a, MidpointRounding.AwayFromZero);
+#else
                 return Vector128.ConvertToSingle(Convert_i32(a));
+#endif
             }
         }
 
@@ -334,7 +353,7 @@ namespace SharpFastNoise2.Functions
         public static f32 LessThanOrEqual(f32 lhs, f32 rhs) => Vector128.LessThanOrEqual(lhs, rhs);
         public static f32 Mul(f32 lhs, f32 rhs) => Vector128.Multiply(lhs, rhs);
         public static f32 Negate(f32 lhs) => Vector128.Negate(lhs);
-        public static f32 NotEqual(f32 lhs,f32 rhs) => ~Vector128.Equals(lhs,rhs);
+        public static f32 NotEqual(f32 lhs, f32 rhs) => ~Vector128.Equals(lhs, rhs);
 
         public static f32 Or(f32 lhs, f32 rhs) => Vector128.BitwiseOr(lhs, rhs);
         public static f32 RightShift(f32 lhs, [ConstantExpected] byte rhs) => throw new NotSupportedException();
@@ -355,7 +374,7 @@ namespace SharpFastNoise2.Functions
         public static i32 LessThanOrEqual(i32 lhs, i32 rhs) => throw new NotSupportedException();
         public static i32 Mul(i32 lhs, i32 rhs) => lhs * rhs;
         public static i32 Negate(i32 lhs) => Vector128.Negate(lhs);
-        public static i32 NotEqual(i32 lhs,i32 rhs) => ~Vector128.Equals(lhs,rhs);
+        public static i32 NotEqual(i32 lhs, i32 rhs) => ~Vector128.Equals(lhs, rhs);
 
         public static i32 Or(i32 lhs, i32 rhs) => Vector128.BitwiseOr(lhs, rhs);
         public static i32 RightShift(i32 lhs, [ConstantExpected] byte rhs) => Vector128.ShiftRightArithmetic(lhs, rhs);

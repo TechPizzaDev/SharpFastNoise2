@@ -19,8 +19,8 @@ namespace SharpFastNoise2.Functions
 
         // Broadcast
 
-        public static f32 Broad(float value) => Vector512.Create(value);
-        public static i32 Broad(int value) => Vector512.Create(value);
+        public static f32 Broad(float value) => Avx512F.BroadcastScalarToVector512(Vector128.CreateScalarUnsafe(value));
+        public static i32 Broad(int value) => Avx512F.BroadcastScalarToVector512(Vector128.CreateScalarUnsafe(value));
 
         // Load
 
@@ -35,8 +35,23 @@ namespace SharpFastNoise2.Functions
 
         // Incremented
 
-        public static f32 Incremented_f32() => Vector512.Create(0f, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15);
-        public static i32 Incremented_i32() => Vector512.Create(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15);
+        public static f32 Incremented_f32()
+        {
+#if NET9_0_OR_GREATER
+            return f32.Indices;
+#else
+            return Vector512.Create(0f, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15);
+#endif
+        }
+
+        public static i32 Incremented_i32()
+        {
+#if NET9_0_OR_GREATER
+            return i32.Indices;
+#else
+            return Vector512.Create(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15);
+#endif
+        }
 
         // Store
 
@@ -160,6 +175,9 @@ namespace SharpFastNoise2.Functions
         public static f32 MaskSub(f32 a, f32 b, f32 m) => Avx512F.BlendVariable(a, a - b, m);
         public static f32 MaskMul(f32 a, f32 b, f32 m) => Avx512F.BlendVariable(a, a * b, m);
 
+        public static i32 MaskIncrement(i32 a, i32 m) => Avx512F.BlendVariable(a, a - i32.One, m);
+        public static i32 MaskDecrement(i32 a, i32 m) => Avx512F.BlendVariable(a, a + i32.One, m);
+
         // NMasked float
 
         public static f32 NMaskAdd(f32 a, f32 b, f32 m) => Avx512F.BlendVariable(a, a + b, ~m);
@@ -187,7 +205,7 @@ namespace SharpFastNoise2.Functions
 
         public static f32 Add(f32 lhs, f32 rhs) => Avx512F.Add(lhs, rhs);
         public static f32 And(f32 lhs, f32 rhs) => Avx512DQ.And(lhs, rhs);
-        public static f32 Complement(f32 lhs) => Vector512.OnesComplement(lhs);
+        public static f32 Complement(f32 lhs) => ~lhs;
         public static f32 Div(f32 lhs, f32 rhs) => Avx512F.Divide(lhs, rhs);
         public static f32 Equal(f32 lhs, f32 rhs) => Avx512F.CompareEqual(lhs, rhs);
         public static f32 GreaterThan(f32 lhs, f32 rhs) => Avx512F.CompareGreaterThan(lhs, rhs);
@@ -196,7 +214,7 @@ namespace SharpFastNoise2.Functions
         public static f32 LessThan(f32 lhs, f32 rhs) => Avx512F.CompareLessThan(lhs, rhs);
         public static f32 LessThanOrEqual(f32 lhs, f32 rhs) => Avx512F.CompareLessThanOrEqual(lhs, rhs);
         public static f32 Mul(f32 lhs, f32 rhs) => Avx512F.Multiply(lhs, rhs);
-        public static f32 Negate(f32 lhs) => Vector512.Negate(lhs);
+        public static f32 Negate(f32 lhs) => -lhs;
         public static f32 NotEqual(f32 lhs, f32 rhs) => Avx512F.CompareNotEqual(lhs, rhs);
         public static f32 Or(f32 lhs, f32 rhs) => Avx512DQ.Or(lhs, rhs);
         public static f32 RightShift(f32 lhs, [ConstantExpected] byte rhs) => throw new NotSupportedException();
@@ -207,7 +225,7 @@ namespace SharpFastNoise2.Functions
 
         public static i32 Add(i32 lhs, i32 rhs) => Avx512F.Add(lhs, rhs);
         public static i32 And(i32 lhs, i32 rhs) => Avx512F.And(lhs, rhs);
-        public static i32 Complement(i32 lhs) => Vector512.OnesComplement(lhs);
+        public static i32 Complement(i32 lhs) => ~lhs;
         public static i32 Div(i32 lhs, i32 rhs) => throw new NotSupportedException();
         public static i32 Equal(i32 lhs, i32 rhs) => Avx512F.CompareEqual(lhs, rhs);
         public static i32 GreaterThan(i32 lhs, i32 rhs) => Avx512F.CompareGreaterThan(lhs, rhs);
@@ -216,7 +234,7 @@ namespace SharpFastNoise2.Functions
         public static i32 LessThan(i32 lhs, i32 rhs) => Avx512F.CompareGreaterThan(rhs, lhs);
         public static i32 LessThanOrEqual(i32 lhs, i32 rhs) => throw new NotSupportedException();
         public static i32 Mul(i32 lhs, i32 rhs) => Avx512F.MultiplyLow(lhs, rhs);
-        public static i32 Negate(i32 lhs) => Avx512F.Subtract(i32.Zero, lhs);
+        public static i32 Negate(i32 lhs) => -lhs;
         public static i32 NotEqual(i32 lhs, i32 rhs) => Avx512F.CompareNotEqual(lhs, rhs);
         public static i32 Or(i32 lhs, i32 rhs) => Avx512F.Or(lhs, rhs);
         public static i32 RightShift(i32 lhs, [ConstantExpected] byte rhs) => Avx512F.ShiftRightArithmetic(lhs, rhs);
@@ -229,10 +247,13 @@ namespace SharpFastNoise2.Functions
         public static f32 GetGradientDotFancy(i32 hash, f32 fX, f32 fY)
         {
             i32 index = Avx512F.ConvertToVector512Int32(
-                Avx512F.ConvertToVector512Single(hash & Vector512.Create(0x3FFFFF)) * Vector512.Create(1.3333333333333333f));
+                Avx512F.ConvertToVector512Single(hash & Broad(0x3FFFFF)) * Broad(1.3333333333333333f));
 
-            f32 gX = Avx512F.PermuteVar16x32(Vector512.Create(ROOT3, ROOT3, 2, 2, 1, -1, 0, 0, -ROOT3, -ROOT3, -2, -2, -1, 1, 0, 0), index);
-            f32 gY = Avx512F.PermuteVar16x32(Vector512.Create(1, -1, 0, 0, ROOT3, ROOT3, 2, 2, -1, 1, 0, 0, -ROOT3, -ROOT3, -2, -2), index);
+            f32 mX = Vector512.Create(ROOT3, ROOT3, 2, 2, 1, -1, 0, 0, -ROOT3, -ROOT3, -2, -2, -1, 1, 0, 0);
+            f32 gX = Avx512F.PermuteVar16x32(mX, index);
+
+            f32 mY = Vector512.Create(1, -1, 0, 0, ROOT3, ROOT3, 2, 2, -1, 1, 0, 0, -ROOT3, -ROOT3, -2, -2);
+            f32 gY = Avx512F.PermuteVar16x32(mY, index);
 
             return Avx512F.FusedMultiplyAdd(gX, fX, fY * gY);
         }
@@ -242,13 +263,11 @@ namespace SharpFastNoise2.Functions
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static f32 GetGradientDot(i32 hash, f32 fX, f32 fY)
         {
-            f32 gX = Avx512F.PermuteVar16x32(Vector512.Create(
-                1 + ROOT2, -1 - ROOT2, 1 + ROOT2, -1 - ROOT2, 1, -1, 1, -1,
-                1 + ROOT2, -1 - ROOT2, 1 + ROOT2, -1 - ROOT2, 1, -1, 1, -1), hash);
+            var mX = Vector256.Create(1 + ROOT2, -1 - ROOT2, 1 + ROOT2, -1 - ROOT2, 1, -1, 1, -1);
+            f32 gX = Avx512F.PermuteVar16x32(Vector512.Create(mX, mX), hash);
 
-            f32 gY = Avx512F.PermuteVar16x32(Vector512.Create(
-                1, 1, -1, -1, 1 + ROOT2, 1 + ROOT2, -1 - ROOT2, -1 - ROOT2,
-                1, 1, -1, -1, 1 + ROOT2, 1 + ROOT2, -1 - ROOT2, -1 - ROOT2), hash);
+            var mY = Vector256.Create(1, 1, -1, -1, 1 + ROOT2, 1 + ROOT2, -1 - ROOT2, -1 - ROOT2);
+            f32 gY = Avx512F.PermuteVar16x32(Vector512.Create(mY, mY), hash);
 
             return Avx512F.FusedMultiplyAdd(gX, fX, fY * gY);
         }

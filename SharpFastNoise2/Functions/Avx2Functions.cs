@@ -19,8 +19,8 @@ namespace SharpFastNoise2.Functions
 
         // Broadcast
 
-        public static f32 Broad(float value) => Vector256.Create(value);
-        public static i32 Broad(int value) => Vector256.Create(value);
+        public static f32 Broad(float value) => Avx2.BroadcastScalarToVector256(Vector128.CreateScalarUnsafe(value));
+        public static i32 Broad(int value) => Avx2.BroadcastScalarToVector256(Vector128.CreateScalarUnsafe(value));
 
         // Load
 
@@ -35,8 +35,23 @@ namespace SharpFastNoise2.Functions
 
         // Incremented
 
-        public static f32 Incremented_f32() => Vector256.Create(0f, 1, 2, 3, 4, 5, 6, 7);
-        public static i32 Incremented_i32() => Vector256.Create(0, 1, 2, 3, 4, 5, 6, 7);
+        public static f32 Incremented_f32()
+        {
+#if NET9_0_OR_GREATER
+            return f32.Indices;
+#else
+            return Vector256.Create(0f, 1, 2, 3, 4, 5, 6, 7);
+#endif
+        }
+
+        public static i32 Incremented_i32()
+        {
+#if NET9_0_OR_GREATER
+            return i32.Indices;
+#else
+            return Vector256.Create(0, 1, 2, 3, 4, 5, 6, 7);
+#endif
+        }
 
         // Store
 
@@ -176,7 +191,7 @@ namespace SharpFastNoise2.Functions
 
         public static f32 Add(f32 lhs, f32 rhs) => Avx.Add(lhs, rhs);
         public static f32 And(f32 lhs, f32 rhs) => Avx.And(lhs, rhs);
-        public static f32 Complement(f32 lhs) => Vector256.OnesComplement(lhs);
+        public static f32 Complement(f32 lhs) => ~lhs;
         public static f32 Div(f32 lhs, f32 rhs) => Avx.Divide(lhs, rhs);
         public static f32 Equal(f32 lhs, f32 rhs) => Avx.CompareEqual(lhs, rhs);
         public static f32 GreaterThan(f32 lhs, f32 rhs) => Avx.CompareGreaterThan(lhs, rhs);
@@ -185,7 +200,7 @@ namespace SharpFastNoise2.Functions
         public static f32 LessThan(f32 lhs, f32 rhs) => Avx.CompareLessThan(lhs, rhs);
         public static f32 LessThanOrEqual(f32 lhs, f32 rhs) => Avx.CompareLessThanOrEqual(lhs, rhs);
         public static f32 Mul(f32 lhs, f32 rhs) => Avx.Multiply(lhs, rhs);
-        public static f32 Negate(f32 lhs) => Vector256.Negate(lhs);
+        public static f32 Negate(f32 lhs) => -lhs;
         public static f32 NotEqual(f32 lhs, f32 rhs) => Avx.CompareNotEqual(lhs, rhs);
         public static f32 Or(f32 lhs, f32 rhs) => Avx.Or(lhs, rhs);
         public static f32 RightShift(f32 lhs, [ConstantExpected] byte rhs) => throw new NotSupportedException();
@@ -196,7 +211,7 @@ namespace SharpFastNoise2.Functions
 
         public static i32 Add(i32 lhs, i32 rhs) => Avx2.Add(lhs, rhs);
         public static i32 And(i32 lhs, i32 rhs) => Avx2.And(lhs, rhs);
-        public static i32 Complement(i32 lhs) => Vector256.OnesComplement(lhs);
+        public static i32 Complement(i32 lhs) => ~lhs;
         public static i32 Div(i32 lhs, i32 rhs) => throw new NotSupportedException();
         public static i32 Equal(i32 lhs, i32 rhs) => Avx2.CompareEqual(lhs, rhs);
         public static i32 GreaterThan(i32 lhs, i32 rhs) => Avx2.CompareGreaterThan(lhs, rhs);
@@ -205,8 +220,8 @@ namespace SharpFastNoise2.Functions
         public static i32 LessThan(i32 lhs, i32 rhs) => Avx2.CompareGreaterThan(rhs, lhs);
         public static i32 LessThanOrEqual(i32 lhs, i32 rhs) => throw new NotSupportedException();
         public static i32 Mul(i32 lhs, i32 rhs) => Avx2.MultiplyLow(lhs, rhs);
-        public static i32 Negate(i32 lhs) => Vector256.Negate(lhs);
-        public static i32 NotEqual(i32 lhs,i32 rhs) => Vector256.Negate(Vector256.Equals(lhs, rhs));
+        public static i32 Negate(i32 lhs) => -lhs;
+        public static i32 NotEqual(i32 lhs, i32 rhs) => ~Avx2.CompareEqual(lhs, rhs);
         public static i32 Or(i32 lhs, i32 rhs) => Avx2.Or(lhs, rhs);
         public static i32 RightShift(i32 lhs, [ConstantExpected] byte rhs) => lhs >> rhs;
         public static i32 Sub(i32 lhs, i32 rhs) => Avx2.Subtract(lhs, rhs);
@@ -218,10 +233,13 @@ namespace SharpFastNoise2.Functions
         public static f32 GetGradientDotFancy(i32 hash, f32 fX, f32 fY)
         {
             i32 index = Avx.ConvertToVector256Int32(
-                Avx.ConvertToVector256Single(hash & Vector256.Create(0x3FFFFF)) * Vector256.Create(1.3333333333333333f));
+                Avx.ConvertToVector256Single(hash & Broad(0x3FFFFF)) * Broad(1.3333333333333333f));
 
-            f32 gX = Avx2.PermuteVar8x32(Vector256.Create(ROOT3, ROOT3, 2, 2, 1, -1, 0, 0), index);
-            f32 gY = Avx2.PermuteVar8x32(Vector256.Create(1, -1, 0, 0, ROOT3, ROOT3, 2, 2), index);
+            f32 mX = Vector256.Create(ROOT3, ROOT3, 2, 2, 1, -1, 0, 0);
+            f32 gX = Avx2.PermuteVar8x32(mX, index);
+
+            f32 mY = Vector256.Create(1, -1, 0, 0, ROOT3, ROOT3, 2, 2);
+            f32 gY = Avx2.PermuteVar8x32(mY, index);
 
             // Bit-8 = Flip sign of a + b
             return FMulAdd(gX, fX, fY * gY) ^ ((index >> 3) << 31).AsSingle();
@@ -232,8 +250,11 @@ namespace SharpFastNoise2.Functions
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static f32 GetGradientDot(i32 hash, f32 fX, f32 fY)
         {
-            f32 gX = Avx2.PermuteVar8x32(Vector256.Create(1 + ROOT2, -1 - ROOT2, 1 + ROOT2, -1 - ROOT2, 1, -1, 1, -1), hash);
-            f32 gY = Avx2.PermuteVar8x32(Vector256.Create(1, 1, -1, -1, 1 + ROOT2, 1 + ROOT2, -1 - ROOT2, -1 - ROOT2), hash);
+            f32 mX = Vector256.Create(1 + ROOT2, -1 - ROOT2, 1 + ROOT2, -1 - ROOT2, 1, -1, 1, -1);
+            f32 gX = Avx2.PermuteVar8x32(mX, hash);
+
+            f32 mY = Vector256.Create(1, 1, -1, -1, 1 + ROOT2, 1 + ROOT2, -1 - ROOT2, -1 - ROOT2);
+            f32 gY = Avx2.PermuteVar8x32(mY, hash);
 
             return FMulAdd(gX, fX, fY * gY);
         }
