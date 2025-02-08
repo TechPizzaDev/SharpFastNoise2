@@ -7,9 +7,19 @@ using SharpFastNoise2;
 using SharpFastNoise2.Distance;
 using SharpFastNoise2.Functions;
 using SharpFastNoise2.Generators;
+using ShellProgressBar;
 using SixLabors.ImageSharp;
 
 namespace Sandbox;
+
+class State
+{
+    public int Seed = 1234;
+    public int Width = 1024;
+    public int Height = 1024;
+
+    public float OffsetX = 0;
+}
 
 class Program
 {
@@ -17,14 +27,19 @@ class Program
     {
         string basePath = "NoiseTextures";
 
-        int width = 1024;
-        int height = 1024;
-        int seed = 1234;
-        float offsetX = 0;
+        State state = new();
+
+        using ProgressBar topProgress = new(2, "Main", new ProgressBarOptions()
+        {
+            CollapseWhenFinished = true,
+        });
 
         if (true)
         {
-            WriteAll(basePath, seed, width, height, offsetX);
+            using ChildProgressBar progress = topProgress.Spawn(4, basePath);
+            WriteAll(basePath, progress, state);
+
+            topProgress.Tick();
         }
 
         if (true)
@@ -32,16 +47,20 @@ class Program
             string tileableBasePath = "TileableNoiseTextures";
 
             string path = Path.Combine(tileableBasePath, "CellularValue");
-            WriteTileableCellularValue<Vector512<float>, Vector512<int>, Avx512Functions>(path, seed, width, height);
-            WriteTileableCellularValue<Vector256<float>, Vector256<int>, Avx2Functions>(path, seed, width, height);
-            WriteTileableCellularValue<Vector128<float>, Vector128<int>, Sse2Functions>(path, seed, width, height);
-            WriteTileableCellularValue<float, int, ScalarFunctions>(path, seed, width, height);
+            using ChildProgressBar progress = topProgress.Spawn(4, path);
+            WriteTileableCellularValue<Vector512<float>, Vector512<int>, Avx512Functions>(path, progress, state);
+            WriteTileableCellularValue<Vector256<float>, Vector256<int>, Avx2Functions>(path, progress, state);
+            WriteTileableCellularValue<Vector128<float>, Vector128<int>, Sse2Functions>(path, progress, state);
+            WriteTileableCellularValue<float, int, ScalarFunctions>(path, progress, state);
+            
+            topProgress.Tick();
         }
     }
 
-    static void WriteTileableCellularValue<f32, i32, F>(string basePath, int seed, int width, int height)
+    static void WriteTileableCellularValue<f32, i32, F>(string basePath, ProgressBarBase topProgress, State state)
         where F : IFunctionList<f32, i32, F>
     {
+        using ChildProgressBar progress = topProgress.Spawn(6, "Distance");
         WriteFor<DistanceEuclidean<f32, i32, F>>();
         WriteFor<DistanceEuclideanEstimate<f32, i32, F>>();
         WriteFor<DistanceEuclideanSquared<f32, i32, F>>();
@@ -53,53 +72,67 @@ class Program
             where D : IDistanceFunction<f32, i32, F>
         {
             string dpath = Path.Combine(basePath, GetDistanceName(typeof(D)));
-            WriteTileable<f32, i32, CellularValue<f32, i32, F, D>>(dpath, generator: new(), seed, width, height);
+            WriteTileable<f32, i32, CellularValue<f32, i32, F, D>>(dpath, progress, state, generator: new());
         }
+
+        topProgress.Tick();
     }
 
-    static void WriteAll(string basePath, int seed, int width, int height, float offsetX)
+    static void WriteAll(string basePath, ProgressBarBase topProgress, State state)
     {
         if (true)
         {
             string path = Path.Combine(basePath, "CellularValue");
-            WriteCellularValue<Vector512<float>, Vector512<int>, Avx512Functions>(path, seed, width, height, offsetX);
-            WriteCellularValue<Vector256<float>, Vector256<int>, Avx2Functions>(path, seed, width, height, offsetX);
-            WriteCellularValue<Vector128<float>, Vector128<int>, Sse2Functions>(path, seed, width, height, offsetX);
-            WriteCellularValue<float, int, ScalarFunctions>(path, seed, width, height, offsetX);
+            using ChildProgressBar progress = topProgress.Spawn(4, path);
+            WriteCellularValue<Vector512<float>, Vector512<int>, Avx512Functions>(path, progress, state);
+            WriteCellularValue<Vector256<float>, Vector256<int>, Avx2Functions>(path, progress, state);
+            WriteCellularValue<Vector128<float>, Vector128<int>, Sse2Functions>(path, progress, state);
+            WriteCellularValue<float, int, ScalarFunctions>(path, progress, state);
+
+            topProgress.Tick();
         }
 
         if (true)
         {
             string path = Path.Combine(basePath, "Perlin");
-            WritePerlin<Vector512<float>, Vector512<int>, Avx512Functions>(path, seed, width, height, offsetX);
-            WritePerlin<Vector256<float>, Vector256<int>, Avx2Functions>(path, seed, width, height, offsetX);
-            WritePerlin<Vector128<float>, Vector128<int>, Sse2Functions>(path, seed, width, height, offsetX);
-            WritePerlin<float, int, ScalarFunctions>(path, seed, width, height, offsetX);
+            using ChildProgressBar progress = topProgress.Spawn(4, path);
+            WritePerlin<Vector512<float>, Vector512<int>, Avx512Functions>(path, progress, state);
+            WritePerlin<Vector256<float>, Vector256<int>, Avx2Functions>(path, progress, state);
+            WritePerlin<Vector128<float>, Vector128<int>, Sse2Functions>(path, progress, state);
+            WritePerlin<float, int, ScalarFunctions>(path, progress, state);
+            
+            topProgress.Tick();
         }
 
         if (true)
         {
             string path = Path.Combine(basePath, "Simplex");
-            WriteSimplex<Vector512<float>, Vector512<int>, Avx512Functions>(path, seed, width, height, offsetX);
-            WriteSimplex<Vector256<float>, Vector256<int>, Avx2Functions>(path, seed, width, height, offsetX);
-            WriteSimplex<Vector128<float>, Vector128<int>, Sse2Functions>(path, seed, width, height, offsetX);
-            WriteSimplex<float, int, ScalarFunctions>(path, seed, width, height, offsetX);
+            using ChildProgressBar progress = topProgress.Spawn(4, path);
+            WriteSimplex<Vector512<float>, Vector512<int>, Avx512Functions>(path, progress, state);
+            WriteSimplex<Vector256<float>, Vector256<int>, Avx2Functions>(path, progress, state);
+            WriteSimplex<Vector128<float>, Vector128<int>, Sse2Functions>(path, progress, state);
+            WriteSimplex<float, int, ScalarFunctions>(path, progress, state);
+            
+            topProgress.Tick();
         }
 
         if (true)
         {
             string path = Path.Combine(basePath, "OpenSimplex2");
-            WriteOpenSimplex2<Vector512<float>, Vector512<int>, Avx512Functions>(path, seed, width, height, offsetX);
-            WriteOpenSimplex2<Vector256<float>, Vector256<int>, Avx2Functions>(path, seed, width, height, offsetX);
-            WriteOpenSimplex2<Vector128<float>, Vector128<int>, Sse2Functions>(path, seed, width, height, offsetX);
-            WriteOpenSimplex2<float, int, ScalarFunctions>(path, seed, width, height, offsetX);
+            using ChildProgressBar progress = topProgress.Spawn(4, path);
+            WriteOpenSimplex2<Vector512<float>, Vector512<int>, Avx512Functions>(path, progress, state);
+            WriteOpenSimplex2<Vector256<float>, Vector256<int>, Avx2Functions>(path, progress, state);
+            WriteOpenSimplex2<Vector128<float>, Vector128<int>, Sse2Functions>(path, progress, state);
+            WriteOpenSimplex2<float, int, ScalarFunctions>(path, progress, state);
+            
+            topProgress.Tick();
         }
     }
 
-    private static void WriteCellularValue<f32, i32, F>(
-        string basePath, int seed, int width, int height, float offsetX)
+    private static void WriteCellularValue<f32, i32, F>(string basePath, ProgressBarBase topProgress, State state)
         where F : IFunctionList<f32, i32, F>
     {
+        using ChildProgressBar progress = topProgress.Spawn(6, "Distance");
         WriteFor<DistanceEuclidean<f32, i32, F>>();
         WriteFor<DistanceEuclideanEstimate<f32, i32, F>>();
         WriteFor<DistanceEuclideanSquared<f32, i32, F>>();
@@ -111,29 +144,28 @@ class Program
             where D : IDistanceFunction<f32, i32, F>
         {
             string dpath = Path.Combine(basePath, GetDistanceName(typeof(D)));
-            Write<f32, i32, F, CellularValue<f32, i32, F, D>>(dpath, generator: new(), seed, offsetX, width, height);
+            Write<f32, i32, F, CellularValue<f32, i32, F, D>>(dpath, progress, state, generator: new());
         }
+
+        topProgress.Tick();
     }
 
-    private static void WritePerlin<f32, i32, F>(
-        string basePath, int seed, int width, int height, float offsetX)
+    private static void WritePerlin<f32, i32, F>(string basePath, ProgressBarBase progress, State state)
         where F : IFunctionList<f32, i32, F>
     {
-        Write<f32, i32, F, Perlin<f32, i32, F>>(basePath, generator: new(), seed, offsetX, width, height);
+        Write<f32, i32, F, Perlin<f32, i32, F>>(basePath, progress, state, generator: new());
     }
 
-    private static void WriteSimplex<f32, i32, F>(
-        string basePath, int seed, int width, int height, float offsetX)
+    private static void WriteSimplex<f32, i32, F>(string basePath, ProgressBarBase progress, State state)
         where F : IFunctionList<f32, i32, F>
     {
-        Write<f32, i32, F, Simplex<f32, i32, F>>(basePath, generator: new(), seed, offsetX, width, height);
+        Write<f32, i32, F, Simplex<f32, i32, F>>(basePath, progress, state, generator: new());
     }
 
-    private static void WriteOpenSimplex2<f32, i32, F>(
-        string basePath, int seed, int width, int height, float offsetX)
+    private static void WriteOpenSimplex2<f32, i32, F>(string basePath, ProgressBarBase progress, State state)
         where F : IFunctionList<f32, i32, F>
     {
-        Write<f32, i32, F, OpenSimplex2<f32, i32, F>>(basePath, generator: new(), seed, offsetX, width, height);
+        Write<f32, i32, F, OpenSimplex2<f32, i32, F>>(basePath, progress, state, generator: new());
     }
 
     static void Save(Image image, string? path)
@@ -165,24 +197,26 @@ class Program
 
     public static void Write<f32, i32, F, G>(
         string basePath,
-        G generator,
-        int seed,
-        float offsetX,
-        int width,
-        int height)
+        ProgressBarBase progress,
+        State state,
+        G generator)
         where F : IFunctionList<f32, i32, F>
         where G : INoiseGeneratorAbstract
     {
+        int seed = state.Seed;
+        int width = state.Width;
+        int height = state.Height;
+
         using Image<L32> image = new(width, height);
         Stopwatch w = new();
 
         var vSeed = F.Broad(seed);
-        var vIncrementX = F.Div(F.Add(F.Incremented_f32(), F.Broad(offsetX)), F.Broad(32f));
+        var vIncrementX = F.Div(F.Add(F.Incremented_f32(), F.Broad(state.OffsetX)), F.Broad(32f));
 
         if (generator is INoiseGenerator4D<f32, i32> gen4D)
         {
             string path = Path.Join(basePath, $"4Dx{G.UnitSize}");
-            Console.Write($"Generating \"{path}\" ");
+            using ChildProgressBar pBar = progress.Spawn(state.Height, $"Generating \"{path}\" ");
 
             w.Restart();
             image.ProcessPixelRows(accessor =>
@@ -198,21 +232,22 @@ class Program
                         f32 noise = gen4D.Gen(vx, vy, F.Broad(0f), F.Broad(0f), vSeed);
                         StoreUnit<f32, i32, F>(row.Slice(x, F.Count), noise);
                     }
+                    pBar.Tick();
                 }
             });
             w.Stop();
-            Console.Write($"({w.Elapsed.TotalMilliseconds,4:0.0}ms)");
+            pBar.Tick($"({w.Elapsed.TotalMilliseconds,4:0.0}ms)");
 
             w.Restart();
             Save(image, path);
             w.Stop();
-            Console.WriteLine($" ({w.Elapsed.TotalMilliseconds,4:0.0}ms encode)");
+            pBar.Tick($" ({w.Elapsed.TotalMilliseconds,4:0.0}ms encode)");
         }
 
         if (generator is INoiseGenerator3D<f32, i32> gen3D)
         {
             string path = Path.Join(basePath, $"3Dx{G.UnitSize}");
-            Console.Write($"Generating \"{path}\" ");
+            using ChildProgressBar pBar = progress.Spawn(state.Height, $"Generating \"{path}\" ");
 
             w.Restart();
             image.ProcessPixelRows(accessor =>
@@ -228,21 +263,22 @@ class Program
                         f32 noise = gen3D.Gen(vx, vy, F.Broad(0f), vSeed);
                         StoreUnit<f32, i32, F>(row.Slice(x, F.Count), noise);
                     }
+                    pBar.Tick();
                 }
             });
             w.Stop();
-            Console.Write($"({w.Elapsed.TotalMilliseconds,4:0.0}ms)");
+            pBar.Tick($"({w.Elapsed.TotalMilliseconds,4:0.0}ms)");
 
             w.Restart();
             Save(image, path);
             w.Stop();
-            Console.WriteLine($" ({w.Elapsed.TotalMilliseconds,4:0.0}ms encode)");
+            pBar.Tick($" ({w.Elapsed.TotalMilliseconds,4:0.0}ms encode)");
         }
 
         if (generator is INoiseGenerator2D<f32, i32> gen2D)
         {
             string path = Path.Join(basePath, $"2Dx{G.UnitSize}");
-            Console.Write($"Generating \"{path}\" ");
+            using ChildProgressBar pBar = progress.Spawn(state.Height, $"Generating \"{path}\" ");
 
             w.Restart();
             image.ProcessPixelRows(accessor =>
@@ -258,21 +294,22 @@ class Program
                         f32 noise = gen2D.Gen(vx, vy, vSeed);
                         StoreUnit<f32, i32, F>(row.Slice(x, F.Count), noise);
                     }
+                    pBar.Tick();
                 }
             });
             w.Stop();
-            Console.Write($"({w.Elapsed.TotalMilliseconds,4:0.0}ms)");
+            pBar.Tick($"({w.Elapsed.TotalMilliseconds,4:0.0}ms)");
 
             w.Restart();
             Save(image, path);
             w.Stop();
-            Console.WriteLine($" ({w.Elapsed.TotalMilliseconds,4:0.0}ms encode)");
+            pBar.Tick($" ({w.Elapsed.TotalMilliseconds,4:0.0}ms encode)");
         }
 
         if (generator is INoiseGenerator1D<f32, i32> gen1D)
         {
             string path = Path.Join(basePath, $"1Dx{G.UnitSize}");
-            Console.Write($"Generating \"{path}\" ");
+            using ChildProgressBar pBar = progress.Spawn(state.Height, $"Generating \"{path}\" ");
 
             w.Restart();
             image.ProcessPixelRows(accessor =>
@@ -287,36 +324,41 @@ class Program
                         f32 noise = gen1D.Gen(vx, vSeed);
                         StoreUnit<f32, i32, F>(row.Slice(x, F.Count), noise);
                     }
+                    pBar.Tick();
                 }
             });
             w.Stop();
-            Console.Write($"({w.Elapsed.TotalMilliseconds,4:0.0}ms)");
+            pBar.Tick($"({w.Elapsed.TotalMilliseconds,4:0.0}ms)");
 
             w.Restart();
             Save(image, path);
             w.Stop();
-            Console.WriteLine($" ({w.Elapsed.TotalMilliseconds,4:0.0}ms encode)");
+            pBar.Tick($" ({w.Elapsed.TotalMilliseconds,4:0.0}ms encode)");
         }
+
+        progress.Tick();
     }
 
     public static void WriteTileable<f32, i32, G>(
         string basePath,
-        G generator,
-        int seed,
-        int width,
-        int height)
+        ProgressBarBase progress,
+        State state,
+        G generator)
         where G : INoiseGenerator4D<f32, i32>
     {
+        int seed = state.Seed;
+        int width = state.Width;
+        int height = state.Height;
+
         float[] dst = new float[width * height];
         string path = Path.Join(basePath, $"x{G.UnitSize}");
-
-        Console.Write($"Generating \"{path}\" ");
+        using ChildProgressBar pBar = progress.SpawnIndeterminate($"Generating \"{path}\" ");
         Stopwatch w = new();
 
         w.Start();
         generator.GenTileable2D(dst.AsSpan(), width, height, 1f / 32f, seed);
         w.Stop();
-        Console.Write($"({w.Elapsed.TotalMilliseconds,4:0.0}ms gen)");
+        pBar.Tick($"({w.Elapsed.TotalMilliseconds,4:0.0}ms gen)");
 
         using Image<L32> image = new(width, height);
         w.Restart();
@@ -335,12 +377,14 @@ class Program
             }
         });
         w.Stop();
-        Console.Write($" ({w.Elapsed.TotalMilliseconds:0.0}ms convert)");
+        pBar.Tick($" ({w.Elapsed.TotalMilliseconds:0.0}ms convert)");
 
         w.Restart();
         Save(image, path);
         w.Stop();
-        Console.WriteLine($" ({w.Elapsed.TotalMilliseconds,4:0.0}ms encode)");
+        pBar.Tick($" ({w.Elapsed.TotalMilliseconds,4:0.0}ms encode)");
+
+        progress.Tick();
     }
 
     static string GetDistanceName(Type type)
