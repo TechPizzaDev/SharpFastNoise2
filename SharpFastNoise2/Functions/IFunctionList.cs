@@ -25,6 +25,22 @@ namespace SharpFastNoise2.Functions
 
         static abstract f32 Load(ReadOnlySpan<float> p);
         static abstract i32 Load(ReadOnlySpan<int> p);
+        
+        static virtual f32 LoadOrZero(ReadOnlySpan<float> a)
+        {
+            Span<float> buf = stackalloc float[F.Count];
+            buf.Clear();
+            a.Slice(0, Math.Min(a.Length, buf.Length)).CopyTo(buf);
+            return F.Load(buf);
+        }
+
+        static virtual i32 LoadOrZero(ReadOnlySpan<int> a)
+        {
+            Span<int> buf = stackalloc int[F.Count];
+            buf.Clear();
+            a.Slice(0, Math.Min(a.Length, buf.Length)).CopyTo(buf);
+            return F.Load(buf);
+        }
 
         // Incremented
 
