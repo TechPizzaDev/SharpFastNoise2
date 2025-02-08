@@ -14,17 +14,20 @@ namespace SharpFastNoise2
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static (f32 Sign, f32 Y) SignSinCos(f32 value)
         {
-            f32 y = F.Sub(value, F.Mul(F.Broad(MathF.Tau), F.Round(F.Div(value, F.Broad(MathF.Tau)))));
+            f32 tau = F.Broad(MathF.Tau);
+            f32 y = F.Sub(value, F.Mul(tau, F.Round(F.Div(value, tau))));
 
+            f32 halfPi = F.Broad(0.5f * MathF.PI);
             f32 signBit = F.Broad(-0f);
-            f32 gHalfPi = F.GreaterThan(y, F.Broad(0.5f * MathF.PI));
-            f32 lHalfPi = F.LessThan(y, F.Xor(F.Broad(0.5f * MathF.PI), signBit));
+            f32 gHalfPi = F.GreaterThan(y, halfPi);
+            f32 lHalfPi = F.LessThan(y, F.Xor(halfPi, signBit));
 
             f32 sign = F.Mask(signBit, F.Or(gHalfPi, lHalfPi));
             f32 yRhs = F.Xor(y, sign);
-            
-            f32 yG = F.MaskAdd(yRhs, F.Broad(MathF.PI), gHalfPi);
-            f32 yL = F.MaskSub(yRhs, F.Broad(MathF.PI), lHalfPi);
+
+            f32 pi = F.Broad(MathF.PI);
+            f32 yG = F.MaskAdd(yRhs, pi, gHalfPi);
+            f32 yL = F.MaskSub(yRhs, pi, lHalfPi);
 
             f32 ySum = F.Select(lHalfPi, yL, yG);
             return (sign, ySum);
@@ -81,8 +84,9 @@ namespace SharpFastNoise2
 
         public static f32 Exp_f32(f32 x)
         {
-            x = F.Min(x, F.Broad(88.3762626647949f));
-            x = F.Max(x, F.Broad(-88.3762626647949f));
+            f32 limit = F.Broad(88.3762626647949f);
+            x = F.Min(x, limit);
+            x = F.Max(x, F.Negate(limit));
 
             // express exp(x) as exp(g + n*log(2))
             f32 fx = F.FMulAdd(x, F.Broad(1.44269504088896341f), F.Broad(0.5f));
@@ -128,12 +132,13 @@ namespace SharpFastNoise2
             i = F.Sub(i, F.Broad(0x7f));
             f32 e = F.Convert_f32(i);
 
-            e = F.Add(e, F.Broad(1f));
+            f32 fc1 = F.Broad(1f);
+            e = F.Add(e, fc1);
 
             f32 mask = F.LessThan(x, F.Broad(0.707106781186547524f));
             x = F.MaskAdd(x, x, mask);
-            x = F.Sub(x, F.Broad(1f));
-            e = F.MaskSub(e, F.Broad(1f), mask);
+            x = F.Sub(x, fc1);
+            e = F.MaskSub(e, fc1, mask);
 
             f32 y = F.Broad(7.0376836292E-2f);
             y = F.FMulAdd(y, x, F.Broad(-1.1514610310E-1f));

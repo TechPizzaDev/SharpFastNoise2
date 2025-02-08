@@ -183,13 +183,12 @@ namespace SharpFastNoise2.Generators
             i32 xMax = F.Add(xSizeV, F.Add(xIdx, F.Broad(-1)));
             i32 vSeed = F.Broad(seed);
 
-            float pi2 = (float) (Math.PI * 2.0);
-            float xSizePi = xSize / pi2;
-            float ySizePi = ySize / pi2;
+            float xSizePi = xSize / MathF.Tau;
+            float ySizePi = ySize / MathF.Tau;
             f32 xFreq = F.Broad(frequency * xSizePi);
             f32 yFreq = F.Broad(frequency * ySizePi);
-            f32 xMul = F.Broad(pi2 / xSize);
-            f32 yMul = F.Broad(pi2 / ySize);
+            f32 xMul = F.Broad(MathF.Tau / xSize);
+            f32 yMul = F.Broad(MathF.Tau / ySize);
 
             destination = destination.Slice(0, xSize * ySize);
 
