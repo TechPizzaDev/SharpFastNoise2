@@ -8,7 +8,6 @@ using SharpFastNoise2.Distance;
 using SharpFastNoise2.Functions;
 using SharpFastNoise2.Generators;
 using SixLabors.ImageSharp;
-using SixLabors.ImageSharp.PixelFormats;
 
 namespace Sandbox
 {
@@ -74,249 +73,85 @@ namespace Sandbox
                     1024,
                     1024);
             }
-
-            if (false)
-            {
-                using var img = new Image<L16>(256, 256);
-
-                float dx = 8;
-                float dy = 8;
-
-                const float pi = MathF.PI;
-                var noise = new CellularValue<float, int, ScalarFunctions,
-                    DistanceEuclideanEstimate<float, int, ScalarFunctions>>();
-
-                for (int y = 0; y < 256; y++)
-                {
-                    for (int x = 0; x < 256; x++)
-                    {
-                        float s = x / 256f;
-                        float t = y / 256f;
-
-                        (float sSin, float sCos) = Utils<float, int, ScalarFunctions>.SinCos_f32(s * 2 * pi);
-                        (float tSin, float tCos) = Utils<float, int, ScalarFunctions>.SinCos_f32(t * 2 * pi);
-
-                        float nx = sCos * dx / (2 * pi);
-                        float ny = tCos * dy / (2 * pi);
-                        float nz = sSin * dx / (2 * pi);
-                        float nw = tSin * dy / (2 * pi);
-
-                        img[x, y] = new L16((ushort) ((noise.Gen(nx, ny, nz, nw, 1234) + 1f) * 0.5f * ushort.MaxValue));
-                    }
-                }
-
-                img.Save("what.png");
-            }
         }
 
         static void WriteAll(string basePath, int width, int height, int seed, float offsetX)
         {
             if (true)
             {
-                void WriteDistanceFunc<D>()
-                    where D : IDistanceFunction<Vector256<float>, Vector256<int>, Avx2Functions>
-                {
-                    string dpath = Path.Combine(basePath, $"CellularValue_{{0}}_{typeof(D).Name}");
-
-                    Write<
-                        Vector256<float>, Vector256<int>, Avx2Functions,
-                        CellularValue<Vector256<float>, Vector256<int>, Avx2Functions, D>>(
-                        dpath,
-                        generator: new(),
-                        seed,
-                        offsetX,
-                        width,
-                        height);
-                }
-
-                WriteDistanceFunc<DistanceEuclidean<Vector256<float>, Vector256<int>, Avx2Functions>>();
-                WriteDistanceFunc<DistanceEuclideanEstimate<Vector256<float>, Vector256<int>, Avx2Functions>>();
-                WriteDistanceFunc<DistanceEuclideanSquared<Vector256<float>, Vector256<int>, Avx2Functions>>();
-                WriteDistanceFunc<DistanceManhattan<Vector256<float>, Vector256<int>, Avx2Functions>>();
-                WriteDistanceFunc<DistanceHybrid<Vector256<float>, Vector256<int>, Avx2Functions>>();
-                WriteDistanceFunc<DistanceMaxAxis<Vector256<float>, Vector256<int>, Avx2Functions>>();
-
                 string path = Path.Combine(basePath, $"CellularValue_{{0}}");
-
-                Write<
-                    Vector512<float>, Vector512<int>, Avx512Functions,
-                    CellularValue<Vector512<float>, Vector512<int>, Avx512Functions,
-                        DistanceEuclideanEstimate<Vector512<float>, Vector512<int>, Avx512Functions>>>(
-                    path,
-                    generator: new(),
-                    seed,
-                    offsetX,
-                    width,
-                    height);
-
-                Write<
-                    Vector256<float>, Vector256<int>, Avx2Functions,
-                    CellularValue<Vector256<float>, Vector256<int>, Avx2Functions,
-                        DistanceEuclideanEstimate<Vector256<float>, Vector256<int>, Avx2Functions>>>(
-                    path,
-                    generator: new(),
-                    seed,
-                    offsetX,
-                    width,
-                    height);
-
-                Write<
-                    Vector128<float>, Vector128<int>, Sse2Functions,
-                    CellularValue<Vector128<float>, Vector128<int>, Sse2Functions,
-                        DistanceEuclideanEstimate<Vector128<float>, Vector128<int>, Sse2Functions>>>(
-                    path,
-                    generator: new(),
-                    seed,
-                    offsetX,
-                    width,
-                    height);
-
-                Write<
-                    float, int, ScalarFunctions,
-                    CellularValue<float, int, ScalarFunctions,
-                        DistanceEuclideanEstimate<float, int, ScalarFunctions>>>(
-                    path,
-                    generator: new(),
-                    seed,
-                    offsetX,
-                    width,
-                    height);
+                WriteCellularValue<Vector512<float>, Vector512<int>, Avx512Functions>(path, width, height, seed, offsetX);
+                WriteCellularValue<Vector256<float>, Vector256<int>, Avx2Functions>(path, width, height, seed, offsetX);
+                WriteCellularValue<Vector128<float>, Vector128<int>, Sse2Functions>(path, width, height, seed, offsetX);
+                WriteCellularValue<float, int, ScalarFunctions>(path, width, height, seed, offsetX);
             }
 
             if (true)
             {
                 string path = Path.Combine(basePath, "Perlin_{0}");
-
-                Write<
-                    Vector512<float>, Vector512<int>, Avx512Functions,
-                    Perlin<Vector512<float>, Vector512<int>, Avx512Functions>>(
-                    path,
-                    generator: new(),
-                    seed,
-                    offsetX,
-                    width,
-                    height);
-
-                Write<
-                    Vector256<float>, Vector256<int>, Avx2Functions,
-                    Perlin<Vector256<float>, Vector256<int>, Avx2Functions>>(
-                    path,
-                    generator: new(),
-                    seed,
-                    offsetX,
-                    width,
-                    height);
-
-                Write<
-                    Vector128<float>, Vector128<int>, Sse2Functions,
-                    Perlin<Vector128<float>, Vector128<int>, Sse2Functions>>(
-                    path,
-                    generator: new(),
-                    seed,
-                    offsetX,
-                    width,
-                    height);
-
-                Write<
-                    float, int, ScalarFunctions,
-                    Perlin<float, int, ScalarFunctions>>(
-                    path,
-                    generator: new(),
-                    seed,
-                    offsetX,
-                    width,
-                    height);
+                WritePerlin<Vector512<float>, Vector512<int>, Avx512Functions>(path, width, height, seed, offsetX);
+                WritePerlin<Vector256<float>, Vector256<int>, Avx2Functions>(path, width, height, seed, offsetX);
+                WritePerlin<Vector128<float>, Vector128<int>, Sse2Functions>(path, width, height, seed, offsetX);
+                WritePerlin<float, int, ScalarFunctions>(path, width, height, seed, offsetX);
             }
 
             if (true)
             {
                 string path = Path.Combine(basePath, "Simplex_{0}");
-
-                Write<
-                    Vector512<float>, Vector512<int>, Avx512Functions,
-                    Simplex<Vector512<float>, Vector512<int>, Avx512Functions>>(
-                    path,
-                    generator: new(),
-                    seed,
-                    offsetX,
-                    width,
-                    height);
-
-                Write<
-                    Vector256<float>, Vector256<int>, Avx2Functions,
-                    Simplex<Vector256<float>, Vector256<int>, Avx2Functions>>(
-                    path,
-                    generator: new(),
-                    seed,
-                    offsetX,
-                    width,
-                    height);
-
-                Write<
-                    Vector128<float>, Vector128<int>, Sse2Functions,
-                    Simplex<Vector128<float>, Vector128<int>, Sse2Functions>>(
-                    path,
-                    generator: new(),
-                    seed,
-                    offsetX,
-                    width,
-                    height);
-
-                Write<
-                    float, int, ScalarFunctions,
-                    Simplex<float, int, ScalarFunctions>>(
-                    path,
-                    generator: new(),
-                    seed,
-                    offsetX,
-                    width,
-                    height);
+                WriteSimplex<Vector512<float>, Vector512<int>, Avx512Functions>(path, width, height, seed, offsetX);
+                WriteSimplex<Vector256<float>, Vector256<int>, Avx2Functions>(path, width, height, seed, offsetX);
+                WriteSimplex<Vector128<float>, Vector128<int>, Sse2Functions>(path, width, height, seed, offsetX);
+                WriteSimplex<float, int, ScalarFunctions>(path, width, height, seed, offsetX);
             }
 
             if (true)
             {
                 string path = Path.Combine(basePath, "OpenSimplex2_{0}");
-
-                Write<
-                    Vector512<float>, Vector512<int>, Avx512Functions,
-                    OpenSimplex2<Vector512<float>, Vector512<int>, Avx512Functions>>(
-                    path,
-                    generator: new(),
-                    seed,
-                    offsetX,
-                    width,
-                    height);
-
-                Write<
-                    Vector256<float>, Vector256<int>, Avx2Functions,
-                    OpenSimplex2<Vector256<float>, Vector256<int>, Avx2Functions>>(
-                    path,
-                    generator: new(),
-                    seed,
-                    offsetX,
-                    width,
-                    height);
-
-                Write<
-                    Vector128<float>, Vector128<int>, Sse2Functions,
-                    OpenSimplex2<Vector128<float>, Vector128<int>, Sse2Functions>>(
-                    path,
-                    generator: new(),
-                    seed,
-                    offsetX,
-                    width,
-                    height);
-
-                Write<
-                    float, int, ScalarFunctions,
-                    OpenSimplex2<float, int, ScalarFunctions>>(
-                    path,
-                    generator: new(),
-                    seed,
-                    offsetX,
-                    width,
-                    height);
+                WriteOpenSimplex2<Vector512<float>, Vector512<int>, Avx512Functions>(path, width, height, seed, offsetX);
+                WriteOpenSimplex2<Vector256<float>, Vector256<int>, Avx2Functions>(path, width, height, seed, offsetX);
+                WriteOpenSimplex2<Vector128<float>, Vector128<int>, Sse2Functions>(path, width, height, seed, offsetX);
+                WriteOpenSimplex2<float, int, ScalarFunctions>(path, width, height, seed, offsetX);
             }
+        }
+
+        private static void WriteCellularValue<f32, i32, F>(
+            string basePath, int width, int height, int seed, float offsetX)
+            where F : IFunctionList<f32, i32, F>
+        {
+            WriteFor<DistanceEuclidean<f32, i32, F>>();
+            WriteFor<DistanceEuclideanEstimate<f32, i32, F>>();
+            WriteFor<DistanceEuclideanSquared<f32, i32, F>>();
+            WriteFor<DistanceManhattan<f32, i32, F>>();
+            WriteFor<DistanceHybrid<f32, i32, F>>();
+            WriteFor<DistanceMaxAxis<f32, i32, F>>();
+
+            void WriteFor<D>()
+                where D : IDistanceFunction<f32, i32, F>
+            {
+                string dpath = basePath + $"_{typeof(D).Name}";
+                Write<f32, i32, F, CellularValue<f32, i32, F, D>>(dpath, generator: new(), seed, offsetX, width, height);
+            }
+        }
+
+        private static void WritePerlin<f32, i32, F>(
+            string basePath, int width, int height, int seed, float offsetX)
+            where F : IFunctionList<f32, i32, F>
+        {
+            Write<f32, i32, F, Perlin<f32, i32, F>>(basePath, generator: new(), seed, offsetX, width, height);
+        }
+
+        private static void WriteSimplex<f32, i32, F>(
+            string basePath, int width, int height, int seed, float offsetX)
+            where F : IFunctionList<f32, i32, F>
+        {
+            Write<f32, i32, F, Simplex<f32, i32, F>>(basePath, generator: new(), seed, offsetX, width, height);
+        }
+
+        private static void WriteOpenSimplex2<f32, i32, F>(
+            string basePath, int width, int height, int seed, float offsetX)
+            where F : IFunctionList<f32, i32, F>
+        {
+            Write<f32, i32, F, OpenSimplex2<f32, i32, F>>(basePath, generator: new(), seed, offsetX, width, height);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
