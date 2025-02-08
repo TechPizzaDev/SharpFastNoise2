@@ -1,5 +1,4 @@
-﻿using System;
-using System.Runtime.CompilerServices;
+﻿using System.Runtime.CompilerServices;
 
 namespace SharpFastNoise2
 {
@@ -14,7 +13,7 @@ namespace SharpFastNoise2
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float AsFloat(this bool value)
         {
-            return value ? BitConverter.Int32BitsToSingle(-1) : 0;
+            return Unsafe.BitCast<int, float>(value ? -1 : 0);
         }
     }
 }

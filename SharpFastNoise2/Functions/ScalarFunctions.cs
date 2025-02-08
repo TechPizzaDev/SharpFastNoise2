@@ -9,6 +9,7 @@ namespace SharpFastNoise2.Functions
 {
     using f32 = Single;
     using i32 = Int32;
+    using static Unsafe;
 
     public struct ScalarFunctions : IFunctionList<f32, i32, ScalarFunctions>
     {
@@ -23,20 +24,13 @@ namespace SharpFastNoise2.Functions
 
         // Load
 
-        public static f32 Load(ref readonly float p) =>
-            Unsafe.ReadUnaligned<f32>(in Unsafe.As<f32, byte>(ref Unsafe.AsRef(in p)));
+        public static f32 Load(ref readonly float p) => p;
+        public static i32 Load(ref readonly int p) => p;
 
-        public static i32 Load(ref readonly int p) =>
-            Unsafe.ReadUnaligned<i32>(in Unsafe.As<i32, byte>(ref Unsafe.AsRef(in p)));
-
-        public static f32 Load(ref readonly float p, nuint elementOffset) =>
-            Unsafe.ReadUnaligned<f32>(in Unsafe.Add(ref Unsafe.As<f32, byte>(ref Unsafe.AsRef(in p)), elementOffset));
-
-        public static i32 Load(ref readonly int p, nuint elementOffset) =>
-            Unsafe.ReadUnaligned<i32>(in Unsafe.Add(ref Unsafe.As<i32, byte>(ref Unsafe.AsRef(in p)), elementOffset));
+        public static f32 Load(ref readonly float p, nuint elementOffset) => Unsafe.Add(ref AsRef(in p), elementOffset);
+        public static i32 Load(ref readonly int p, nuint elementOffset) => Unsafe.Add(ref AsRef(in p), elementOffset);
 
         public static f32 Load(ReadOnlySpan<float> p) => p[0];
-
         public static i32 Load(ReadOnlySpan<int> p) => p[0];
 
         public static f32 LoadOrZero(ReadOnlySpan<float> a) => a.Length >= 1 ? a[0] : 0;
@@ -45,7 +39,6 @@ namespace SharpFastNoise2.Functions
         // Incremented
 
         public static f32 Incremented_f32() => 0;
-
         public static i32 Incremented_i32() => 0;
 
         // Store
@@ -57,7 +50,6 @@ namespace SharpFastNoise2.Functions
         public static void Store(ref int p, nuint elementOffset, i32 a) => Unsafe.Add(ref p, elementOffset) = a;
 
         public static void Store(Span<float> p, f32 a) => p[0] = a;
-
         public static void Store(Span<int> p, i32 a) => p[0] = a;
 
         // Extract
@@ -70,8 +62,8 @@ namespace SharpFastNoise2.Functions
 
         // Cast
 
-        public static f32 Cast_f32(i32 a) => Unsafe.BitCast<i32, f32>(a);
-        public static i32 Cast_i32(f32 a) => Unsafe.BitCast<f32, i32>(a);
+        public static f32 Cast_f32(i32 a) => BitCast<i32, f32>(a);
+        public static i32 Cast_i32(f32 a) => BitCast<f32, i32>(a);
 
         // Convert
 
@@ -88,7 +80,8 @@ namespace SharpFastNoise2.Functions
 
         // Select
 
-        public static f32 Select(f32 m, f32 a, f32 b) => Unsafe.BitCast<f32, i32>(m) != 0 ? a : b;
+        public static f32 Select(f32 m, f32 a, f32 b) => BitCast<f32, i32>(m) != 0 ? a : b;
+
         public static i32 Select(i32 m, i32 a, i32 b) => m != 0 ? a : b;
 
         // Min
@@ -100,7 +93,7 @@ namespace SharpFastNoise2.Functions
             {
                 return Sse.MinScalar(Vector128.CreateScalarUnsafe(a), Vector128.CreateScalarUnsafe(b)).ToScalar();
             }
-            return MathF.Min(a, b);
+            return (a <= b) ? a : b;
         }
 
         public static i32 Min(i32 a, i32 b) => Math.Min(a, b);
@@ -114,17 +107,27 @@ namespace SharpFastNoise2.Functions
             {
                 return Sse.MaxScalar(Vector128.CreateScalarUnsafe(a), Vector128.CreateScalarUnsafe(b)).ToScalar();
             }
-            return MathF.Max(a, b);
+            return (a >= b) ? a : b;
         }
 
         public static i32 Max(i32 a, i32 b) => Math.Max(a, b);
 
         // Bitwise       
 
-        public static f32 AndNot(f32 a, f32 b) => Cast_f32(Cast_i32(a) & ~Cast_i32(b));
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static f32 AndNot(f32 a, f32 b)
+        {
+            return BitCast<i32, f32>(BitCast<f32, i32>(a) & ~BitCast<f32, i32>(b));
+        }
+
         public static i32 AndNot(i32 a, i32 b) => a & ~b;
 
-        public static f32 ShiftRightLogical(f32 a, [ConstantExpected] byte b) => Cast_f32(Cast_i32(a) >>> b);
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static f32 ShiftRightLogical(f32 a, [ConstantExpected] byte b)
+        {
+            return BitCast<i32, f32>(BitCast<f32, i32>(a) >>> b);
+        }
+
         public static i32 ShiftRightLogical(i32 a, [ConstantExpected] byte b) => a >>> b;
 
         // Abs
@@ -145,15 +148,21 @@ namespace SharpFastNoise2.Functions
         public static f32 Round(f32 a) => MathF.Round(a);
 
         // Mask
-
-        public static i32 Mask(i32 a, i32 m) => m != 0 ? a : 0;
-        public static f32 Mask(f32 a, f32 m) => m != 0 ? a : 0;
-
-        public static i32 NMask(i32 a, i32 m) => m != 0 ? 0 : a;
-        public static f32 NMask(f32 a, f32 m) => m != 0 ? 0 : a;
-
-        public static bool AnyMask(i32 m) => m != 0;
-        public static bool AllMask(i32 m) => m == -1;
+        
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static i32 Mask(i32 a, i32 m) => BitCast<f32, i32>(m) != 0 ? a : 0;
+        
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static f32 Mask(f32 a, f32 m) => BitCast<f32, i32>(m) != 0 ? a : 0;
+        
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static i32 NMask(i32 a, i32 m) => BitCast<f32, i32>(m) != 0 ? 0 : a;
+        
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static f32 NMask(f32 a, f32 m) => BitCast<f32, i32>(m) != 0 ? 0 : a;
+        
+        public static bool AnyMask(i32 m) => BitCast<f32, i32>(m) != 0;
+        public static bool AllMask(i32 m) => BitCast<f32, i32>(m) == -1;
 
         // Bit Ops
 
@@ -171,27 +180,60 @@ namespace SharpFastNoise2.Functions
         // FMA
 
         public static f32 FMulAdd(f32 a, f32 b, f32 c) => MathF.FusedMultiplyAdd(a, b, c);
-        public static f32 FNMulAdd(f32 a, f32 b, f32 c) => -(a * b) + c;
+        public static f32 FNMulAdd(f32 a, f32 b, f32 c) => MathF.FusedMultiplyAdd(a, -b, c);
 
         // Float math
 
         public static f32 Add(f32 lhs, f32 rhs) => lhs + rhs;
-        public static f32 And(f32 lhs, f32 rhs) => Cast_f32(Cast_i32(lhs) & Cast_i32(rhs));
-        public static f32 Not(f32 lhs) => Cast_f32(~Cast_i32(lhs));
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static f32 And(f32 lhs, f32 rhs)
+        {
+            return BitCast<i32, f32>(BitCast<f32, i32>(lhs) & BitCast<f32, i32>(rhs));
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static f32 Not(f32 lhs)
+        {
+            return BitCast<i32, f32>(~BitCast<f32, i32>(lhs));
+        }
+
         public static f32 Div(f32 lhs, f32 rhs) => lhs / rhs;
         public static f32 Equal(f32 lhs, f32 rhs) => (lhs == rhs).AsFloat();
         public static f32 GreaterThan(f32 lhs, f32 rhs) => (lhs > rhs).AsFloat();
         public static f32 GreaterThanOrEqual(f32 lhs, f32 rhs) => (lhs >= rhs).AsFloat();
-        public static f32 LeftShift(f32 lhs, [ConstantExpected] byte rhs) => Cast_f32(Cast_i32(lhs) << rhs);
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static f32 LeftShift(f32 lhs, [ConstantExpected] byte rhs)
+        {
+            return BitCast<i32, f32>(BitCast<f32, i32>(lhs) << rhs);
+        }
+
         public static f32 LessThan(f32 lhs, f32 rhs) => (lhs < rhs).AsFloat();
         public static f32 LessThanOrEqual(f32 lhs, f32 rhs) => (lhs <= rhs).AsFloat();
         public static f32 Mul(f32 lhs, f32 rhs) => lhs * rhs;
         public static f32 Negate(f32 lhs) => -lhs;
         public static f32 NotEqual(f32 lhs, f32 rhs) => (lhs != rhs).AsFloat();
-        public static f32 Or(f32 lhs, f32 rhs) => Cast_f32(Cast_i32(lhs) | Cast_i32(rhs));
-        public static f32 RightShift(f32 lhs, [ConstantExpected] byte rhs) => Cast_f32(Cast_i32(lhs) >> rhs);
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static f32 Or(f32 lhs, f32 rhs)
+        {
+            return BitCast<i32, f32>(BitCast<f32, i32>(lhs) | BitCast<f32, i32>(rhs));
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static f32 RightShift(f32 lhs, [ConstantExpected] byte rhs)
+        {
+            return BitCast<i32, f32>(BitCast<f32, i32>(lhs) >> rhs);
+        }
+
         public static f32 Sub(f32 lhs, f32 rhs) => lhs - rhs;
-        public static f32 Xor(f32 lhs, f32 rhs) => Cast_f32(Cast_i32(lhs) ^ Cast_i32(rhs));
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static f32 Xor(f32 lhs, f32 rhs)
+        {
+            return BitCast<i32, f32>(BitCast<f32, i32>(lhs) ^ BitCast<f32, i32>(rhs));
+        }
 
         // Int math
 
