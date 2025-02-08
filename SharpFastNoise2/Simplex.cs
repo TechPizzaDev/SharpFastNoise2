@@ -18,7 +18,7 @@ namespace SharpFastNoise2
         readonly int INoiseGenerator.UnitSize => F.Count;
 
         [MethodImpl(MethodImplOptions.AggressiveOptimization)]
-        public f32 Gen(f32 x, f32 y, i32 seed)
+        public readonly f32 Gen(f32 x, f32 y, i32 seed)
         {
             const float SQRT3 = 1.7320508075688772935274463415059f;
             const float F2 = 0.5f * (SQRT3 - 1.0f);
@@ -44,13 +44,15 @@ namespace SharpFastNoise2
             f32 x2 = F.Add(x0, F.Broad(G2 * 2 - 1));
             f32 y2 = F.Add(y0, F.Broad(G2 * 2 - 1));
 
-            f32 t0 = F.FNMulAdd(x0, x0, F.FNMulAdd(y0, y0, F.Broad(0.5f)));
-            f32 t1 = F.FNMulAdd(x1, x1, F.FNMulAdd(y1, y1, F.Broad(0.5f)));
-            f32 t2 = F.FNMulAdd(x2, x2, F.FNMulAdd(y2, y2, F.Broad(0.5f)));
+            f32 fc0d5 = F.Broad(0.5f);
+            f32 t0 = F.FNMulAdd(x0, x0, F.FNMulAdd(y0, y0, fc0d5));
+            f32 t1 = F.FNMulAdd(x1, x1, F.FNMulAdd(y1, y1, fc0d5));
+            f32 t2 = F.FNMulAdd(x2, x2, F.FNMulAdd(y2, y2, fc0d5));
 
-            t0 = F.Max(t0, F.Broad((float)0));
-            t1 = F.Max(t1, F.Broad((float)0));
-            t2 = F.Max(t2, F.Broad((float)0));
+            f32 fc0 = F.Broad(0f);
+            t0 = F.Max(t0, fc0);
+            t1 = F.Max(t1, fc0);
+            t2 = F.Max(t2, fc0);
 
             t0 = F.Mul(t0, t0);
             t0 = F.Mul(t0, t0);
@@ -82,7 +84,7 @@ namespace SharpFastNoise2
         }
 
         [MethodImpl(MethodImplOptions.AggressiveOptimization)]
-        public f32 Gen(f32 x, f32 y, f32 z, i32 seed)
+        public readonly f32 Gen(f32 x, f32 y, f32 z, i32 seed)
         {
             const float F3 = 1.0f / 3.0f;
             const float G3 = 1.0f / 2.0f;
@@ -106,8 +108,9 @@ namespace SharpFastNoise2
             f32 x_ge_y = F.GreaterThanOrEqual(xi, yi);
             f32 y_ge_z = F.GreaterThanOrEqual(yi, zi);
             f32 x_ge_z = F.GreaterThanOrEqual(xi, zi);
-
-            f32 g = F.Mul(F.Broad(G3), F.Add(F.Add(xi, yi), zi));
+            
+            f32 fcG3 = F.Broad(G3);
+            f32 g = F.Mul(fcG3, F.Add(F.Add(xi, yi), zi));
             x0 = F.Sub(xi, g);
             y0 = F.Sub(yi, g);
             z0 = F.Sub(zi, g);
@@ -120,25 +123,32 @@ namespace SharpFastNoise2
             f32 j2 = F.Or(F.Not(x_ge_y), y_ge_z);
             f32 k2 = F.And(x_ge_z, y_ge_z); //NMasked
 
-            f32 x1 = F.Add(F.MaskSub(x0, F.Broad(1f), i1), F.Broad(G3));
-            f32 y1 = F.Add(F.MaskSub(y0, F.Broad(1f), j1), F.Broad(G3));
-            f32 z1 = F.Add(F.MaskSub(z0, F.Broad(1f), k1), F.Broad(G3));
-            f32 x2 = F.Add(F.MaskSub(x0, F.Broad(1f), i2), F.Broad(G3 * 2));
-            f32 y2 = F.Add(F.MaskSub(y0, F.Broad(1f), j2), F.Broad(G3 * 2));
-            f32 z2 = F.Add(F.NMaskSub(z0, F.Broad(1f), k2), F.Broad(G3 * 2));
-            f32 x3 = F.Add(x0, F.Broad(G3 * 3 - 1));
-            f32 y3 = F.Add(y0, F.Broad(G3 * 3 - 1));
-            f32 z3 = F.Add(z0, F.Broad(G3 * 3 - 1));
+            f32 fc1 = F.Broad(1f);
+            f32 x1 = F.Add(F.MaskSub(x0, fc1, i1), fcG3);
+            f32 y1 = F.Add(F.MaskSub(y0, fc1, j1), fcG3);
+            f32 z1 = F.Add(F.MaskSub(z0, fc1, k1), fcG3);
 
-            f32 t0 = F.FNMulAdd(x0, x0, F.FNMulAdd(y0, y0, F.FNMulAdd(z0, z0, F.Broad(0.6f))));
-            f32 t1 = F.FNMulAdd(x1, x1, F.FNMulAdd(y1, y1, F.FNMulAdd(z1, z1, F.Broad(0.6f))));
-            f32 t2 = F.FNMulAdd(x2, x2, F.FNMulAdd(y2, y2, F.FNMulAdd(z2, z2, F.Broad(0.6f))));
-            f32 t3 = F.FNMulAdd(x3, x3, F.FNMulAdd(y3, y3, F.FNMulAdd(z3, z3, F.Broad(0.6f))));
+            f32 fc2G3 = F.Broad(G3 * 2);
+            f32 x2 = F.Add(F.MaskSub(x0, fc1, i2), fc2G3);
+            f32 y2 = F.Add(F.MaskSub(y0, fc1, j2), fc2G3);
+            f32 z2 = F.Add(F.NMaskSub(z0, fc1, k2), fc2G3);
 
-            t0 = F.Max(t0, F.Broad((float)0));
-            t1 = F.Max(t1, F.Broad((float)0));
-            t2 = F.Max(t2, F.Broad((float)0));
-            t3 = F.Max(t3, F.Broad((float)0));
+            f32 fc3G3 = F.Broad(G3 * 3 - 1);
+            f32 x3 = F.Add(x0, fc3G3);
+            f32 y3 = F.Add(y0, fc3G3);
+            f32 z3 = F.Add(z0, fc3G3);
+
+            f32 fc0d6 = F.Broad(0.6f);
+            f32 t0 = F.FNMulAdd(x0, x0, F.FNMulAdd(y0, y0, F.FNMulAdd(z0, z0, fc0d6)));
+            f32 t1 = F.FNMulAdd(x1, x1, F.FNMulAdd(y1, y1, F.FNMulAdd(z1, z1, fc0d6)));
+            f32 t2 = F.FNMulAdd(x2, x2, F.FNMulAdd(y2, y2, F.FNMulAdd(z2, z2, fc0d6)));
+            f32 t3 = F.FNMulAdd(x3, x3, F.FNMulAdd(y3, y3, F.FNMulAdd(z3, z3, fc0d6)));
+
+            f32 fc0 = F.Broad(0f);
+            t0 = F.Max(t0, fc0);
+            t1 = F.Max(t1, fc0);
+            t2 = F.Max(t2, fc0);
+            t3 = F.Max(t3, fc0);
 
             t0 = F.Mul(t0, t0);
             t0 = F.Mul(t0, t0);
@@ -150,10 +160,10 @@ namespace SharpFastNoise2
             t3 = F.Mul(t3, t3);
 
             f32 n0 = F.GetGradientDot(
-                Utils< f32, i32, F>.HashPrimes(seed, i, j, k), x0, y0, z0);
+                Utils<f32, i32, F>.HashPrimes(seed, i, j, k), x0, y0, z0);
 
             f32 n1 = F.GetGradientDot(
-                Utils< f32, i32, F>.HashPrimes(
+                Utils<f32, i32, F>.HashPrimes(
                     seed,
                     F.MaskAdd(i, F.Broad(Primes.X), F.Cast_i32(i1)),
                     F.MaskAdd(j, F.Broad(Primes.Y), F.Cast_i32(j1)),
@@ -161,7 +171,7 @@ namespace SharpFastNoise2
                 x1, y1, z1);
 
             f32 n2 = F.GetGradientDot(
-                Utils< f32, i32, F>.HashPrimes(
+                Utils<f32, i32, F>.HashPrimes(
                     seed,
                     F.MaskAdd(i, F.Broad(Primes.X), F.Cast_i32(i2)),
                     F.MaskAdd(j, F.Broad(Primes.Y), F.Cast_i32(j2)),
@@ -181,7 +191,7 @@ namespace SharpFastNoise2
         }
 
         [MethodImpl(MethodImplOptions.AggressiveOptimization)]
-        public f32 Gen(f32 x, f32 y, f32 z, f32 w, i32 seed)
+        public readonly f32 Gen(f32 x, f32 y, f32 z, f32 w, i32 seed)
         {
             const float SQRT5 = 2.236067977499f;
             const float F4 = (SQRT5 - 1.0f) / 4.0f;
@@ -266,23 +276,24 @@ namespace SharpFastNoise2
             f32 y1 = F.Add(F.MaskSub(y0, fc1, F.Cast_f32(j1)), fcG4);
             f32 z1 = F.Add(F.MaskSub(z0, fc1, F.Cast_f32(k1)), fcG4);
             f32 w1 = F.Add(F.MaskSub(w0, fc1, F.Cast_f32(l1)), fcG4);
-            
+
             f32 fc2G4 = F.Broad(G4 * 2);
             f32 x2 = F.Add(F.MaskSub(x0, fc1, F.Cast_f32(i2)), fc2G4);
             f32 y2 = F.Add(F.MaskSub(y0, fc1, F.Cast_f32(j2)), fc2G4);
             f32 z2 = F.Add(F.MaskSub(z0, fc1, F.Cast_f32(k2)), fc2G4);
             f32 w2 = F.Add(F.MaskSub(w0, fc1, F.Cast_f32(l2)), fc2G4);
-            
+
             f32 fc3G4 = F.Broad(G4 * 3);
             f32 x3 = F.Add(F.MaskSub(x0, fc1, F.Cast_f32(i3)), fc3G4);
             f32 y3 = F.Add(F.MaskSub(y0, fc1, F.Cast_f32(j3)), fc3G4);
             f32 z3 = F.Add(F.MaskSub(z0, fc1, F.Cast_f32(k3)), fc3G4);
             f32 w3 = F.Add(F.MaskSub(w0, fc1, F.Cast_f32(l3)), fc3G4);
-            
-            f32 x4 = F.Add(x0, F.Broad(G4 * 4 - 1));
-            f32 y4 = F.Add(y0, F.Broad(G4 * 4 - 1));
-            f32 z4 = F.Add(z0, F.Broad(G4 * 4 - 1));
-            f32 w4 = F.Add(w0, F.Broad(G4 * 4 - 1));
+
+            f32 fc4G4 = F.Broad(G4 * 4 - 1);
+            f32 x4 = F.Add(x0, fc4G4);
+            f32 y4 = F.Add(y0, fc4G4);
+            f32 z4 = F.Add(z0, fc4G4);
+            f32 w4 = F.Add(w0, fc4G4);
 
             f32 fc0d6 = F.Broad(0.6f);
             f32 t0 = F.FNMulAdd(x0, x0, F.FNMulAdd(y0, y0, F.FNMulAdd(z0, z0, F.FNMulAdd(w0, w0, fc0d6))));
