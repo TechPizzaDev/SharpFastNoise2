@@ -101,7 +101,7 @@ namespace SharpFastNoise2
                 f32 score0zr = F.Abs(d0zr);
                 f32 dir0xr = F.LessThanOrEqual(F.Max(score0yr, score0zr), score0xr);
                 f32 dir0yr = F.AndNot(F.LessThanOrEqual(F.Max(score0zr, score0xr), score0yr), dir0xr);
-                f32 dir0zr = F.Complement(F.Or(dir0xr, dir0yr));
+                f32 dir0zr = F.Not(F.Or(dir0xr, dir0yr));
                 f32 v1xr = F.MaskAdd(v0xr, F.Or(F.Broad(1.0f), F.And(F.Broad(-1.0f), d0xr)), dir0xr);
                 f32 v1yr = F.MaskAdd(v0yr, F.Or(F.Broad(1.0f), F.And(F.Broad(-1.0f), d0yr)), dir0yr);
                 f32 v1zr = F.MaskAdd(v0zr, F.Or(F.Broad(1.0f), F.And(F.Broad(-1.0f), d0zr)), dir0zr);
@@ -139,7 +139,7 @@ namespace SharpFastNoise2
                 xr = F.Add(xr, F.Broad(0.5f));
                 yr = F.Add(yr, F.Broad(0.5f));
                 zr = F.Add(zr, F.Broad(0.5f));
-                seed = F.Complement(seed);
+                seed = F.Not(seed);
             }
 
             return F.Mul(F.Broad(32.69428253173828125f), val);

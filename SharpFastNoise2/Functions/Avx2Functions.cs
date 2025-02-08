@@ -191,7 +191,7 @@ namespace SharpFastNoise2.Functions
 
         public static f32 Add(f32 lhs, f32 rhs) => Avx.Add(lhs, rhs);
         public static f32 And(f32 lhs, f32 rhs) => Avx.And(lhs, rhs);
-        public static f32 Complement(f32 lhs) => ~lhs;
+        public static f32 Not(f32 lhs) => ~lhs;
         public static f32 Div(f32 lhs, f32 rhs) => Avx.Divide(lhs, rhs);
         public static f32 Equal(f32 lhs, f32 rhs) => Avx.CompareEqual(lhs, rhs);
         public static f32 GreaterThan(f32 lhs, f32 rhs) => Avx.CompareGreaterThan(lhs, rhs);
@@ -211,7 +211,7 @@ namespace SharpFastNoise2.Functions
 
         public static i32 Add(i32 lhs, i32 rhs) => Avx2.Add(lhs, rhs);
         public static i32 And(i32 lhs, i32 rhs) => Avx2.And(lhs, rhs);
-        public static i32 Complement(i32 lhs) => ~lhs;
+        public static i32 Not(i32 lhs) => ~lhs;
         public static i32 Div(i32 lhs, i32 rhs) => throw new NotSupportedException();
         public static i32 Equal(i32 lhs, i32 rhs) => Avx2.CompareEqual(lhs, rhs);
         public static i32 GreaterThan(i32 lhs, i32 rhs) => Avx2.CompareGreaterThan(lhs, rhs);

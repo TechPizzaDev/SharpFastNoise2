@@ -343,7 +343,7 @@ namespace SharpFastNoise2.Functions
 
         public static f32 Add(f32 lhs, f32 rhs) => Vector128.Add(lhs, rhs);
         public static f32 And(f32 lhs, f32 rhs) => Vector128.BitwiseAnd(lhs, rhs);
-        public static f32 Complement(f32 lhs) => Vector128.OnesComplement(lhs);
+        public static f32 Not(f32 lhs) => Vector128.OnesComplement(lhs);
         public static f32 Div(f32 lhs, f32 rhs) => Vector128.Divide(lhs, rhs);
         public static f32 Equal(f32 lhs, f32 rhs) => Vector128.Equals(lhs, rhs);
         public static f32 GreaterThan(f32 lhs, f32 rhs) => Vector128.GreaterThan(lhs, rhs);
@@ -364,7 +364,7 @@ namespace SharpFastNoise2.Functions
 
         public static i32 Add(i32 lhs, i32 rhs) => Vector128.Add(lhs, rhs);
         public static i32 And(i32 lhs, i32 rhs) => Vector128.BitwiseAnd(lhs, rhs);
-        public static i32 Complement(i32 lhs) => Vector128.OnesComplement(lhs);
+        public static i32 Not(i32 lhs) => Vector128.OnesComplement(lhs);
         public static i32 Div(i32 lhs, i32 rhs) => throw new NotSupportedException();
         public static i32 Equal(i32 lhs, i32 rhs) => Vector128.Equals(lhs, rhs);
         public static i32 GreaterThan(i32 lhs, i32 rhs) => Vector128.GreaterThan(lhs, rhs);

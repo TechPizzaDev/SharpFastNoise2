@@ -114,10 +114,10 @@ namespace SharpFastNoise2
 
             f32 i1 = F.And(x_ge_y, x_ge_z);
             f32 j1 = F.AndNot(y_ge_z, x_ge_y);
-            f32 k1 = F.AndNot(F.Complement(x_ge_z), y_ge_z);
+            f32 k1 = F.AndNot(F.Not(x_ge_z), y_ge_z);
 
             f32 i2 = F.Or(x_ge_y, x_ge_z);
-            f32 j2 = F.Or(F.Complement(x_ge_y), y_ge_z);
+            f32 j2 = F.Or(F.Not(x_ge_y), y_ge_z);
             f32 k2 = F.And(x_ge_z, y_ge_z); //NMasked
 
             f32 x1 = F.Add(F.MaskSub(x0, F.Broad(1f), i1), F.Broad(G3));
@@ -220,27 +220,27 @@ namespace SharpFastNoise2
 
             i32 x_ge_y = F.Cast_i32(F.GreaterThanOrEqual(x0, y0));
             rankx = F.MaskIncrement(rankx, x_ge_y);
-            ranky = F.MaskIncrement(ranky, F.Complement(x_ge_y));
+            ranky = F.MaskIncrement(ranky, F.Not(x_ge_y));
 
             i32 x_ge_z = F.Cast_i32(F.GreaterThanOrEqual(x0, z0));
             rankx = F.MaskIncrement(rankx, x_ge_z);
-            rankz = F.MaskIncrement(rankz, F.Complement(x_ge_z));
+            rankz = F.MaskIncrement(rankz, F.Not(x_ge_z));
 
             i32 x_ge_w = F.Cast_i32(F.GreaterThanOrEqual(x0, w0));
             rankx = F.MaskIncrement(rankx, x_ge_w);
-            rankw = F.MaskIncrement(rankw, F.Complement(x_ge_w));
+            rankw = F.MaskIncrement(rankw, F.Not(x_ge_w));
 
             i32 y_ge_z = F.Cast_i32(F.GreaterThanOrEqual(y0, z0));
             ranky = F.MaskIncrement(ranky, y_ge_z);
-            rankz = F.MaskIncrement(rankz, F.Complement(y_ge_z));
+            rankz = F.MaskIncrement(rankz, F.Not(y_ge_z));
 
             i32 y_ge_w = F.Cast_i32(F.GreaterThanOrEqual(y0, w0));
             ranky = F.MaskIncrement(ranky, y_ge_w);
-            rankw = F.MaskIncrement(rankw, F.Complement(y_ge_w));
+            rankw = F.MaskIncrement(rankw, F.Not(y_ge_w));
 
-            i32 z_ge_w =F.Cast_i32( F.GreaterThanOrEqual(z0, w0));
+            i32 z_ge_w = F.Cast_i32(F.GreaterThanOrEqual(z0, w0));
             rankz = F.MaskIncrement(rankz, z_ge_w);
-            rankw = F.MaskIncrement(rankw, F.Complement(z_ge_w));
+            rankw = F.MaskIncrement(rankw, F.Not(z_ge_w));
 
             i32 ic2 = F.Broad(2);
             i32 i1 = F.GreaterThan(rankx, ic2);
