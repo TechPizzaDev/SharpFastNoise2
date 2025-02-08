@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
+using System.Runtime.CompilerServices;
 using System.Runtime.Intrinsics;
 using SharpFastNoise2;
 using SharpFastNoise2.Distance;
@@ -318,6 +319,17 @@ namespace Sandbox
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static void StoreUnit<f32, i32, F>(Span<L32> span, f32 unit)
+            where F : IFunctionList<f32, i32, F>
+        {
+            f32 scaled = F.Mul(F.Add(unit, F.Broad(1f)), F.Broad(uint.MaxValue / 2 + 0.5f));
+            for (int i = 0; i < F.Count; i++)
+            {
+                span[i] = new L32(L32.UpscaleF32ToU32(F.Extract(scaled, i)));
+            }
+        }
+
         public static void Write<f32, i32, F, G>(
             string basePath,
             G generator,
@@ -330,7 +342,7 @@ namespace Sandbox
             where F : IFunctionList<f32, i32, F>
             where G : INoiseGeneratorAbstract
         {
-            using Image<L16> image = new(width, height);
+            using Image<L32> image = new(width, height);
             Stopwatch w = new();
 
             var vSeed = F.Broad(seed);
@@ -342,22 +354,21 @@ namespace Sandbox
                 Console.Write($"Generating \"{path}\" ");
 
                 w.Restart();
-                for (int y = 0; y < image.Height; y++)
+                image.ProcessPixelRows(accessor =>
                 {
-                    f32 vy = F.Broad(y / 32f);
-
-                    for (int x = 0; x < image.Width; x += G.UnitSize)
+                    for (int y = 0; y < accessor.Height; y++)
                     {
-                        f32 vx = F.Add(F.Broad(x / 32f), vIncrementX);
-                        f32 noise = gen4D.Gen(vx, vy, default, default, vSeed);
+                        Span<L32> row = accessor.GetRowSpan(y);
+                        f32 vy = F.Broad(y / 32f);
 
-                        for (int i = 0; i < G.UnitSize; i++)
+                        for (int x = 0; x < row.Length; x += G.UnitSize)
                         {
-                            image[x + i, y] = new L16((ushort) ((F.Extract(noise, i) + 1) * 0.5f * ushort.MaxValue));
+                            f32 vx = F.Add(F.Broad(x / 32f), vIncrementX);
+                            f32 noise = gen4D.Gen(vx, vy, default, default, vSeed);
+                            StoreUnit<f32, i32, F>(row.Slice(x, F.Count), noise);
                         }
                     }
-                }
-
+                });
                 w.Stop();
                 Console.Write($"({w.Elapsed.TotalMilliseconds,4:0.0}ms)");
 
@@ -373,22 +384,21 @@ namespace Sandbox
                 Console.Write($"Generating \"{path}\" ");
 
                 w.Restart();
-                for (int y = 0; y < image.Height; y++)
+                image.ProcessPixelRows(accessor =>
                 {
-                    f32 vy = F.Broad(y / 32f);
-
-                    for (int x = 0; x < image.Width; x += G.UnitSize)
+                    for (int y = 0; y < accessor.Height; y++)
                     {
-                        f32 vx = F.Add(F.Broad(x / 32f), vIncrementX);
-                        f32 noise = gen3D.Gen(vx, vy, default, vSeed);
+                        Span<L32> row = accessor.GetRowSpan(y);
+                        f32 vy = F.Broad(y / 32f);
 
-                        for (int i = 0; i < G.UnitSize; i++)
+                        for (int x = 0; x < image.Width; x += G.UnitSize)
                         {
-                            image[x + i, y] = new L16((ushort) ((F.Extract(noise, i) + 1) * 0.5f * ushort.MaxValue));
+                            f32 vx = F.Add(F.Broad(x / 32f), vIncrementX);
+                            f32 noise = gen3D.Gen(vx, vy, default, vSeed);
+                            StoreUnit<f32, i32, F>(row.Slice(x, F.Count), noise);
                         }
                     }
-                }
-
+                });
                 w.Stop();
                 Console.Write($"({w.Elapsed.TotalMilliseconds,4:0.0}ms)");
 
@@ -404,22 +414,21 @@ namespace Sandbox
                 Console.Write($"Generating \"{path}\" ");
 
                 w.Restart();
-                for (int y = 0; y < image.Height; y++)
+                image.ProcessPixelRows(accessor =>
                 {
-                    f32 vy = F.Broad(y / 32f);
-
-                    for (int x = 0; x < image.Width; x += G.UnitSize)
+                    for (int y = 0; y < accessor.Height; y++)
                     {
-                        f32 vx = F.Add(F.Broad(x / 32f), vIncrementX);
-                        f32 noise = gen2D.Gen(vx, vy, vSeed);
+                        Span<L32> row = accessor.GetRowSpan(y);
+                        f32 vy = F.Broad(y / 32f);
 
-                        for (int i = 0; i < G.UnitSize; i++)
+                        for (int x = 0; x < image.Width; x += G.UnitSize)
                         {
-                            image[x + i, y] = new L16((ushort) ((F.Extract(noise, i) + 1) * 0.5f * ushort.MaxValue));
+                            f32 vx = F.Add(F.Broad(x / 32f), vIncrementX);
+                            f32 noise = gen2D.Gen(vx, vy, vSeed);
+                            StoreUnit<f32, i32, F>(row.Slice(x, F.Count), noise);
                         }
                     }
-                }
-
+                });
                 w.Stop();
                 Console.Write($"({w.Elapsed.TotalMilliseconds,4:0.0}ms)");
 
@@ -435,20 +444,20 @@ namespace Sandbox
                 Console.Write($"Generating \"{path}\" ");
 
                 w.Restart();
-                for (int y = 0; y < image.Height; y++)
+                image.ProcessPixelRows(accessor =>
                 {
-                    for (int x = 0; x < image.Width; x += G.UnitSize)
+                    for (int y = 0; y < accessor.Height; y++)
                     {
-                        f32 vx = F.Add(F.Broad(x / 32f), vIncrementX);
-                        f32 noise = gen1D.Gen(vx, vSeed);
+                        Span<L32> row = accessor.GetRowSpan(y);
 
-                        for (int i = 0; i < G.UnitSize; i++)
+                        for (int x = 0; x < image.Width; x += G.UnitSize)
                         {
-                            image[x + i, y] = new L16((ushort) ((F.Extract(noise, i) + 1) * 0.5f * ushort.MaxValue));
+                            f32 vx = F.Add(F.Broad(x / 32f), vIncrementX);
+                            f32 noise = gen1D.Gen(vx, vSeed);
+                            StoreUnit<f32, i32, F>(row.Slice(x, F.Count), noise);
                         }
                     }
-                }
-
+                });
                 w.Stop();
                 Console.Write($"({w.Elapsed.TotalMilliseconds,4:0.0}ms)");
 
@@ -478,29 +487,30 @@ namespace Sandbox
             w.Start();
             generator.GenTileable2D(dst.AsSpan(), width, height, 1f / 32f, seed);
             w.Stop();
-            Console.Write($"({w.Elapsed.TotalMilliseconds,4:0.0}ms)");
+            Console.Write($"({w.Elapsed.TotalMilliseconds,4:0.0}ms gen)");
 
+            using Image<L32> image = new(width, height);
             w.Restart();
-            using Image<L16> image = new(width, height);
-
             image.ProcessPixelRows(accessor =>
             {
                 for (int y = 0; y < accessor.Height; y++)
                 {
-                    Span<L16> row = accessor.GetRowSpan(y).Slice(0, width);
+                    Span<L32> row = accessor.GetRowSpan(y).Slice(0, width);
                     Span<float> dstSlice = dst.AsSpan(y * width, width);
 
+                    const float scale = uint.MaxValue / 2 + 0.5f;
                     for (int x = 0; x < row.Length; x++)
                     {
-                        float value = dstSlice[x] + 1;
-                        row[x] = new L16((ushort) (value * 0.5f * ushort.MaxValue));
+                        row[x] = new L32(L32.UpscaleF32ToU32((dstSlice[x] + 1f) * scale));
                     }
                 }
             });
+            w.Stop();
+            Console.Write($" ({w.Elapsed.TotalMilliseconds:0.0}ms convert)");
 
+            w.Restart();
             image.Save(path);
             w.Stop();
-
             Console.WriteLine($" ({w.Elapsed.TotalMilliseconds,4:0.0}ms encode)");
         }
     }
