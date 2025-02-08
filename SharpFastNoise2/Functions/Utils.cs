@@ -9,64 +9,57 @@ namespace SharpFastNoise2
         where i32 : unmanaged
         where F : IFunctionList<f32, i32, F>
     {
+        private const int Prime = 0x27d4eb2d;
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static i32 HashPrimes(i32 seed, i32 x, i32 y)
         {
-            i32 hash = seed;
-            hash = F.Xor(hash, F.Xor(x, y));
+            i32 hash = F.Xor(seed, F.Xor(x, y));
 
-            hash = F.Mul(hash, F.Broad(0x27d4eb2d));
+            hash = F.Mul(hash, F.Broad(Prime));
             return F.Xor(F.RightShift(hash, 15), hash);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static i32 HashPrimes(i32 seed, i32 x, i32 y, i32 z)
         {
-            i32 hash = seed;
-            hash = F.Xor(hash, F.Xor(x, F.Xor(y, z)));
+            i32 hash = F.Xor(seed, F.Xor(x, F.Xor(y, z)));
 
-            hash = F.Mul(hash, F.Broad(0x27d4eb2d));
+            hash = F.Mul(hash, F.Broad(Prime));
             return F.Xor(F.RightShift(hash, 15), hash);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static i32 HashPrimes(i32 seed, i32 x, i32 y, i32 z, i32 w)
         {
-            i32 hash = seed;
-            hash = F.Xor(hash, F.Xor(x, F.Xor(y, F.Xor(z, w))));
+            i32 hash = F.Xor(seed, F.Xor(x, F.Xor(y, F.Xor(z, w))));
 
-            hash = F.Mul(hash, F.Broad(0x27d4eb2d));
+            hash = F.Mul(hash, F.Broad(Prime));
             return F.Xor(F.RightShift(hash, 15), hash);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static i32 HashPrimesHB(i32 seed, i32 x, i32 y)
         {
-            i32 hash = seed;
-            hash = F.Xor(hash, F.Xor(x, y));
+            i32 hash = F.Xor(seed, F.Xor(x, y));
 
-            hash = F.Mul(hash, F.Broad(0x27d4eb2d));
-            return hash;
+            return F.Mul(hash, F.Broad(Prime));
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static i32 HashPrimesHB(i32 seed, i32 x, i32 y, i32 z)
         {
-            i32 hash = seed;
-            hash = F.Xor(hash, F.Xor(x, F.Xor(y, z)));
+            i32 hash = F.Xor(seed, F.Xor(x, F.Xor(y, z)));
 
-            hash = F.Mul(hash, F.Broad(0x27d4eb2d));
-            return hash;
+            return F.Mul(hash, F.Broad(Prime));
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static i32 HashPrimesHB(i32 seed, i32 x, i32 y, i32 z, i32 w)
         {
-            i32 hash = seed;
-            hash = F.Xor(hash, F.Xor(x, F.Xor(y, F.Xor(z, w))));
+            i32 hash = F.Xor(seed, F.Xor(x, F.Xor(y, F.Xor(z, w))));
 
-            hash = F.Mul(hash, F.Broad(0x27d4eb2d));
-            return hash;
+            return F.Mul(hash, F.Broad(Prime));
         }
 
         //public static float32v GetValueCoord(int32v seed, P...primedPos )
@@ -74,7 +67,7 @@ namespace SharpFastNoise2
         //    int32v hash = seed;
         //    hash ^= (primedPos ^ ...);
         //
-        //    hash = hash.Mul(hash.Mul(F.Broad(0x27d4eb2d)));
+        //    hash = hash.Mul(hash.Mul(F.Broad(Prime)));
         //    return F.Converti32_f32(hash).Mul(F.Broad(1.0f / int.MaxValue));
         //}
 
