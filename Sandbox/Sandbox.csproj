@@ -7,6 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="ParallelExtensionsExtras.NetFxStandard" Version="2.1.0" />
     <PackageReference Include="ShellProgressBar" Version="5.2.0" />
     <PackageReference Include="SixLabors.ImageSharp" Version="3.1.6" />
   </ItemGroup>
