@@ -59,14 +59,10 @@ class Program
 
             string path = Path.Combine(tileableBasePath, "CellularValue");
             using ChildProgressBar progress = topProgress.Spawn(4, path);
-            var tasks = new[]
-            {
-                WriteTileableCellularValue<Vector512<float>, Vector512<int>, Avx512Functions>(path, progress, state),
-                WriteTileableCellularValue<Vector256<float>, Vector256<int>, Avx2Functions>(path, progress, state),
-                WriteTileableCellularValue<Vector128<float>, Vector128<int>, Sse2Functions>(path, progress, state),
-                WriteTileableCellularValue<float, int, ScalarFunctions>(path, progress, state)
-            };
-            await Task.WhenAll(tasks);
+            await WriteTileableCellularValue<Vector512<float>, Vector512<int>, Avx512Functions>(path, progress, state);
+            await WriteTileableCellularValue<Vector256<float>, Vector256<int>, Avx2Functions>(path, progress, state);
+            await WriteTileableCellularValue<Vector128<float>, Vector128<int>, Sse2Functions>(path, progress, state);
+            await WriteTileableCellularValue<float, int, ScalarFunctions>(path, progress, state);
             topProgress.Tick();
         }
     }
@@ -91,10 +87,7 @@ class Program
             where D : IDistanceFunction<f32, i32, F>
         {
             string dpath = Path.Combine(basePath, GetDistanceName(typeof(D)));
-            return state.TaskFactory.StartNew(async () =>
-            {
-                await WriteTileable<f32, i32, CellularValue<f32, i32, F, D>>(dpath, progress, state, generator: new());
-            });
+            return WriteTileable<f32,i32,CellularValue<f32,i32,F,D>>(dpath,progress,state,generator: new());
         }
     }
 
@@ -104,14 +97,10 @@ class Program
         {
             string path = Path.Combine(basePath, "CellularValue");
             using ChildProgressBar progress = topProgress.Spawn(4, path);
-            var tasks = new[]
-            {
-                WriteCellularValue<Vector512<float>, Vector512<int>, Avx512Functions>(path, progress, state),
-                WriteCellularValue<Vector256<float>, Vector256<int>, Avx2Functions>(path, progress, state),
-                WriteCellularValue<Vector128<float>, Vector128<int>, Sse2Functions>(path, progress, state),
-                WriteCellularValue<float, int, ScalarFunctions>(path, progress, state)
-            };
-            await Task.WhenAll(tasks);
+            await WriteCellularValue<Vector512<float>,Vector512<int>,Avx512Functions>(path,progress,state);
+            await WriteCellularValue<Vector256<float>,Vector256<int>,Avx2Functions>(path,progress,state);
+            await WriteCellularValue<Vector128<float>,Vector128<int>,Sse2Functions>(path,progress,state);
+            await WriteCellularValue<float,int,ScalarFunctions>(path,progress,state);
             topProgress.Tick();
         }
 
