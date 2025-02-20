@@ -20,7 +20,7 @@ namespace SharpFastNoise2.Generators
             f32 freqV = F.Broad(frequency);
             i32 seedV = F.Broad(seed);
 
-            i32 xIdx = F.Add(F.Broad(xStart), F.Incremented_i32());
+            i32 xIdx = F.Broad(xStart);
             i32 yIdx = F.Broad(yStart);
 
             i32 xSizeV = F.Broad(xSize);
@@ -29,6 +29,7 @@ namespace SharpFastNoise2.Generators
             int xStep = xSize;
             destination = destination.Slice(0, xStep * ySize);
 
+            xIdx = F.Add(xIdx, F.Incremented_i32());
             (xIdx, yIdx) = GeneratorHelper.AxisReset<f32, i32, F>(true, xIdx, yIdx, xMax, xSizeV, xStep);
 
             f32 min = F.Broad(float.PositiveInfinity);
