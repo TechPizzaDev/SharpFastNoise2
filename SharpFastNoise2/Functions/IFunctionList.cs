@@ -173,42 +173,42 @@ namespace SharpFastNoise2.Functions
 
         // Float math
 
-        static abstract f32 Add(f32 lhs, f32 rhs);
-        static abstract f32 And(f32 lhs, f32 rhs);
-        static abstract f32 Div(f32 lhs, f32 rhs);
-        static abstract f32 Not(f32 lhs);
-        static abstract f32 Equal(f32 lhs, f32 rhs);
-        static abstract f32 GreaterThan(f32 lhs, f32 rhs);
-        static abstract f32 GreaterThanOrEqual(f32 lhs, f32 rhs);
-        static abstract f32 LeftShift(f32 lhs, [ConstantExpected] byte rhs);
-        static abstract f32 LessThan(f32 lhs, f32 rhs);
-        static abstract f32 LessThanOrEqual(f32 lhs, f32 rhs);
-        static abstract f32 Mul(f32 lhs, f32 rhs);
-        static abstract f32 Negate(f32 lhs);
-        static abstract f32 NotEqual(f32 lhs, f32 rhs);
-        static abstract f32 Or(f32 lhs, f32 rhs);
-        static abstract f32 RightShift(f32 lhs, [ConstantExpected] byte rhs);
-        static abstract f32 Sub(f32 lhs, f32 rhs);
-        static abstract f32 Xor(f32 lhs, f32 rhs);
+        static abstract f32 Add(f32 a, f32 b);
+        static abstract f32 And(f32 a, f32 b);
+        static abstract f32 Div(f32 a, f32 b);
+        static abstract f32 Not(f32 a);
+        static abstract f32 Equal(f32 a, f32 b);
+        static abstract f32 GreaterThan(f32 a, f32 b);
+        static abstract f32 GreaterThanOrEqual(f32 a, f32 b);
+        static abstract f32 LeftShift(f32 a, [ConstantExpected] byte shift);
+        static abstract f32 LessThan(f32 l, f32 b);
+        static abstract f32 LessThanOrEqual(f32 a, f32 b);
+        static abstract f32 Mul(f32 a, f32 b);
+        static abstract f32 Negate(f32 a);
+        static abstract f32 NotEqual(f32 a, f32 b);
+        static abstract f32 Or(f32 a, f32 b);
+        static abstract f32 RightShift(f32 a, [ConstantExpected] byte shift);
+        static abstract f32 Sub(f32 a, f32 b);
+        static abstract f32 Xor(f32 a, f32 b);
 
         // Int math
 
-        static abstract i32 Add(i32 lhs, i32 rhs);
-        static abstract i32 And(i32 lhs, i32 rhs);
-        static abstract i32 Div(i32 lhs, i32 rhs);
-        static abstract i32 Not(i32 lhs);
-        static abstract i32 Equal(i32 lhs, i32 rhs);
-        static abstract i32 GreaterThan(i32 lhs, i32 rhs);
-        static abstract i32 GreaterThanOrEqual(i32 lhs, i32 rhs);
-        static abstract i32 LeftShift(i32 lhs, [ConstantExpected] byte rhs);
-        static abstract i32 LessThan(i32 lhs, i32 rhs);
-        static abstract i32 LessThanOrEqual(i32 lhs, i32 rhs);
-        static abstract i32 Mul(i32 lhs, i32 rhs);
-        static abstract i32 Negate(i32 lhs);
-        static abstract i32 NotEqual(i32 lhs, i32 rhs);
-        static abstract i32 Or(i32 lhs, i32 rhs);
-        static abstract i32 RightShift(i32 lhs, [ConstantExpected] byte rhs);
-        static abstract i32 Sub(i32 lhs, i32 rhs);
-        static abstract i32 Xor(i32 lhs, i32 rhs);
+        static abstract i32 Add(i32 a, i32 b);
+        static abstract i32 And(i32 a, i32 b);
+        static abstract i32 Div(i32 a, i32 b);
+        static abstract i32 Not(i32 a);
+        static abstract i32 Equal(i32 a, i32 b);
+        static abstract i32 GreaterThan(i32 a, i32 b);
+        static abstract i32 GreaterThanOrEqual(i32 a, i32 b);
+        static abstract i32 LeftShift(i32 a, [ConstantExpected] byte shift);
+        static abstract i32 LessThan(i32 a, i32 b);
+        static abstract i32 LessThanOrEqual(i32 a, i32 b);
+        static abstract i32 Mul(i32 a, i32 b);
+        static abstract i32 Negate(i32 a);
+        static abstract i32 NotEqual(i32 a, i32 b);
+        static abstract i32 Or(i32 a, i32 b);
+        static abstract i32 RightShift(i32 a, [ConstantExpected] byte shift);
+        static abstract i32 Sub(i32 a, i32 b);
+        static abstract i32 Xor(i32 a, i32 b);
     }
 }
