@@ -115,9 +115,9 @@ namespace SharpFastNoise2.Generators
             f32 finalGen = F.Broad(0f);
             if (destination.Length > 0)
             {
-                f32 xPos = F.Add(xOffsetV, F.LoadOrZero(xPosArray));
-                f32 yPos = F.Add(yOffsetV, F.LoadOrZero(yPosArray));
-                f32 zPos = F.Add(zOffsetV, F.LoadOrZero(zPosArray));
+                f32 xPos = F.Add(xOffsetV, F.LoadOrValue(xPosArray, finalGen));
+                f32 yPos = F.Add(yOffsetV, F.LoadOrValue(yPosArray, finalGen));
+                f32 zPos = F.Add(zOffsetV, F.LoadOrValue(zPosArray, finalGen));
 
                 finalGen = generator.Gen(xPos, yPos, zPos, seedV);
             }

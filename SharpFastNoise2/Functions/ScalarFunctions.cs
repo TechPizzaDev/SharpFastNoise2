@@ -33,8 +33,8 @@ namespace SharpFastNoise2.Functions
         public static f32 Load(ReadOnlySpan<float> p) => p[0];
         public static i32 Load(ReadOnlySpan<int> p) => p[0];
 
-        public static f32 LoadOrZero(ReadOnlySpan<float> a) => a.Length >= 1 ? a[0] : 0;
-        public static i32 LoadOrZero(ReadOnlySpan<int> a) => a.Length >= 1 ? a[0] : 0;
+        public static f32 LoadOrValue(ReadOnlySpan<float> a, f32 b) => a.Length >= 1 ? a[0] : b;
+        public static i32 LoadOrValue(ReadOnlySpan<int> a, i32 b) => a.Length >= 1 ? a[0] : b;
 
         // Incremented
 

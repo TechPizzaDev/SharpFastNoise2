@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Runtime.CompilerServices;
 
 namespace SharpFastNoise2.Functions
 {
@@ -25,20 +26,30 @@ namespace SharpFastNoise2.Functions
 
         static abstract f32 Load(ReadOnlySpan<float> p);
         static abstract i32 Load(ReadOnlySpan<int> p);
-        
-        static virtual f32 LoadOrZero(ReadOnlySpan<float> a)
+
+        [SkipLocalsInit]
+        static virtual f32 LoadOrValue(ReadOnlySpan<float> a, f32 b)
         {
+            if (a.Length >= F.Count)
+            {
+                return F.Load(a);
+            }
             Span<float> buf = stackalloc float[F.Count];
-            buf.Clear();
-            a.Slice(0, Math.Min(a.Length, buf.Length)).CopyTo(buf);
+            F.Store(buf, b);
+            a.CopyTo(buf);
             return F.Load(buf);
         }
 
-        static virtual i32 LoadOrZero(ReadOnlySpan<int> a)
+        [SkipLocalsInit]
+        static virtual i32 LoadOrValue(ReadOnlySpan<int> a, i32 b)
         {
+            if (a.Length >= F.Count)
+            {
+                return F.Load(a);
+            }
             Span<int> buf = stackalloc int[F.Count];
-            buf.Clear();
-            a.Slice(0, Math.Min(a.Length, buf.Length)).CopyTo(buf);
+            F.Store(buf, b);
+            a.CopyTo(buf);
             return F.Load(buf);
         }
 
