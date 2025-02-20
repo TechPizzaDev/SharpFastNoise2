@@ -13,7 +13,7 @@ namespace SharpFastNoise2.Functions
 
     public struct Avx512Functions : IFunctionList<f32, i32, Avx512Functions>
     {
-        public static bool IsSupported => Avx512F.IsSupported && Avx512DQ.IsSupported;
+        public static bool IsSupported => Avx512F.IsSupported;
 
         public static int Count => f32.Count;
 
@@ -111,7 +111,7 @@ namespace SharpFastNoise2.Functions
 
         // Bitwise
 
-        public static f32 AndNot(f32 a, f32 b) => Avx512DQ.AndNot(b, a);
+        public static f32 AndNot(f32 a, f32 b) => Vector512.AndNot(a, b);
         public static i32 AndNot(i32 a, i32 b) => Avx512F.AndNot(b, a);
 
         public static f32 ShiftRightLogical(f32 a, [ConstantExpected] byte b) => a >>> b;
@@ -142,21 +142,11 @@ namespace SharpFastNoise2.Functions
 
         // Mask
 
-        public static i32 Mask(i32 a, i32 m) =>
-            // return _mm512_maskz_mov_epi32(m, a);
-            Avx512F.And(m, a);
+        public static i32 Mask(i32 a, i32 m) => a & m;
+        public static f32 Mask(f32 a, f32 m) => a & m;
 
-        public static f32 Mask(f32 a, f32 m) =>
-            // return _mm512_maskz_mov_ps(m, a);
-            Avx512DQ.And(m, a);
-
-        public static i32 NMask(i32 a, i32 m) =>
-            // return _mm512_maskz_mov_epi32( ~m, a );
-            Avx512F.AndNot(m, a);
-
-        public static f32 NMask(f32 a, f32 m) =>
-            // return _mm512_maskz_mov_ps( ~m, a );
-            Avx512DQ.AndNot(m, a);
+        public static i32 NMask(i32 a, i32 m) => Avx512F.AndNot(m, a);
+        public static f32 NMask(f32 a, f32 m) => Vector512.AndNot(a, m);
 
         public static bool AnyMask(i32 m) => m.ExtractMostSignificantBits() != 0;
         public static bool AllMask(i32 m) => m.ExtractMostSignificantBits() == 0xFFFF;
@@ -204,7 +194,7 @@ namespace SharpFastNoise2.Functions
         // Float math
 
         public static f32 Add(f32 lhs, f32 rhs) => Avx512F.Add(lhs, rhs);
-        public static f32 And(f32 lhs, f32 rhs) => Avx512DQ.And(lhs, rhs);
+        public static f32 And(f32 lhs, f32 rhs) => lhs & rhs;
         public static f32 Not(f32 lhs) => ~lhs;
         public static f32 Div(f32 lhs, f32 rhs) => Avx512F.Divide(lhs, rhs);
         public static f32 Equal(f32 lhs, f32 rhs) => Avx512F.CompareEqual(lhs, rhs);
@@ -216,10 +206,10 @@ namespace SharpFastNoise2.Functions
         public static f32 Mul(f32 lhs, f32 rhs) => Avx512F.Multiply(lhs, rhs);
         public static f32 Negate(f32 lhs) => -lhs;
         public static f32 NotEqual(f32 lhs, f32 rhs) => Avx512F.CompareNotEqual(lhs, rhs);
-        public static f32 Or(f32 lhs, f32 rhs) => Avx512DQ.Or(lhs, rhs);
+        public static f32 Or(f32 lhs, f32 rhs) => lhs | rhs;
         public static f32 RightShift(f32 lhs, [ConstantExpected] byte rhs) => throw new NotSupportedException();
         public static f32 Sub(f32 lhs, f32 rhs) => Avx512F.Subtract(lhs, rhs);
-        public static f32 Xor(f32 lhs, f32 rhs) => Avx512DQ.Xor(lhs, rhs);
+        public static f32 Xor(f32 lhs, f32 rhs) => lhs ^ rhs;
 
         // Int math
 
