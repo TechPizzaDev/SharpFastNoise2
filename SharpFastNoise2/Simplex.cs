@@ -19,15 +19,18 @@ namespace SharpFastNoise2
         public readonly f32 Gen(f32 x, f32 y, i32 seed)
         {
             const float SQRT3 = 1.7320508075688772935274463415059f;
-            const float F2 = 0.5f * (SQRT3 - 1.0f);
-            const float G2 = (3.0f - SQRT3) / 6.0f;
+            const float F2 = 0.5f * (SQRT3 - 1f);
+            const float G2 = (3f - SQRT3) / 6f;
 
             f32 f = F.Mul(F.Broad(F2), F.Add(x, y));
             f32 x0 = F.Floor(F.Add(x, f));
             f32 y0 = F.Floor(F.Add(y, f));
 
-            i32 i = F.Mul(F.Convert_i32(x0), F.Broad(Primes.X));
-            i32 j = F.Mul(F.Convert_i32(y0), F.Broad(Primes.Y));
+            i32 primeX = F.Broad(Primes.X);
+            i32 primeY = F.Broad(Primes.Y);
+            
+            i32 i = F.Mul(F.Convert_i32(x0), primeX);
+            i32 j = F.Mul(F.Convert_i32(y0), primeY);
 
             f32 g = F.Mul(F.Broad(G2), F.Add(x0, y0));
             x0 = F.Sub(x, F.Sub(x0, g));
@@ -66,15 +69,15 @@ namespace SharpFastNoise2
             f32 n1 = F.GetGradientDot(
                 Utils<f32, i32, F>.HashPrimes(
                     seed,
-                    F.MaskAdd(i, F.Broad(Primes.X), F.Cast_i32(i1)),
-                    F.NMaskAdd(j, F.Broad(Primes.Y), F.Cast_i32(i1))),
+                    F.MaskAdd(i, primeX, F.Cast_i32(i1)),
+                    F.NMaskAdd(j, primeY, F.Cast_i32(i1))),
                 x1, y1);
 
             f32 n2 = F.GetGradientDot(
                 Utils<f32, i32, F>.HashPrimes(
                     seed,
-                    F.Add(i, F.Broad(Primes.X)),
-                    F.Add(j, F.Broad(Primes.Y))),
+                    F.Add(i, primeX),
+                    F.Add(j, primeY)),
                 x2, y2);
 
             f32 last = F.FMulAdd(n0, t0, F.FMulAdd(n1, t1, F.Mul(n2, t2)));
@@ -84,8 +87,8 @@ namespace SharpFastNoise2
         [MethodImpl(MethodImplOptions.AggressiveOptimization)]
         public readonly f32 Gen(f32 x, f32 y, f32 z, i32 seed)
         {
-            const float F3 = 1.0f / 3.0f;
-            const float G3 = 1.0f / 2.0f;
+            const float F3 = 1f / 3f;
+            const float G3 = 1f / 2f;
 
             f32 s = F.Mul(F.Broad(F3), F.Add(F.Add(x, y), z));
             x = F.Add(x, s);
@@ -99,14 +102,18 @@ namespace SharpFastNoise2
             f32 yi = F.Sub(y, y0);
             f32 zi = F.Sub(z, z0);
 
-            i32 i = F.Mul(F.Convert_i32(x0), F.Broad(Primes.X));
-            i32 j = F.Mul(F.Convert_i32(y0), F.Broad(Primes.Y));
-            i32 k = F.Mul(F.Convert_i32(z0), F.Broad(Primes.Z));
+            i32 primeX = F.Broad(Primes.X);
+            i32 primeY = F.Broad(Primes.Y);
+            i32 primeZ = F.Broad(Primes.Z);
+
+            i32 i = F.Mul(F.Convert_i32(x0), primeX);
+            i32 j = F.Mul(F.Convert_i32(y0), primeY);
+            i32 k = F.Mul(F.Convert_i32(z0), primeZ);
 
             f32 x_ge_y = F.GreaterThanOrEqual(xi, yi);
             f32 y_ge_z = F.GreaterThanOrEqual(yi, zi);
             f32 x_ge_z = F.GreaterThanOrEqual(xi, zi);
-            
+
             f32 fcG3 = F.Broad(G3);
             f32 g = F.Mul(fcG3, F.Add(F.Add(xi, yi), zi));
             x0 = F.Sub(xi, g);
@@ -163,25 +170,25 @@ namespace SharpFastNoise2
             f32 n1 = F.GetGradientDot(
                 Utils<f32, i32, F>.HashPrimes(
                     seed,
-                    F.MaskAdd(i, F.Broad(Primes.X), F.Cast_i32(i1)),
-                    F.MaskAdd(j, F.Broad(Primes.Y), F.Cast_i32(j1)),
-                    F.MaskAdd(k, F.Broad(Primes.Z), F.Cast_i32(k1))),
+                    F.MaskAdd(i, primeX, F.Cast_i32(i1)),
+                    F.MaskAdd(j, primeY, F.Cast_i32(j1)),
+                    F.MaskAdd(k, primeZ, F.Cast_i32(k1))),
                 x1, y1, z1);
 
             f32 n2 = F.GetGradientDot(
                 Utils<f32, i32, F>.HashPrimes(
                     seed,
-                    F.MaskAdd(i, F.Broad(Primes.X), F.Cast_i32(i2)),
-                    F.MaskAdd(j, F.Broad(Primes.Y), F.Cast_i32(j2)),
-                    F.NMaskAdd(k, F.Broad(Primes.Z), F.Cast_i32(k2))),
+                    F.MaskAdd(i, primeX, F.Cast_i32(i2)),
+                    F.MaskAdd(j, primeY, F.Cast_i32(j2)),
+                    F.NMaskAdd(k, primeZ, F.Cast_i32(k2))),
                 x2, y2, z2);
 
             f32 n3 = F.GetGradientDot(
                 Utils<f32, i32, F>.HashPrimes(
                     seed,
-                    F.Add(i, F.Broad(Primes.X)),
-                    F.Add(j, F.Broad(Primes.Y)),
-                    F.Add(k, F.Broad(Primes.Z))),
+                    F.Add(i, primeX),
+                    F.Add(j, primeY),
+                    F.Add(k, primeZ)),
                 x3, y3, z3);
 
             f32 last = F.FMulAdd(n0, t0, F.FMulAdd(n1, t1, F.FMulAdd(n2, t2, F.Mul(n3, t3))));
@@ -192,8 +199,8 @@ namespace SharpFastNoise2
         public readonly f32 Gen(f32 x, f32 y, f32 z, f32 w, i32 seed)
         {
             const float SQRT5 = 2.236067977499f;
-            const float F4 = (SQRT5 - 1.0f) / 4.0f;
-            const float G4 = (5.0f - SQRT5) / 20.0f;
+            const float F4 = (SQRT5 - 1f) / 4f;
+            const float G4 = (5f - SQRT5) / 20f;
 
             f32 s = F.Mul(F.Broad(F4), F.Add(F.Add(F.Add(x, y), z), w));
             x = F.Add(x, s);
@@ -210,10 +217,15 @@ namespace SharpFastNoise2
             f32 zi = F.Sub(z, z0);
             f32 wi = F.Sub(w, w0);
 
-            i32 i = F.Mul(F.Convert_i32(x0), F.Broad(Primes.X));
-            i32 j = F.Mul(F.Convert_i32(y0), F.Broad(Primes.Y));
-            i32 k = F.Mul(F.Convert_i32(z0), F.Broad(Primes.Z));
-            i32 l = F.Mul(F.Convert_i32(w0), F.Broad(Primes.W));
+            i32 primeX = F.Broad(Primes.X);
+            i32 primeY = F.Broad(Primes.Y);
+            i32 primeZ = F.Broad(Primes.Z);
+            i32 primeW = F.Broad(Primes.W);
+
+            i32 i = F.Mul(F.Convert_i32(x0), primeX);
+            i32 j = F.Mul(F.Convert_i32(y0), primeY);
+            i32 k = F.Mul(F.Convert_i32(z0), primeZ);
+            i32 l = F.Mul(F.Convert_i32(w0), primeW);
 
             f32 g = F.Mul(F.Broad(G4), F.Add(F.Add(F.Add(xi, yi), zi), wi));
             x0 = F.Sub(xi, g);
@@ -324,37 +336,37 @@ namespace SharpFastNoise2
             f32 n1 = F.GetGradientDot(
                 Utils<f32, i32, F>.HashPrimes(
                     seed,
-                    F.MaskAdd(i, F.Broad(Primes.X), i1),
-                    F.MaskAdd(j, F.Broad(Primes.Y), j1),
-                    F.MaskAdd(k, F.Broad(Primes.Z), k1),
-                    F.MaskAdd(l, F.Broad(Primes.W), l1)),
+                    F.MaskAdd(i, primeX, i1),
+                    F.MaskAdd(j, primeY, j1),
+                    F.MaskAdd(k, primeZ, k1),
+                    F.MaskAdd(l, primeW, l1)),
                 x1, y1, z1, w1);
 
             f32 n2 = F.GetGradientDot(
                 Utils<f32, i32, F>.HashPrimes(
                     seed,
-                    F.MaskAdd(i, F.Broad(Primes.X), i2),
-                    F.MaskAdd(j, F.Broad(Primes.Y), j2),
-                    F.MaskAdd(k, F.Broad(Primes.Z), k2),
-                    F.MaskAdd(l, F.Broad(Primes.W), l2)),
+                    F.MaskAdd(i, primeX, i2),
+                    F.MaskAdd(j, primeY, j2),
+                    F.MaskAdd(k, primeZ, k2),
+                    F.MaskAdd(l, primeW, l2)),
                 x2, y2, z2, w2);
 
             f32 n3 = F.GetGradientDot(
                 Utils<f32, i32, F>.HashPrimes(
                     seed,
-                    F.MaskAdd(i, F.Broad(Primes.X), i3),
-                    F.MaskAdd(j, F.Broad(Primes.Y), j3),
-                    F.MaskAdd(k, F.Broad(Primes.Z), k3),
-                    F.MaskAdd(l, F.Broad(Primes.W), l3)),
+                    F.MaskAdd(i, primeX, i3),
+                    F.MaskAdd(j, primeY, j3),
+                    F.MaskAdd(k, primeZ, k3),
+                    F.MaskAdd(l, primeW, l3)),
                 x3, y3, z3, w3);
 
             f32 n4 = F.GetGradientDot(
                 Utils<f32, i32, F>.HashPrimes(
                     seed,
-                    F.Add(i, F.Broad(Primes.X)),
-                    F.Add(j, F.Broad(Primes.Y)),
-                    F.Add(k, F.Broad(Primes.Z)),
-                    F.Add(l, F.Broad(Primes.W))),
+                    F.Add(i, primeX),
+                    F.Add(j, primeY),
+                    F.Add(k, primeZ),
+                    F.Add(l, primeW)),
                 x4, y4, z4, w4);
 
             f32 last = F.FMulAdd(

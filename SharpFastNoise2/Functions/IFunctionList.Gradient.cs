@@ -5,7 +5,9 @@ namespace SharpFastNoise2.Functions
     public partial interface IFunctionList<f32, i32, F>
         where F : IFunctionList<f32, i32, F>
     {
-        const MethodImplOptions Options = MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining; 
+        const MethodImplOptions Options = 
+            MethodImplOptions.AggressiveOptimization | 
+            MethodImplOptions.AggressiveInlining; 
 
         // Gradient dot fancy
         

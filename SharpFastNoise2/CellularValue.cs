@@ -77,7 +77,7 @@ namespace SharpFastNoise2
                 for (int yi = 0; yi < 3; yi++)
                 {
                     i32 hash = Utils<f32, i32, F>.HashPrimesHB(seed, xc, yc);
-                    f32 halfMask = F.Broad(0xffff / 2.0f);
+                    f32 halfMask = F.Broad(0xffff / 2f);
                     f32 xd = F.Sub(F.Convert_f32(F.And(hash, F.Broad(0xffff))), halfMask);
                     f32 yd = F.Sub(F.Convert_f32(F.RightShift(hash, 16)), halfMask);
 
@@ -146,7 +146,7 @@ namespace SharpFastNoise2
                     {
                         i32 hash = Utils<f32, i32, F>.HashPrimesHB(seed, xc, yc, zc);
                         i32 mask = F.Broad(0x3ff);
-                        f32 halfMask = F.Broad(0x3ff / 2.0f);
+                        f32 halfMask = F.Broad(0x3ff / 2f);
                         f32 xd = F.Sub(F.Convert_f32(F.And(hash, mask)), halfMask);
                         f32 yd = F.Sub(F.Convert_f32(F.And(F.RightShift(hash, 10), mask)), halfMask);
                         f32 zd = F.Sub(F.Convert_f32(F.And(F.RightShift(hash, 20), mask)), halfMask);
@@ -227,7 +227,7 @@ namespace SharpFastNoise2
                         {
                             i32 hash = Utils<f32, i32, F>.HashPrimesHB(seed, xc, yc, zc, wc);
                             i32 mask = F.Broad(0xff);
-                            f32 halfMask = F.Broad(0xff / 2.0f);
+                            f32 halfMask = F.Broad(0xff / 2f);
                             f32 xd = F.Sub(F.Convert_f32(F.And(hash, mask)), halfMask);
                             f32 yd = F.Sub(F.Convert_f32(F.And(F.RightShift(hash, 8), mask)), halfMask);
                             f32 zd = F.Sub(F.Convert_f32(F.And(F.RightShift(hash, 16), mask)), halfMask);
